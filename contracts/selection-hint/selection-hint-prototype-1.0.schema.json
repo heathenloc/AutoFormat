@@ -26,8 +26,8 @@
     "renderer_id": { "type": "string", "minLength": 1 },
     "renderer_version": { "type": "string", "minLength": 1 },
     "selected_text": { "type": "string", "minLength": 1, "maxLength": 4096 },
-    "context_before": { "type": "string" },
-    "context_after": { "type": "string" },
+    "context_before": { "type": "string", "maxLength": 4096 },
+    "context_after": { "type": "string", "maxLength": 4096 },
     "pdf_page": { "type": "integer", "minimum": 1 },
     "text_layer_start": { "type": "integer", "minimum": 0 },
     "text_layer_end": { "type": "integer", "minimum": 1 }

@@ -19,6 +19,10 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 - `apps/api` now has a replaceable LibreOffice preview adapter. It produces
   versioned PDF metadata and rejects unsafe input before launching the
   renderer. See [local setup](docs/libreoffice-local-setup.md).
+- The API package now provides a PDF provenance and text check for preview
+  selections. The C# index requires trusted version and preview metadata
+  before locating a selection. Repeated text and complex paragraphs pause for
+  user targeting. This read-only anchor is not an edit command.
 
 ## Local checks
 

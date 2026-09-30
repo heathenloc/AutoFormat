@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/selection-anchor/preview-binding-1.0",
+  "title": "Trusted server-side preview binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "base_version_id", "base_docx_sha256", "preview_artifact_id",
+    "renderer_id", "renderer_version", "pdf_page_count"
+  ],
+  "properties": {
+    "base_version_id": { "type": "string", "minLength": 1 },
+    "base_docx_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "preview_artifact_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" },
+    "renderer_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+    "renderer_version": { "type": "string", "minLength": 1 },
+    "pdf_page_count": { "type": "integer", "minimum": 1 }
+  }
+}

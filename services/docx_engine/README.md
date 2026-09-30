@@ -13,10 +13,23 @@ dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业�
 
 The index omits headers, footers, footnotes, endnotes, and layout coordinates.
 It cannot prove that PDF.js text layer offsets refer to the selected DOCX text.
-The caller must bind a hint to a real preview artifact and use a renderer-aware
-mapping check before enabling edits. Repeated or missing text and cross-paragraph
-selections return a state requiring user action. PDF page and text layer fields
-are retained as hints only and never choose a DOCX object by themselves.
+Before calling `locate`, the caller must run the API package's
+`verify_pdf_selection` check against saved artifact metadata. It checks the
+PDF hash, page count, source DOCX hash, and that the selected text occurs once
+on the claimed PDF page.
+`locate` also requires a `PreviewBinding` loaded from trusted version metadata;
+the client must never supply this binding. Its version, DOCX hash, preview ID,
+renderer, and page count must match the selection hint. Repeated or missing
+DOCX text, mismatched context, tracked or hidden content, and cross-paragraph
+selections require user action. PDF page and text layer fields are retained as
+hints only and never choose a DOCX object by themselves.
+
+`SelectionAnchor/1.0` is emitted only for a unique safe match. It preserves the
+version, preview renderer, selected text, PDF hint and version-local DOCX span.
+An anchor is location evidence, not an executable formatting rule. It still
+needs feedback interpretation, a confirmed typed rule and an edit plan before
+an edit can run. The PDF.js text-layer offsets cannot yet be independently
+verified, so this boundary is not the complete feedback workflow.
 
 The index prototype is deliberately read-only. Editing is a separate project.
 

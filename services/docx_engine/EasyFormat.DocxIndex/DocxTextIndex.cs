@@ -6,7 +6,8 @@ using System.Xml.Linq;
 
 namespace EasyFormat.DocxIndex;
 
-public sealed record IndexedParagraph(string ObjectId, string XmlPath, string? StyleId, string Text);
+public sealed record IndexedParagraph(
+    string ObjectId, string XmlPath, string? StyleId, string Text, bool RequiresManualTargeting);
 
 public sealed record DocumentIndex(string Sha256, IReadOnlyList<IndexedParagraph> Paragraphs);
 
@@ -23,19 +24,16 @@ public static class DocxTextIndex
 
     public static DocumentIndex Build(string path)
     {
-        var file = new FileInfo(path);
-        if (!file.Exists || file.Length is 0 or > MaxDocxBytes)
+        using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        if (file.Length is 0 or > MaxDocxBytes)
         {
             throw new InvalidDataException("DOCX missing, empty, or larger than prototype limit.");
         }
 
-        string hash;
-        using (var stream = file.OpenRead())
-        {
-            hash = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
-        }
+        var hash = Convert.ToHexString(SHA256.HashData(file)).ToLowerInvariant();
+        file.Position = 0;
 
-        using var archive = ZipFile.OpenRead(path);
+        using var archive = new ZipArchive(file, ZipArchiveMode.Read, leaveOpen: true);
         var entry = archive.GetEntry("word/document.xml")
             ?? throw new InvalidDataException("DOCX has no word/document.xml.");
         if (entry.Length is 0 or > MaxDocumentXmlBytes)
@@ -64,7 +62,8 @@ public static class DocxTextIndex
                 $"p:{paragraphs.Count + 1:D6}",
                 GetPath(paragraph, body),
                 style,
-                text));
+                text,
+                RequiresManualTargeting(paragraph)));
         }
 
         return new DocumentIndex(hash, paragraphs);
@@ -87,6 +86,19 @@ public static class DocxTextIndex
         }
 
         return result.ToString();
+    }
+
+    private static bool RequiresManualTargeting(XElement paragraph)
+    {
+        if (paragraph.Ancestors().Any(node => node.Name == W + "txbxContent")) return true;
+
+        return paragraph.Descendants().Any(node =>
+            node.Name == W + "del" || node.Name == W + "moveFrom" ||
+            node.Name == W + "ins" || node.Name == W + "moveTo" ||
+            node.Name == W + "fldChar" || node.Name == W + "instrText" ||
+            node.Name == W + "drawing" || node.Name == W + "pict" ||
+            node.Name == W + "object" || node.Name == W + "vanish" ||
+            node.Name == W + "webHidden");
     }
 
     private static string GetPath(XElement element, XElement body)

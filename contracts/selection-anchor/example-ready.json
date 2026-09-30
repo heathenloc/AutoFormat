@@ -1,0 +1,18 @@
+{
+  "schema_version": "selection-anchor/1.0",
+  "base_version_id": "version-1",
+  "preview_artifact_id": "preview-1",
+  "renderer_id": "libreoffice",
+  "renderer_version": "LibreOffice 26.8.0.3",
+  "selected_text": "正文",
+  "context_before": "这是",
+  "context_after": "。",
+  "pdf_page": 1,
+  "text_layer_start": 10,
+  "text_layer_end": 12,
+  "docx_object_id": "p:000001",
+  "docx_xml_path": "body/p[1]",
+  "docx_start": 2,
+  "docx_length": 2,
+  "status": "ready"
+}

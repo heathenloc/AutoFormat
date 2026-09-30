@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/selection-anchor/1.0",
+  "title": "Uniquely resolved preview selection anchor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "base_version_id", "preview_artifact_id",
+    "renderer_id", "renderer_version", "selected_text", "context_before",
+    "context_after", "pdf_page", "text_layer_start", "text_layer_end",
+    "docx_object_id", "docx_xml_path", "docx_start", "docx_length", "status"
+  ],
+  "properties": {
+    "schema_version": { "const": "selection-anchor/1.0" },
+    "base_version_id": { "type": "string", "minLength": 1 },
+    "preview_artifact_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" },
+    "renderer_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+    "renderer_version": { "type": "string", "minLength": 1 },
+    "selected_text": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "context_before": { "type": "string", "maxLength": 4096 },
+    "context_after": { "type": "string", "maxLength": 4096 },
+    "pdf_page": { "type": "integer", "minimum": 1 },
+    "text_layer_start": { "type": "integer", "minimum": 0 },
+    "text_layer_end": { "type": "integer", "minimum": 1 },
+    "docx_object_id": { "type": "string", "pattern": "^p:[0-9]{6,}$" },
+    "docx_xml_path": { "type": "string", "pattern": "^body/" },
+    "docx_start": { "type": "integer", "minimum": 0 },
+    "docx_length": { "type": "integer", "minimum": 1 },
+    "status": { "const": "ready" }
+  }
+}
