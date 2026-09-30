@@ -137,6 +137,65 @@ var existing = ParagraphAlignmentEditor.Apply(taskRoot, manifest with
 });
 Require(existing.Status == "needs_user_input", "Published version cannot be overwritten.");
 
+var batch = new BatchEditManifest(
+    "edit-batch-manifest/1.0", "batch-1", "version-1", modified.Sha256,
+    "v1.docx", "batch.docx", new[]
+    {
+        new BatchEditOperation("batch-op-1", "rule-body", "p:000001",
+            ParagraphAlignmentEditor.HashText(source.Paragraphs[0].Text),
+            source.Paragraphs[0].XmlPath, "paragraph.alignment", "center", "paragraph", "left"),
+        new BatchEditOperation("batch-op-2", "rule-body", "p:000002",
+            ParagraphAlignmentEditor.HashText(source.Paragraphs[1].Text),
+            source.Paragraphs[1].XmlPath, "paragraph.alignment", "center", "paragraph", "center"),
+    });
+var roundTrip = JsonSerializer.Deserialize<BatchEditManifest>(
+    JsonSerializer.Serialize(batch, jsonOptions), jsonOptions);
+Require(roundTrip is not null && roundTrip.BatchId == batch.BatchId &&
+    roundTrip.Operations.SequenceEqual(batch.Operations),
+    "Batch manifest serializes across the CLI boundary.");
+var batchResult = ParagraphAlignmentBatchEditor.Apply(taskRoot, batch);
+Require(batchResult.Status == "ready" &&
+    batchResult.Operations.Select(item => item.Status).SequenceEqual(
+        new[] { "ready", "already_satisfied" }),
+    "Batch verifies changed and already satisfied targets separately.");
+using (var document = WordprocessingDocument.Open(Path.Combine(taskRoot, "batch.docx"), false))
+{
+    var paragraphs = document.MainDocumentPart!.Document!.Body!.Descendants<Paragraph>().ToArray();
+    Require(paragraphs[0].ParagraphProperties?.Justification?.Val?.Value == JustificationValues.Center &&
+        paragraphs[1].ParagraphProperties?.Justification?.Val?.Value == JustificationValues.Center &&
+        paragraphs[2].ParagraphProperties?.Justification is null,
+        "Batch changed only its two confirmed paragraphs.");
+}
+Require(DocxTextIndex.Build(input).Sha256 == originalHash, "Batch preserves original bytes.");
+
+var batchHash = DocxTextIndex.Build(Path.Combine(taskRoot, "batch.docx")).Sha256;
+var noChangeBatch = ParagraphAlignmentBatchEditor.Apply(taskRoot, batch with
+{
+    BatchId = "batch-no-change", BaseDocxSha256 = batchHash,
+    InputFile = "batch.docx", OutputFile = "batch-no-change.docx",
+    Operations = batch.Operations.Select(item => item with
+    {
+        ExpectedBeforeDirectAlignment = "center"
+    }).ToArray(),
+});
+Require(noChangeBatch.Status == "already_satisfied" &&
+    noChangeBatch.Operations.All(item => item.Status == "already_satisfied") &&
+    DocxTextIndex.Build(Path.Combine(taskRoot, "batch-no-change.docx")).Sha256 == batchHash,
+    "A repeated batch is byte-for-byte idempotent.");
+
+var rejectedBatch = ParagraphAlignmentBatchEditor.Apply(taskRoot, batch with
+{
+    BatchId = "batch-rejected", OutputFile = "batch-rejected.docx",
+    Operations = new[]
+    {
+        batch.Operations[0],
+        batch.Operations[1] with { ExpectedParagraphTextSha256 = new string('0', 64) },
+    },
+});
+Require(rejectedBatch.Status == "ambiguous_target" &&
+    !File.Exists(Path.Combine(taskRoot, "batch-rejected.docx")),
+    "One stale target prevents the whole batch from publishing.");
+
 Console.WriteLine("DocxEditor checks passed.");
 
 static void Require(bool condition, string description)

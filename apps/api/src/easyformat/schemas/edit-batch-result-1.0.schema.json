@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/edit-batch-result/1.0",
+  "title": "Verified atomic paragraph alignment batch result",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "status", "batch_id", "output_docx_sha256", "operations", "reason"],
+  "properties": {
+    "schema_version": {"const": "edit-batch-result/1.0"},
+    "status": {"enum": ["ready", "already_satisfied", "needs_user_input", "unsupported_property", "stale_base_version", "ambiguous_target", "validation_failed"]},
+    "batch_id": {"type": "string", "minLength": 1},
+    "output_docx_sha256": {"oneOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "operations": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+    "reason": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operation_id", "target_object_id", "status", "before_direct_alignment", "after_direct_alignment"],
+      "properties": {
+        "operation_id": {"$ref": "#/$defs/hash"},
+        "target_object_id": {"type": "string", "pattern": "^p:[0-9]{6,}$"},
+        "status": {"enum": ["ready", "already_satisfied"]},
+        "before_direct_alignment": {"type": ["string", "null"]},
+        "after_direct_alignment": {"enum": ["left", "center", "right", "both"]}
+      }
+    }
+  }
+}

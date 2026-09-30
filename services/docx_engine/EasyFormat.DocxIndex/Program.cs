@@ -46,6 +46,7 @@ try
                 requires_manual_targeting = paragraph.RequiresManualTargeting,
                 role_candidate = paragraph.RoleCandidate,
                 role_evidence = paragraph.RoleEvidence,
+                direct_alignment = paragraph.DirectAlignment,
             }),
         };
     }

@@ -8,7 +8,7 @@ namespace EasyFormat.DocxIndex;
 
 public sealed record IndexedParagraph(
     string ObjectId, string XmlPath, string? StyleId, string Text, bool RequiresManualTargeting,
-    string RoleCandidate, string RoleEvidence);
+    string RoleCandidate, string RoleEvidence, string? DirectAlignment);
 
 public sealed record DocumentIndex(string Sha256, IReadOnlyList<IndexedParagraph> Paragraphs);
 
@@ -66,7 +66,8 @@ public static class DocxTextIndex
                 text,
                 RequiresManualTargeting(paragraph),
                 RoleCandidate(paragraph, style, text),
-                RoleEvidence(paragraph, style, text)));
+                RoleEvidence(paragraph, style, text),
+                (string?)paragraph.Element(W + "pPr")?.Element(W + "jc")?.Attribute(W + "val")));
         }
 
         return new DocumentIndex(hash, paragraphs);

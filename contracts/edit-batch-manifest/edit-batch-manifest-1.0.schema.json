@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/edit-batch-manifest/1.0",
+  "title": "Atomic paragraph alignment batch",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "batch_id", "base_version_id", "base_docx_sha256", "input_file", "output_file", "operations"],
+  "properties": {
+    "schema_version": {"const": "edit-batch-manifest/1.0"},
+    "batch_id": {"type": "string", "minLength": 1},
+    "base_version_id": {"type": "string", "minLength": 1},
+    "base_docx_sha256": {"$ref": "#/$defs/hash"},
+    "input_file": {"$ref": "#/$defs/docx_name"},
+    "output_file": {"$ref": "#/$defs/docx_name"},
+    "operations": {"type": "array", "minItems": 1, "maxItems": 5000, "items": {"$ref": "#/$defs/operation"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "docx_name": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\\.docx$"},
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operation_id", "rule_id", "target_object_id", "expected_paragraph_text_sha256", "expected_xml_path", "property", "value", "effective_scope", "expected_before_direct_alignment"],
+      "properties": {
+        "operation_id": {"$ref": "#/$defs/hash"},
+        "rule_id": {"type": "string", "minLength": 1},
+        "target_object_id": {"type": "string", "pattern": "^p:[0-9]{6,}$"},
+        "expected_paragraph_text_sha256": {"$ref": "#/$defs/hash"},
+        "expected_xml_path": {"type": "string", "pattern": "^body/"},
+        "property": {"const": "paragraph.alignment"},
+        "value": {"enum": ["left", "center", "right", "both"]},
+        "effective_scope": {"const": "paragraph"},
+        "expected_before_direct_alignment": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

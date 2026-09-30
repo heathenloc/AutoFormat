@@ -59,8 +59,8 @@ escapes them into deterministic Markdown. Before publication, the store checks
 the full report Schema, its summary and evidence links, parent history,
 version/preview references, and exact Markdown correspondence. It still relies
 on upstream validators for the truth of individual formatting claims and
-verification references. The current `easyformat.workflow` connects only a
-confirmed `brief_explicit` paragraph-alignment rule. The rule's original Brief
+verification references. The current `easyformat.workflow` connects confirmed
+`brief_explicit` paragraph-alignment rules. The rule's original Brief
 wording and evidence are report facts; the typed property, value, scope and
 target alone drive the editor. Its `DotnetEditor` runs an explicitly located,
 hash-checked, previously built DLL without a shell or dependency restore. The
@@ -68,17 +68,23 @@ workflow checks the editor's JSON result and output hash, creates a selectable
 preview, builds a report tied to the output DOCX, and publishes the version.
 Already-satisfied operations add no version; repeated request IDs return the
 same published version only for matching rule input. Template observations,
-free-text feedback and general rule planning are not accepted by this narrow
-entry point.
+free-text feedback and other formatting properties are not accepted by this
+narrow entry point. A global body rule can now be reviewed, have every
+paragraph classified by a recorded user decision, and become an `edit-plan/1.0`
+with explicit target IDs, previous direct alignments and a review hash. The
+batch workflow re-indexes the parent, re-creates the plan, checks the recorded
+decision, and publishes one version only after all target results agree.
 
 `easyformat.target_planning.DotnetTargetIndexer` runs the pinned C# `inspect`
 command against a version-bound DOCX and validates its target index. The
-`build_body_alignment_review` function combines that index with the typed
-academic rule set. Its `target-review-plan/1.0` lists every paragraph's
-candidate role and review disposition but always has an empty executable
-operation list. A `Normal` style paragraph is not proof of the paper's body
-scope. The selected DOCX hash must be supplied from trusted version storage;
-the review does not authorize the paragraph editor.
+`build_body_alignment_review` combines that index with the typed academic rule
+set. Its `target-review-plan/1.0` lists every paragraph's candidate role and
+review disposition but has an empty executable operation list. A `Normal` style
+paragraph is not proof of the paper's body scope. `confirm_body_scope` requires
+an include or exclude decision for every paragraph and records it separately
+from DOCX versions. `build_confirmed_body_alignment_plan` then admits only
+nonempty, safe body targets. The user-facing review and confirmation API is
+still pending.
 
 Run the storage checks with:
 

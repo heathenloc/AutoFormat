@@ -7,8 +7,10 @@ become an executable operation until the document's actual body scope is known.
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +38,25 @@ class TargetPlanningError(ValueError):
     def __init__(self, status: str, reason: str) -> None:
         self.status = status
         super().__init__(reason)
+
+
+@dataclass(frozen=True, slots=True)
+class BodyScopeConfirmation:
+    """A recorded user classification of every paragraph in one target review."""
+
+    decision_id: str
+    base_version_id: str
+    base_docx_sha256: str
+    rules_snapshot_id: str
+    review_sha256: str
+    body_object_ids: tuple[str, ...]
+    excluded_object_ids: tuple[str, ...]
+
+
+def _canonical_hash(value: dict[str, Any]) -> str:
+    encoded = json.dumps(value, sort_keys=True, ensure_ascii=False,
+                         separators=(",", ":"), allow_nan=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 class DotnetTargetIndexer:
@@ -104,6 +125,8 @@ def validate_target_index(index: dict[str, Any], *, expected_docx_sha256: str) -
             raise TargetPlanningError("validation_failed", "Body candidate is not structurally eligible.")
         if paragraph["is_empty"] and paragraph["text_preview"]:
             raise TargetPlanningError("validation_failed", "Empty paragraph has a text preview.")
+        if paragraph["direct_alignment"] is not None and not paragraph["direct_alignment"]:
+            raise TargetPlanningError("validation_failed", "Direct alignment is empty.")
 
 
 def build_body_alignment_review(
@@ -149,6 +172,7 @@ def build_body_alignment_review(
                     "text_preview": paragraph["text_preview"],
                     "role_candidate": role,
                     "role_evidence": paragraph["role_evidence"],
+                    "direct_alignment": paragraph["direct_alignment"],
                     "disposition": disposition,
                 })
         reviews.append({
@@ -163,7 +187,7 @@ def build_body_alignment_review(
             "estimated_affected_count": None,
             "targets": targets,
         })
-    return {
+    review = {
         "schema_version": "target-review-plan/1.0",
         "base_version_id": base_version_id,
         "base_docx_sha256": index["sha256"],
@@ -178,3 +202,88 @@ def build_body_alignment_review(
             "next_action": issue.next_action,
         } for issue in ruleset.issues],
     }
+    review["review_sha256"] = _canonical_hash(review)
+    return review
+
+
+def build_confirmed_body_alignment_plan(
+    *, ruleset: AcademicFormatRuleSet, index: dict[str, Any],
+    confirmation: BodyScopeConfirmation,
+) -> dict[str, Any]:
+    """Turn one reviewed global body rule into an explicit, bounded edit plan.
+
+    Every indexed paragraph must be classified by the user. Built-in headings,
+    tables, empty paragraphs and complex content cannot be silently included.
+    """
+    if (not confirmation.decision_id.strip() or
+            not _HASH.fullmatch(confirmation.review_sha256)):
+        raise TargetPlanningError("needs_user_input", "Body scope decision is missing.")
+    review = build_body_alignment_review(
+        ruleset=ruleset, index=index,
+        base_version_id=confirmation.base_version_id,
+        expected_base_docx_sha256=confirmation.base_docx_sha256,
+        rules_snapshot_id=confirmation.rules_snapshot_id,
+    )
+    if review["review_sha256"] != confirmation.review_sha256:
+        raise TargetPlanningError("stale_base_version", "Body scope review has changed.")
+    supported = [item for item in review["rule_reviews"]
+                 if item["status"] == "needs_user_input" and item["targets"]]
+    if len(supported) != 1:
+        raise TargetPlanningError("blocked_conflict", "Expected one unambiguous body alignment rule.")
+    rule = supported[0]
+    targets = {item["object_id"]: item for item in rule["targets"]}
+    included = confirmation.body_object_ids
+    excluded = confirmation.excluded_object_ids
+    if (not included or len(set(included)) != len(included) or
+            len(set(excluded)) != len(excluded) or
+            set(included) & set(excluded) or
+            set(included) | set(excluded) != set(targets)):
+        raise TargetPlanningError("needs_user_input", "Every paragraph needs one scope decision.")
+    for object_id in included:
+        target = targets[object_id]
+        if (target["disposition"] not in {"needs_body_confirmation", "needs_classification"}
+                or target["role_candidate"] in {"heading_candidate", "table_cell"}
+                or target["role_evidence"] == "empty_paragraph"):
+            raise TargetPlanningError("ambiguous_target", "Unsafe paragraph was classified as body.")
+    operations = []
+    for target in rule["targets"]:
+        if target["object_id"] not in included:
+            continue
+        identity = {
+            "review_sha256": review["review_sha256"],
+            "rule_id": rule["rule_id"], "object_id": target["object_id"],
+            "property_id": "paragraph.alignment", "value": rule["value"],
+        }
+        operations.append({
+            "operation_id": _canonical_hash(identity),
+            "rule_id": rule["rule_id"],
+            "object_id": target["object_id"],
+            "xml_path": target["xml_path"],
+            "expected_paragraph_text_sha256": target["text_sha256"],
+            "property_id": "paragraph.alignment",
+            "before_value": target["direct_alignment"],
+            "after_value": rule["value"],
+            "effective_scope": "paragraph",
+            "status": "pending",
+        })
+    if len(operations) > 5000:
+        raise TargetPlanningError("validation_failed", "Body plan exceeds the batch editor limit.")
+    plan = {
+        "schema_version": "edit-plan/1.0",
+        "base_version_id": confirmation.base_version_id,
+        "base_docx_sha256": confirmation.base_docx_sha256,
+        "rules_snapshot_id": confirmation.rules_snapshot_id,
+        "scope_decision_id": confirmation.decision_id,
+        "review_sha256": review["review_sha256"],
+        "rule_id": rule["rule_id"],
+        "source_requirement_id": rule["source_requirement_id"],
+        "source_version": rule["source_version"],
+        "requested_scope": "same_kind",
+        "value": rule["value"],
+        "estimated_affected_count": len(operations),
+        "excluded_object_ids": [item["object_id"] for item in rule["targets"]
+                                if item["object_id"] in excluded],
+        "operations": operations,
+    }
+    plan["plan_id"] = _canonical_hash(plan)
+    return plan

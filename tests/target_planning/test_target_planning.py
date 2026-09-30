@@ -6,6 +6,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+from dataclasses import replace
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -17,7 +18,8 @@ from brief_parser.domain.academic_format import (
 from jsonschema import Draft202012Validator
 
 from easyformat.target_planning import (
-    DotnetTargetIndexer, TargetPlanningError, build_body_alignment_review,
+    BodyScopeConfirmation, DotnetTargetIndexer, TargetPlanningError,
+    build_body_alignment_review, build_confirmed_body_alignment_plan,
     validate_target_index,
 )
 
@@ -110,6 +112,71 @@ def test_mixed_docx_produces_review_without_executable_edits(
         "needs_body_confirmation", "excluded_candidate", "excluded_candidate",
         "needs_classification", "needs_classification", "blocked_complex_content",
     ]
+    assert review["targets"][0]["direct_alignment"] is None
+
+
+def test_confirmed_scope_produces_bounded_multi_target_plan(
+    tmp_path: Path, indexer: DotnetTargetIndexer,
+) -> None:
+    source = tmp_path / "paper.docx"
+    source_hash = _fixture_docx(source)
+    index = indexer.inspect(source, expected_docx_sha256=source_hash)
+    ruleset = _ruleset()
+    review = build_body_alignment_review(
+        ruleset=ruleset, index=index, base_version_id="v0",
+        expected_base_docx_sha256=source_hash, rules_snapshot_id="rules-v0",
+    )
+    ids = [item["object_id"] for item in index["paragraphs"]]
+    confirmation = BodyScopeConfirmation(
+        decision_id="scope-1", base_version_id="v0",
+        base_docx_sha256=source_hash, rules_snapshot_id="rules-v0",
+        review_sha256=review["review_sha256"],
+        body_object_ids=(ids[0], ids[3]),
+        excluded_object_ids=(ids[1], ids[2], ids[4], ids[5]),
+    )
+    plan = build_confirmed_body_alignment_plan(
+        ruleset=ruleset, index=index, confirmation=confirmation,
+    )
+    schema = json.loads((ROOT / "contracts" / "edit-plan" /
+        "edit-plan-1.0.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator(schema).validate(plan)
+    assert plan["estimated_affected_count"] == 2
+    assert [item["object_id"] for item in plan["operations"]] == [ids[0], ids[3]]
+    assert all(item["before_value"] is None for item in plan["operations"])
+    assert all(item["after_value"] == "center" for item in plan["operations"])
+
+    with pytest.raises(TargetPlanningError) as incomplete:
+        build_confirmed_body_alignment_plan(
+            ruleset=ruleset, index=index,
+            confirmation=replace(confirmation, excluded_object_ids=(ids[1],)),
+        )
+    assert incomplete.value.status == "needs_user_input"
+
+    with pytest.raises(TargetPlanningError) as unsafe:
+        build_confirmed_body_alignment_plan(
+            ruleset=ruleset, index=index,
+            confirmation=BodyScopeConfirmation(
+                decision_id="scope-1", base_version_id="v0",
+                base_docx_sha256=source_hash, rules_snapshot_id="rules-v0",
+                review_sha256=review["review_sha256"],
+                body_object_ids=(ids[0], ids[1]),
+                excluded_object_ids=(ids[2], ids[3], ids[4], ids[5]),
+            ),
+        )
+    assert unsafe.value.status == "ambiguous_target"
+
+    with pytest.raises(TargetPlanningError) as stale:
+        build_confirmed_body_alignment_plan(
+            ruleset=ruleset, index=index,
+            confirmation=BodyScopeConfirmation(
+                decision_id="scope-1", base_version_id="v0",
+                base_docx_sha256=source_hash, rules_snapshot_id="rules-v0",
+                review_sha256="0" * 64,
+                body_object_ids=(ids[0], ids[3]),
+                excluded_object_ids=(ids[1], ids[2], ids[4], ids[5]),
+            ),
+        )
+    assert stale.value.status == "stale_base_version"
 
 
 def test_stale_or_inconsistent_index_never_becomes_plan(

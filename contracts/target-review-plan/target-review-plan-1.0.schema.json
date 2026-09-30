@@ -4,12 +4,13 @@
   "title": "Non-executable semantic target review",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "base_version_id", "base_docx_sha256", "rules_snapshot_id", "status", "executable_operations", "rule_reviews", "source_issues"],
+  "required": ["schema_version", "base_version_id", "base_docx_sha256", "rules_snapshot_id", "review_sha256", "status", "executable_operations", "rule_reviews", "source_issues"],
   "properties": {
     "schema_version": {"const": "target-review-plan/1.0"},
     "base_version_id": {"type": "string", "minLength": 1},
     "base_docx_sha256": {"$ref": "#/$defs/hash"},
     "rules_snapshot_id": {"type": "string", "minLength": 1},
+    "review_sha256": {"$ref": "#/$defs/hash"},
     "status": {"const": "needs_user_input"},
     "executable_operations": {"type": "array", "maxItems": 0},
     "rule_reviews": {
@@ -32,7 +33,7 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["object_id", "xml_path", "text_sha256", "text_preview", "role_candidate", "role_evidence", "disposition"],
+              "required": ["object_id", "xml_path", "text_sha256", "text_preview", "role_candidate", "role_evidence", "direct_alignment", "disposition"],
               "properties": {
                 "object_id": {"type": "string", "pattern": "^p:[0-9]{6,}$"},
                 "xml_path": {"type": "string", "pattern": "^body/"},
@@ -40,6 +41,7 @@
                 "text_preview": {"type": "string", "maxLength": 120},
                 "role_candidate": {"enum": ["body_candidate", "heading_candidate", "table_cell", "unclassified"]},
                 "role_evidence": {"type": "string", "minLength": 1},
+                "direct_alignment": {"type": ["string", "null"]},
                 "disposition": {"enum": ["blocked_complex_content", "needs_body_confirmation", "needs_classification", "excluded_candidate"]}
               }
             }

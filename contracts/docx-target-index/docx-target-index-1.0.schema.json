@@ -14,7 +14,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["object_id", "xml_path", "style_id", "text_sha256", "text_preview", "is_empty", "requires_manual_targeting", "role_candidate", "role_evidence"],
+        "required": ["object_id", "xml_path", "style_id", "text_sha256", "text_preview", "is_empty", "requires_manual_targeting", "role_candidate", "role_evidence", "direct_alignment"],
         "properties": {
           "object_id": {"type": "string", "pattern": "^p:[0-9]{6,}$"},
           "xml_path": {"type": "string", "pattern": "^body/"},
@@ -24,7 +24,8 @@
           "is_empty": {"type": "boolean"},
           "requires_manual_targeting": {"type": "boolean"},
           "role_candidate": {"enum": ["body_candidate", "heading_candidate", "table_cell", "unclassified"]},
-          "role_evidence": {"enum": ["normal_style_only", "built_in_heading_style", "inside_table", "empty_paragraph", "complex_or_hidden_content", "numbering_properties", "no_reliable_body_role"]}
+          "role_evidence": {"enum": ["normal_style_only", "built_in_heading_style", "inside_table", "empty_paragraph", "complex_or_hidden_content", "numbering_properties", "no_reliable_body_role"]},
+          "direct_alignment": {"type": ["string", "null"], "maxLength": 64}
         }
       }
     }

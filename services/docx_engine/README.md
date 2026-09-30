@@ -14,7 +14,7 @@ dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业�
 
 The index omits headers, footers, footnotes, endnotes, and layout coordinates.
 `inspect` returns a `docx-target-index/1.0` with text hashes, paragraph paths,
-and structural role signals. A `Normal` paragraph is only a body candidate;
+direct alignment and structural role signals. A `Normal` paragraph is only a body candidate;
 heading styles, tables, numbering, hidden content, and custom styles are
 reported separately. It does not decide the complete academic body scope.
 It cannot prove that PDF.js text layer offsets refer to the selected DOCX text.
@@ -46,12 +46,19 @@ task directory. It copies V0, edits the copy through Open XML SDK, validates
 the package and target property, compares main-document text and every other
 DOCX part, then publishes the new file. A failed candidate is removed; a
 published output is never overwritten. This is an engine primitive, not yet
-the complete rule planner or product workflow.
+the complete product workflow.
+
+The `apply-batch` command accepts a typed `edit-batch-manifest/1.0` with
+multiple confirmed paragraph targets. It checks the base hash, target IDs,
+paths, text hashes, current direct alignments and structural safety before
+editing. All changes are made to one staging copy; the result is exposed only
+after Open XML, text, alignment and non-target package checks pass. It returns
+one `edit-batch-result/1.0` with a result for every operation.
 
 ```powershell
 dotnet run --project tests/DocxEditor.Checks
 ```
 
 The editor currently handles only direct paragraph alignment. It does not
-resolve inherited styles, process a full rule set, refresh fields, or produce
-the versioned Markdown report and preview. Those are later increments.
+resolve inherited styles or refresh fields. The Python workflow produces the
+versioned Markdown report and preview for a confirmed body-alignment batch.

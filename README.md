@@ -19,8 +19,9 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   index and exact selection anchor prototype. Its unique matches are safe
   candidates for later verification, not permission to edit yet.
 - `services/docx_engine/EasyFormat.DocxEditor` applies one typed paragraph
-  alignment operation to a new DOCX copy and verifies the result. Paragraphs
-  with hidden or revision content require manual targeting.
+  alignment operation or a confirmed batch to a new DOCX copy. A batch checks
+  every target before editing and verifies all paragraph alignments and text
+  before exposing one output. Hidden or revision content remains blocked.
 - `apps/api` now has a replaceable LibreOffice preview adapter. It produces
   versioned PDF metadata and rejects unsafe input before launching the
   renderer. See [local setup](docs/libreoffice-local-setup.md).
@@ -43,12 +44,14 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   `AcademicParseBundle` without a generic `ExecutionBrief`. The semantic
   compiler accepts that Bundle, while source classification still must come
   from a trusted step; an unclassified IR item never becomes a formatting rule.
-- The DOCX index now exposes a versioned, read-only target profile. The API
-  checks the index binary and DOCX hashes, then produces a non-executable
-  review for a global body alignment rule. `Normal` style is only a body
-  candidate; custom styles, tables, headings, and complex paragraphs remain
-  visible for classification. Confirmed scope, executable multi-target plans,
-  and the user-facing API are still to be connected.
+- The DOCX index exposes a versioned, read-only target profile, including
+  direct paragraph alignment. The API checks the index binary and DOCX hashes
+  before reviewing a global body rule. `Normal` is only a candidate. A complete
+  user classification of every paragraph is recorded as a decision bound to
+  the review hash; eligible body paragraphs then form a typed `edit-plan/1.0`.
+  The batch workflow rechecks the plan and decision, edits one candidate DOCX,
+  and publishes one version with per-target verification, report and preview.
+  The user-facing API and broader formatting properties remain to be built.
 
 ## Local checks
 

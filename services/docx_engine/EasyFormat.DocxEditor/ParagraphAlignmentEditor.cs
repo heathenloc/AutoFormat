@@ -159,10 +159,10 @@ public static class ParagraphAlignmentEditor
     private static EditResult Result(EditManifest manifest, string status, string reason) =>
         new("edit-result-prototype/1.0", status, manifest.OperationId, null, null, null, reason);
 
-    private static bool IsSha256(string? value) =>
+    internal static bool IsSha256(string? value) =>
         value is { Length: 64 } && value.All(Uri.IsHexDigit);
 
-    private static bool IsSimpleDocxName(string? value)
+    internal static bool IsSimpleDocxName(string? value)
     {
         if (value is null || !Regex.IsMatch(value,
                 "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\\.docx$", RegexOptions.CultureInvariant))
@@ -174,7 +174,7 @@ public static class ParagraphAlignmentEditor
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 
-    private static int ParseTargetIndex(string? objectId)
+    internal static int ParseTargetIndex(string? objectId)
     {
         if (objectId is null || !objectId.StartsWith("p:", StringComparison.Ordinal) ||
             !int.TryParse(objectId.AsSpan(2), out var oneBased) || oneBased < 1)
@@ -185,7 +185,7 @@ public static class ParagraphAlignmentEditor
         return oneBased - 1;
     }
 
-    private static JustificationValues? ParseAlignment(string? value) => value switch
+    internal static JustificationValues? ParseAlignment(string? value) => value switch
     {
         "left" => JustificationValues.Left,
         "center" => JustificationValues.Center,
@@ -194,10 +194,10 @@ public static class ParagraphAlignmentEditor
         _ => null,
     };
 
-    private static Paragraph? FindParagraph(WordprocessingDocument document, int index) =>
+    internal static Paragraph? FindParagraph(WordprocessingDocument document, int index) =>
         document.MainDocumentPart?.Document?.Body?.Descendants<Paragraph>().ElementAtOrDefault(index);
 
-    private static bool OtherPartsEqual(string source, string output)
+    internal static bool OtherPartsEqual(string source, string output)
     {
         using var left = ZipFile.OpenRead(source);
         using var right = ZipFile.OpenRead(output);
