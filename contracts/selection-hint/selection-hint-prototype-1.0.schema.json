@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/selection-hint/prototype-1.0",
+  "title": "Selection hint for read-only DOCX anchor prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "base_version_id",
+    "base_docx_sha256",
+    "preview_artifact_id",
+    "renderer_id",
+    "renderer_version",
+    "selected_text",
+    "context_before",
+    "context_after",
+    "pdf_page",
+    "text_layer_start",
+    "text_layer_end"
+  ],
+  "properties": {
+    "schema_version": { "const": "selection-hint-prototype/1.0" },
+    "base_version_id": { "type": "string", "minLength": 1 },
+    "base_docx_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "preview_artifact_id": { "type": "string", "minLength": 1 },
+    "renderer_id": { "type": "string", "minLength": 1 },
+    "renderer_version": { "type": "string", "minLength": 1 },
+    "selected_text": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "context_before": { "type": "string" },
+    "context_after": { "type": "string" },
+    "pdf_page": { "type": "integer", "minimum": 1 },
+    "text_layer_start": { "type": "integer", "minimum": 0 },
+    "text_layer_end": { "type": "integer", "minimum": 1 }
+  }
+}

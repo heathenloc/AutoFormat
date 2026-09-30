@@ -1,0 +1,38 @@
+# EasyFormat
+
+EasyFormat is under staged development. The approved product scope and technical
+boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Architecture.md),
+[EasyFormat_PRD.md](EasyFormat_PRD.md), and [BriefParsing_EasyFormat.md](BriefParsing_EasyFormat.md).
+
+## Current development increment
+
+- The copied Brief Parsing source remains in `modules/brief_parsing/` and is
+  independent of the read-only source project. The 180 recorded source files
+  currently match `SOURCE_SNAPSHOT.json`.
+- `services/docx_engine/EasyFormat.DocxIndex` is a read-only DOCX paragraph
+  index and exact selection anchor prototype. Its unique matches are safe
+  candidates for later verification, not permission to edit yet.
+- The production editor, renderer, feedback workflow, version store, and UI
+  have not been implemented.
+
+## Local checks
+
+Use Python 3.12 to install the parser copy and its test dependencies into an
+ignored `.venv`. Then run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_source_snapshot.ps1
+cd modules/brief_parsing
+../../.venv/Scripts/python.exe -m pytest -q --ignore=tests/contract/test_infrastructure_baseline.py
+cd ../..
+dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业论文模板2026.docx
+```
+
+The four excluded infrastructure tests reference deployment files deliberately
+omitted from the Brief Parsing copy (`Dockerfile`, `compose.yaml`, `deploy/`,
+and `.github/`). They are not tests of this project's parser runtime. Two
+Linux process isolation tests skip on Windows.
+
+The DOCX prototype requires .NET 10. Preview conversion has not been exercised
+because LibreOffice is not installed in the current development environment.
+See [the engine notes](services/docx_engine/README.md) for its exact boundary.
