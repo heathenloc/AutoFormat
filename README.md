@@ -26,6 +26,9 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 - A local SQLite version store now publishes immutable V0/V1 and later
   branches, checks every artifact hash, and keeps user decisions separate from
   DOCX versions. It is not yet connected to the full task workflow or UI.
+- Version reports now have a JSON fact contract and deterministic Markdown
+  output. Publication checks evidence links, rule counts, preview metadata,
+  and cumulative history against the selected parent version.
 
 ## Local checks
 
@@ -41,6 +44,7 @@ dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业�
 dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/preview
 ./.venv/Scripts/python.exe -m pytest -q tests/version_store
+./.venv/Scripts/python.exe -m pytest -q tests/reports
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

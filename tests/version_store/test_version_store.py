@@ -18,6 +18,7 @@ from pypdf import PdfReader
 from jsonschema import Draft202012Validator
 
 from easyformat.preview import LibreOfficeRenderer, PreviewArtifact
+from easyformat.reports import ReportContext, build_report, render_markdown, write_report
 from easyformat.version_store import (
     VersionReferences,
     VersionStore,
@@ -64,21 +65,74 @@ def _source(path: Path) -> None:
     document.save(path)
 
 
+def _report_files(
+    directory: Path, *, store: VersionStore, parent, version_id: str,
+    docx: Path, artifact: PreviewArtifact,
+) -> tuple[Path, Path]:
+    report = directory / "report.json"
+    markdown = directory / "report.md"
+    parent_report = (json.loads(store.artifact_path(parent.task_id, parent.version_id,
+                                                    "report_json").read_text(encoding="utf-8"))
+                     if parent.kind == "output" else None)
+    rules = list(parent_report["rules"]) if parent_report else []
+    previous_changes = list(parent_report["changes_cumulative"]) if parent_report else []
+    decisions = list(parent_report["decisions"]) if parent_report else []
+    changed = _hash(docx) != parent.docx_sha256
+    changes = []
+    if changed:
+        rule_id = f"rule-{version_id}"
+        verification_ref = f"fixture-verification-{version_id}"
+        rules.append({
+            "rule_id": rule_id, "source_kind": "brief_explicit",
+            "source_artifact_id": "fixture-brief", "source_version": "brief-1",
+            "original_requirement": "测试用例要求正文段落居中",
+            "evidence_refs": [{
+                "source_artifact_id": "fixture-brief", "source_version": "brief-1",
+                "locator": "fixture:1", "quote": "正文段落居中",
+            }],
+            "object_id": "p:000002", "semantic_role": "body",
+            "property_id": "paragraph.alignment",
+            "requested_scope": "paragraph", "effective_scope": "paragraph",
+            "before_value": None, "after_value": "center",
+            "status": "modified_verified", "reason": "Fixture result verified by caller.",
+            "next_action": None, "decision_id": None,
+            "verification_ref": verification_ref,
+        })
+        changes.append({
+            "change_id": f"change-{version_id}", "rule_id": rule_id,
+            "object_id": "p:000002", "property_id": "paragraph.alignment",
+            "before_value": None, "after_value": "center",
+            "effective_scope": "paragraph", "validation_status": "verified",
+            "verification_ref": verification_ref,
+        })
+    context = ReportContext(
+        task_id=parent.task_id, version_id=version_id,
+        parent_version_id=parent.version_id,
+        source_docx_sha256=parent.docx_sha256,
+        output_docx_sha256=_hash(docx), brief_version_id="brief-1",
+        rules_snapshot_id="rules-1", edit_plan_id="plan-1",
+        preview_artifact_id=artifact.artifact_id,
+        renderer_id=artifact.renderer_id,
+        renderer_version=artifact.renderer_version, font_fingerprint="font-1",
+    )
+    payload = build_report(
+        context, rules=rules, changes_this_round=changes,
+        changes_cumulative=previous_changes + changes,
+        decisions=decisions, issues=[],
+        note=("Fixture candidate has a verified format change." if changed else
+              "No confirmed executable changes; draft remains unassessed."),
+    )
+    write_report(report, markdown, payload)
+    return report, markdown
+
+
 def _candidate_set(
-    directory: Path, *, task_id: str, version_id: str, parent_version_id: str,
+    directory: Path, *, store: VersionStore, parent, version_id: str,
     docx: Path,
 ) -> tuple[Path, Path, PreviewArtifact]:
     directory.mkdir()
-    report = directory / "report.json"
-    markdown = directory / "report.md"
     pdf = directory / "preview.pdf"
     docx_hash = _hash(docx)
-    report.write_text(json.dumps({
-        "task_id": task_id, "version_id": version_id,
-        "parent_version_id": parent_version_id, "docx_sha256": docx_hash,
-        "changes": [], "pending": [],
-    }), encoding="utf-8")
-    markdown.write_text("# Version report\n\nValidated candidate.\n", encoding="utf-8")
     _pdf(pdf)
     with pdf.open("rb") as stream:
         reader = PdfReader(stream, strict=True)
@@ -92,6 +146,10 @@ def _candidate_set(
         page_count=page_count, selectable_text_chars=text_chars,
         renderer_id="fixture", renderer_version="test-1",
     )
+    report, markdown = _report_files(
+        directory, store=store, parent=parent, version_id=version_id,
+        docx=docx, artifact=artifact,
+    )
     return report, markdown, artifact
 
 
@@ -102,8 +160,8 @@ def _publish(
     version_id = version_id or new_id()
     request_id = request_id or new_id()
     report, markdown, artifact = _candidate_set(
-        directory, task_id=parent.task_id, version_id=version_id,
-        parent_version_id=parent.version_id, docx=candidate,
+        directory, store=store, parent=parent, version_id=version_id,
+        docx=candidate,
     )
     result = store.publish_version(
         task_id=parent.task_id, version_id=version_id,
@@ -245,8 +303,8 @@ def test_preview_mismatch_never_publishes_a_version(tmp_path: Path) -> None:
     version_id = new_id()
     directory = tmp_path / "candidate"
     report, markdown, artifact = _candidate_set(
-        directory, task_id=v0.task_id, version_id=version_id,
-        parent_version_id=v0.version_id, docx=source,
+        directory, store=store, parent=v0, version_id=version_id,
+        docx=source,
     )
     with pytest.raises(VersionStoreError) as error:
         store.publish_version(
@@ -316,14 +374,10 @@ def test_real_libreoffice_preview_can_publish_v1() -> None:
     )
     artifact = renderer.render(render_input, new_id())
     version_id = new_id()
-    report = root / "report.json"
-    markdown = root / "report.md"
-    report.write_text(json.dumps({
-        "task_id": v0.task_id, "version_id": version_id,
-        "parent_version_id": v0.version_id, "docx_sha256": v0.docx_sha256,
-        "changes": [], "pending": [],
-    }), encoding="utf-8")
-    markdown.write_text("# Initial draft\n\nNo confirmed edits yet.\n", encoding="utf-8")
+    report, markdown = _report_files(
+        root, store=store, parent=v0, version_id=version_id,
+        docx=source, artifact=artifact,
+    )
     v1 = store.publish_version(
         task_id=v0.task_id, version_id=version_id,
         parent_version_id=v0.version_id,
@@ -337,3 +391,71 @@ def test_real_libreoffice_preview_can_publish_v1() -> None:
     assert _hash(store.artifact_path(v1.task_id, v1.version_id, "preview")) == artifact.pdf_sha256
     assert _hash(store.artifact_path(v0.task_id, v0.version_id, "docx")) == v0.docx_sha256
     assert not list((render_root / "preview-work").iterdir())
+
+
+def test_markdown_tamper_and_lost_parent_history_block_publication(tmp_path: Path) -> None:
+    source = tmp_path / "source.docx"
+    _source(source)
+    store = VersionStore(tmp_path / "store")
+    v0 = store.create_task(source)
+    first_id = new_id()
+    first_dir = tmp_path / "bad-markdown"
+    report, markdown, artifact = _candidate_set(
+        first_dir, store=store, parent=v0, version_id=first_id, docx=source,
+    )
+    markdown.write_text("# Unrelated text\n", encoding="utf-8")
+    with pytest.raises(VersionStoreError) as mismatch:
+        store.publish_version(
+            task_id=v0.task_id, version_id=first_id,
+            parent_version_id=v0.version_id,
+            expected_parent_sha256=v0.docx_sha256, request_id=new_id(),
+            candidate_docx=source, report_json=report, report_markdown=markdown,
+            preview_pdf=first_dir / "preview.pdf", preview_artifact=artifact,
+            references=VersionReferences("rules-1", "brief-1", "plan-1", "font-1"),
+        )
+    assert mismatch.value.status == "validation_failed"
+    assert len(store.list_versions(v0.task_id)) == 1
+
+    formatted = tmp_path / "formatted.docx"
+    shutil.copyfile(source, formatted)
+    document = Document(formatted)
+    document.paragraphs[1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    document.save(formatted)
+    v1, _ = _publish(store, parent=v0, candidate=formatted, directory=tmp_path / "v1")
+    second_id = new_id()
+    second_dir = tmp_path / "lost-history"
+    report, markdown, artifact = _candidate_set(
+        second_dir, store=store, parent=v1, version_id=second_id, docx=formatted,
+    )
+    original = json.loads(report.read_text(encoding="utf-8"))
+    context = ReportContext(
+        task_id=original["task_id"], version_id=original["version_id"],
+        parent_version_id=original["parent_version_id"],
+        source_docx_sha256=original["input"]["source_docx_sha256"],
+        output_docx_sha256=original["output_docx_sha256"],
+        brief_version_id=original["input"]["brief_version_id"],
+        rules_snapshot_id=original["input"]["rules_snapshot_id"],
+        edit_plan_id=original["input"]["edit_plan_id"],
+        preview_artifact_id=original["preview"]["artifact_id"],
+        renderer_id=original["preview"]["renderer_id"],
+        renderer_version=original["preview"]["renderer_version"],
+        font_fingerprint=original["preview"]["font_fingerprint"],
+        created_at=original["created_at"],
+    )
+    dropped = build_report(
+        context, rules=[], changes_this_round=[], changes_cumulative=[],
+        decisions=[], issues=[], note="Incorrectly dropped parent history.",
+    )
+    report.write_text(json.dumps(dropped, ensure_ascii=False), encoding="utf-8")
+    markdown.write_text(render_markdown(dropped), encoding="utf-8")
+    with pytest.raises(VersionStoreError) as history:
+        store.publish_version(
+            task_id=v1.task_id, version_id=second_id,
+            parent_version_id=v1.version_id,
+            expected_parent_sha256=v1.docx_sha256, request_id=new_id(),
+            candidate_docx=formatted, report_json=report, report_markdown=markdown,
+            preview_pdf=second_dir / "preview.pdf", preview_artifact=artifact,
+            references=VersionReferences("rules-1", "brief-1", "plan-1", "font-1"),
+        )
+    assert history.value.status == "validation_failed"
+    assert len(store.list_versions(v0.task_id)) == 2

@@ -18,6 +18,7 @@ from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
 from .preview import PreviewArtifact, PreviewError, _sha256, inspect_docx_for_render
+from .reports import ReportError, render_markdown, validate_report
 
 
 _ID = re.compile(r"^[a-f0-9]{32}$")
@@ -283,6 +284,17 @@ class VersionStore:
             references.edit_plan_id, references.font_fingerprint,
         )):
             raise VersionStoreError("validation_failed", "Version references are incomplete.")
+        references_json = json.dumps(asdict(references), sort_keys=True)
+        with self._transaction() as connection:
+            prior_request = connection.execute(
+                "SELECT version_id, parent_version_id, references_json FROM versions "
+                "WHERE task_id=? AND request_id=?", (task_id, request_id),
+            ).fetchone()
+            if (prior_request is not None and
+                    (prior_request["version_id"] != version_id or
+                     prior_request["parent_version_id"] != parent_version_id or
+                     prior_request["references_json"] != references_json)):
+                raise VersionStoreError("blocked_conflict", "Request ID was used for different output.")
         stage = self._new_stage()
         version_root = self.tasks_dir / task_id / "versions"
         final_dir = version_root / version_id
@@ -314,8 +326,10 @@ class VersionStore:
             if _sha256(candidate_docx) != docx_hash:
                 raise VersionStoreError("validation_failed", "Candidate DOCX changed during staging.")
             report_hash, markdown_hash = _sha256(report), _sha256(markdown)
-            self._validate_report(report, markdown, task_id, version_id,
-                                  parent_version_id, docx_hash)
+            report_payload = self._validate_report(
+                report, markdown, task_id, version_id, parent_version_id,
+                expected_parent_sha256, docx_hash, preview_artifact, references,
+            )
             pdf_hash = self._validate_preview(pdf, preview_artifact, docx_hash)
             preview_metadata = stage / "preview-artifact.json"
             preview_metadata.write_text(
@@ -323,7 +337,6 @@ class VersionStore:
                 encoding="utf-8",
             )
             preview_metadata_hash = _sha256(preview_metadata)
-            references_json = json.dumps(asdict(references), sort_keys=True)
             fingerprint = _sha256_bytes(json.dumps({
                 "parent": parent_version_id, "parent_hash": expected_parent_sha256,
                 "docx": docx_hash, "report": report_hash, "markdown": markdown_hash,
@@ -356,6 +369,11 @@ class VersionStore:
                     raise VersionStoreError("stale_base_version", "Working version or parent hash changed.")
                 if not self._matches_hash(parent["docx_path"], parent["docx_sha256"]):
                     raise VersionStoreError("validation_failed", "Parent DOCX artifact is missing or changed.")
+                if docx_hash != parent["docx_sha256"] and not report_payload["changes_this_round"]:
+                    raise VersionStoreError("validation_failed", "Changed DOCX has no verified report changes.")
+                if docx_hash == parent["docx_sha256"] and report_payload["changes_this_round"]:
+                    raise VersionStoreError("validation_failed", "Report claims changes absent from DOCX bytes.")
+                self._validate_report_lineage(parent, report_payload)
                 output_count = connection.execute(
                     "SELECT COUNT(*) FROM versions WHERE task_id=? AND kind='output'",
                     (task_id,),
@@ -411,21 +429,68 @@ class VersionStore:
     @staticmethod
     def _validate_report(
         report: Path, markdown: Path, task_id: str, version_id: str,
-        parent_version_id: str, docx_hash: str,
-    ) -> None:
+        parent_version_id: str, parent_hash: str, docx_hash: str,
+        preview_artifact: PreviewArtifact, references: VersionReferences,
+    ) -> dict:
         if (not 0 < report.stat().st_size <= _MAX_REPORT_BYTES or
                 not 0 < markdown.stat().st_size <= _MAX_REPORT_BYTES):
             raise VersionStoreError("validation_failed", "Version report is empty or too large.")
         try:
             payload = json.loads(report.read_text(encoding="utf-8"))
-            markdown.read_text(encoding="utf-8")
+            markdown_text = markdown.read_text(encoding="utf-8")
         except (ValueError, UnicodeError) as error:
             raise VersionStoreError("validation_failed", "Version report cannot be read.") from error
-        if not isinstance(payload, dict) or any(payload.get(key) != value for key, value in (
+        try:
+            validate_report(payload)
+            expected_markdown = render_markdown(payload)
+        except ReportError as error:
+            raise VersionStoreError("validation_failed", str(error)) from error
+        if markdown_text != expected_markdown:
+            raise VersionStoreError("validation_failed", "Markdown report differs from JSON facts.")
+        if any(payload.get(key) != value for key, value in (
             ("task_id", task_id), ("version_id", version_id),
-            ("parent_version_id", parent_version_id), ("docx_sha256", docx_hash),
+            ("parent_version_id", parent_version_id),
+            ("output_docx_sha256", docx_hash),
         )):
             raise VersionStoreError("validation_failed", "Version report does not match its DOCX.")
+        expected_input = {
+            "source_docx_sha256": parent_hash,
+            "brief_version_id": references.brief_version_id,
+            "rules_snapshot_id": references.rules_snapshot_id,
+            "edit_plan_id": references.edit_plan_id,
+            "template_version_id": references.template_version_id,
+            "decision_version_id": references.decision_version_id,
+        }
+        expected_preview = {
+            "artifact_id": preview_artifact.artifact_id,
+            "renderer_id": preview_artifact.renderer_id,
+            "renderer_version": preview_artifact.renderer_version,
+            "font_fingerprint": references.font_fingerprint,
+        }
+        if payload["input"] != expected_input or payload["preview"] != expected_preview:
+            raise VersionStoreError("validation_failed", "Report references do not match the version.")
+        return payload
+
+    def _validate_report_lineage(self, parent: sqlite3.Row, report: dict) -> None:
+        if parent["kind"] == "original":
+            if report["changes_cumulative"] != report["changes_this_round"]:
+                raise VersionStoreError("validation_failed", "First report has inconsistent cumulative changes.")
+            return
+        if not self._matches_hash(parent["report_json_path"], parent["report_json_sha256"]):
+            raise VersionStoreError("validation_failed", "Parent report is missing or changed.")
+        try:
+            parent_report = json.loads(
+                self._artifact_path(parent["report_json_path"]).read_text(encoding="utf-8")
+            )
+            validate_report(parent_report)
+        except (ValueError, UnicodeError, ReportError) as error:
+            raise VersionStoreError("validation_failed", "Parent report cannot be validated.") from error
+        previous = parent_report["changes_cumulative"]
+        current = report["changes_cumulative"]
+        if current[:len(previous)] != previous or current[len(previous):] != report["changes_this_round"]:
+            raise VersionStoreError("validation_failed", "Cumulative changes do not extend the parent report.")
+        if report["decisions"][:len(parent_report["decisions"])] != parent_report["decisions"]:
+            raise VersionStoreError("validation_failed", "Report dropped a parent decision.")
 
     @staticmethod
     def _validate_preview(pdf: Path, artifact: PreviewArtifact, docx_hash: str) -> str:

@@ -53,10 +53,14 @@ creating a DOCX version. Repeated request IDs return the prior event only when
 the payload matches. On startup, the store removes unpublished staging and
 orphan directories and marks rows with missing or modified artifacts as
 `validation_failed`. Artifact reads recheck hashes. The store is a persistence
-primitive; it does not yet generate a full rule report, run the DOCX editor,
-authorize API downloads, or implement task UI. Report validation currently
-checks identity, UTF-8 JSON and Markdown, size, and file hashes; a full report
-schema is still needed before workflow publication.
+primitive; it does not yet run the DOCX editor, authorize API downloads, or
+implement task UI. `easyformat.reports` builds `version-report/1.0` facts and
+escapes them into deterministic Markdown. Before publication, the store checks
+the full report Schema, its summary and evidence links, parent history,
+version/preview references, and exact Markdown correspondence. It still relies
+on upstream validators for the truth of individual formatting claims and
+verification references; those must be connected to the workflow before an
+end-user task can claim format compliance.
 
 Run the storage checks with:
 

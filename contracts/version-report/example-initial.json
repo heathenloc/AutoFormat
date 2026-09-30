@@ -1,0 +1,46 @@
+{
+  "schema_version": "version-report/1.0",
+  "task_id": "00000000000000000000000000000000",
+  "version_id": "11111111111111111111111111111111",
+  "parent_version_id": "22222222222222222222222222222222",
+  "created_at": "2026-09-30T00:00:00+00:00",
+  "input": {
+    "source_docx_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "brief_version_id": "brief-example-1",
+    "rules_snapshot_id": "rules-example-1",
+    "edit_plan_id": "plan-example-1",
+    "template_version_id": null,
+    "decision_version_id": null
+  },
+  "output_docx_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "preview": {
+    "artifact_id": "preview-example-1",
+    "renderer_id": "libreoffice",
+    "renderer_version": "LibreOffice 26.8.0.3",
+    "font_fingerprint": "fonts-example-1"
+  },
+  "rules": [],
+  "changes_this_round": [],
+  "changes_cumulative": [],
+  "decisions": [],
+  "issues": [
+    {
+      "issue_id": "issue-no-confirmed-rule",
+      "status": "needs_user_input",
+      "rule_id": null,
+      "object_id": null,
+      "reason": "No confirmed executable formatting rule is available.",
+      "next_action": "Review the Brief and confirm applicable rules."
+    }
+  ],
+  "summary": {
+    "delivery_status": "ready",
+    "format_status": "unassessed",
+    "total_rules": 0,
+    "status_counts": {},
+    "this_round_change_count": 0,
+    "cumulative_change_count": 0,
+    "pending_count": 1,
+    "note": "Initial DOCX copy is available; formatting has not been assessed."
+  }
+}
