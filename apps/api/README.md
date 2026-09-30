@@ -53,17 +53,27 @@ creating a DOCX version. Repeated request IDs return the prior event only when
 the payload matches. On startup, the store removes unpublished staging and
 orphan directories and marks rows with missing or modified artifacts as
 `validation_failed`. Artifact reads recheck hashes. The store is a persistence
-primitive; it does not yet run the DOCX editor, authorize API downloads, or
-implement task UI. `easyformat.reports` builds `version-report/1.0` facts and
+primitive; it does not authorize API downloads or implement task UI.
+`easyformat.reports` builds `version-report/1.0` facts and
 escapes them into deterministic Markdown. Before publication, the store checks
 the full report Schema, its summary and evidence links, parent history,
 version/preview references, and exact Markdown correspondence. It still relies
 on upstream validators for the truth of individual formatting claims and
-verification references; those must be connected to the workflow before an
-end-user task can claim format compliance.
+verification references. The current `easyformat.workflow` connects only a
+confirmed `brief_explicit` paragraph-alignment rule. The rule's original Brief
+wording and evidence are report facts; the typed property, value, scope and
+target alone drive the editor. Its `DotnetEditor` runs an explicitly located,
+hash-checked, previously built DLL without a shell or dependency restore. The
+workflow checks the editor's JSON result and output hash, creates a selectable
+preview, builds a report tied to the output DOCX, and publishes the version.
+Already-satisfied operations add no version; repeated request IDs return the
+same published version only for matching rule input. Template observations,
+free-text feedback and general rule planning are not accepted by this narrow
+entry point.
 
 Run the storage checks with:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q tests\version_store
+.\.venv\Scripts\python.exe -m pytest -q tests\workflow
 ```

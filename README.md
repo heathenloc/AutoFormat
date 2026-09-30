@@ -13,9 +13,8 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   index and exact selection anchor prototype. Its unique matches are safe
   candidates for later verification, not permission to edit yet.
 - `services/docx_engine/EasyFormat.DocxEditor` applies one typed paragraph
-  alignment operation to a new DOCX copy and verifies the result. The full
-  rule planner, feedback workflow, version store, and UI have not been
-  implemented.
+  alignment operation to a new DOCX copy and verifies the result. Paragraphs
+  with hidden or revision content require manual targeting.
 - `apps/api` now has a replaceable LibreOffice preview adapter. It produces
   versioned PDF metadata and rejects unsafe input before launching the
   renderer. See [local setup](docs/libreoffice-local-setup.md).
@@ -25,10 +24,15 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   user targeting. This read-only anchor is not an edit command.
 - A local SQLite version store now publishes immutable V0/V1 and later
   branches, checks every artifact hash, and keeps user decisions separate from
-  DOCX versions. It is not yet connected to the full task workflow or UI.
+  DOCX versions.
 - Version reports now have a JSON fact contract and deterministic Markdown
   output. Publication checks evidence links, rule counts, preview metadata,
   and cumulative history against the selected parent version.
+- `easyformat.workflow` connects a confirmed, typed Brief paragraph-alignment
+  rule to the C# editor, LibreOffice preview, report, and version store. It
+  supports V0→V1, later edits, and request replay. Rule extraction, broader
+  formatting properties, feedback decisions, API authorization, and UI remain
+  separate development work.
 
 ## Local checks
 
@@ -45,6 +49,7 @@ dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/preview
 ./.venv/Scripts/python.exe -m pytest -q tests/version_store
 ./.venv/Scripts/python.exe -m pytest -q tests/reports
+./.venv/Scripts/python.exe -m pytest -q tests/workflow
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

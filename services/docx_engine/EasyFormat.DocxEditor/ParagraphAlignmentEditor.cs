@@ -75,6 +75,12 @@ public static class ParagraphAlignmentEditor
             return Result(manifest, "ambiguous_target", "Target paragraph is absent or has changed.");
         }
 
+        if (source.Paragraphs[targetIndex].RequiresManualTargeting)
+        {
+            return Result(manifest, "ambiguous_target",
+                "Target contains hidden or revision content and needs manual targeting.");
+        }
+
         string? before;
         using (var document = WordprocessingDocument.Open(input, false))
         {

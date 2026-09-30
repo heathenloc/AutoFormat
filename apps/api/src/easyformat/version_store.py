@@ -524,6 +524,22 @@ class VersionStore:
             raise VersionStoreError("stale_base_version", "Version is unavailable.")
         return self._row_to_record(row)
 
+    def find_request_version(self, task_id: str, request_id: str) -> VersionRecord | None:
+        """Find a published request so callers can return an idempotent replay."""
+        _require_id(task_id, "task")
+        _require_id(request_id, "request")
+        with self._transaction() as connection:
+            row = connection.execute(
+                "SELECT * FROM versions WHERE task_id=? AND request_id=?",
+                (task_id, request_id),
+            ).fetchone()
+        if row is None:
+            return None
+        if row["status"] != "ready" or not self._matches_hash(
+                row["docx_path"], row["docx_sha256"]):
+            raise VersionStoreError("validation_failed", "Published request artifact is unavailable.")
+        return self._row_to_record(row)
+
     def list_versions(self, task_id: str) -> list[VersionRecord]:
         _require_id(task_id, "task")
         with self._transaction() as connection:

@@ -20,6 +20,7 @@ using (var document = WordprocessingDocument.Create(input, WordprocessingDocumen
         new Paragraph(new Run(new RunProperties(new Bold()), new Text("第二段需要居中"))),
         new Table(new TableProperties(), new TableGrid(new GridColumn()),
             new TableRow(new TableCell(new Paragraph(new Run(new Text("表格文字不变")))))),
+        new Paragraph(new Run(new RunProperties(new Vanish()), new Text("隐藏段落"))),
         new SectionProperties()));
     main.Document.Save();
 }
@@ -31,7 +32,7 @@ using (var document = WordprocessingDocument.Open(input, false))
     Require(errors.Length == 0, "Generated source DOCX is invalid: " + string.Join("; ", errors));
 }
 var originalHash = source.Sha256;
-Require(source.Paragraphs.Count == 3, "Expected main document and table paragraphs.");
+Require(source.Paragraphs.Count == 4, "Expected main document, table, and hidden paragraphs.");
 var manifest = new EditManifest(
     "edit-manifest-prototype/1.0", "operation-1", "rule-1", "version-0",
     originalHash, "v0.docx", "v1.docx", "p:000002",
@@ -91,6 +92,16 @@ var changedTarget = ParagraphAlignmentEditor.Apply(taskRoot, manifest with
 Require(changedTarget.Status == "ambiguous_target" &&
     !File.Exists(Path.Combine(taskRoot, "target.docx")),
     "Changed target text does not publish a candidate.");
+
+var hiddenTarget = ParagraphAlignmentEditor.Apply(taskRoot, manifest with
+{
+    OperationId = "operation-hidden", OutputFile = "hidden.docx",
+    TargetObjectId = "p:000004",
+    ExpectedParagraphTextSha256 = ParagraphAlignmentEditor.HashText(source.Paragraphs[3].Text),
+});
+Require(hiddenTarget.Status == "ambiguous_target" &&
+    !File.Exists(Path.Combine(taskRoot, "hidden.docx")),
+    "Hidden or revision content requires manual targeting.");
 
 var unsupported = ParagraphAlignmentEditor.Apply(taskRoot, manifest with
 {
