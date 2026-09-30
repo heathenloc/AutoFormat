@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/body-plan-execution/1.0",
+  "title": "Execute a previously confirmed body alignment plan",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "request_id", "expected_base_docx_sha256", "decision_id", "plan_id"],
+  "properties": {
+    "schema_version": {"const": "body-plan-execution/1.0"},
+    "request_id": {"$ref": "#/$defs/id"},
+    "expected_base_docx_sha256": {"$ref": "#/$defs/hash"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "plan_id": {"$ref": "#/$defs/hash"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

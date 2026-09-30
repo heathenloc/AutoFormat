@@ -376,6 +376,7 @@ def confirm_body_scope(
     raw_answer: str, ruleset: AcademicFormatRuleSet, rules_snapshot_id: str,
     indexer: DotnetTargetIndexer, body_object_ids: tuple[str, ...],
     excluded_object_ids: tuple[str, ...],
+    expected_review_sha256: str | None = None,
 ) -> tuple[BodyScopeConfirmation, dict]:
     """Validate a complete classification before recording the user's answer."""
     if not raw_answer.strip():
@@ -387,6 +388,9 @@ def confirm_body_scope(
         expected_base_docx_sha256=parent.docx_sha256,
         rules_snapshot_id=rules_snapshot_id,
     )
+    if (expected_review_sha256 is not None and
+            review["review_sha256"] != expected_review_sha256):
+        raise WorkflowError("stale_base_version", "Target review changed before confirmation.")
     provisional = BodyScopeConfirmation(
         decision_id="pending", base_version_id=parent.version_id,
         base_docx_sha256=parent.docx_sha256,

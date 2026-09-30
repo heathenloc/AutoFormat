@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/task-rule-snapshot/1.0",
+  "title": "Immutable task-bound academic ruleset snapshot",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "task_id", "base_version_id", "snapshot_id", "ruleset"],
+  "properties": {
+    "schema_version": {"const": "task-rule-snapshot/1.0"},
+    "task_id": {"$ref": "#/$defs/id"},
+    "base_version_id": {"$ref": "#/$defs/id"},
+    "snapshot_id": {"$ref": "#/$defs/hash"},
+    "ruleset": {"type": "object"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

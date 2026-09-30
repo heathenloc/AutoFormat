@@ -38,8 +38,7 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 - `easyformat.workflow` connects a confirmed, typed Brief paragraph-alignment
   rule to the C# editor, LibreOffice preview, report, and version store. It
   supports V0→V1, later edits, and request replay. Rule extraction, broader
-  formatting properties, feedback decisions, API authorization, and UI remain
-  separate development work.
+  formatting properties, feedback decisions, and UI remain separate work.
 - A dedicated academic parse-only service path now returns a versioned
   `AcademicParseBundle` without a generic `ExecutionBrief`. The semantic
   compiler accepts that Bundle, while source classification still must come
@@ -51,7 +50,10 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   the review hash; eligible body paragraphs then form a typed `edit-plan/1.0`.
   The batch workflow rechecks the plan and decision, edits one candidate DOCX,
   and publishes one version with per-target verification, report and preview.
-  The user-facing API and broader formatting properties remain to be built.
+  A session-protected local API now exposes review, confirmation, execution,
+  version listing and registered artifact downloads for tasks provisioned by
+  the trusted parse workflow. Dual-file upload, automatic parser orchestration,
+  the UI and broader formatting properties remain to be built.
 
 ## Local checks
 
@@ -70,6 +72,7 @@ dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/reports
 ./.venv/Scripts/python.exe -m pytest -q tests/workflow
 ./.venv/Scripts/python.exe -m pytest -q tests/target_planning
+./.venv/Scripts/python.exe -m pytest -q tests/local_api
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

@@ -84,7 +84,42 @@ paragraph is not proof of the paper's body scope. `confirm_body_scope` requires
 an include or exclude decision for every paragraph and records it separately
 from DOCX versions. `build_confirmed_body_alignment_plan` then admits only
 nonempty, safe body targets. The user-facing review and confirmation API is
-still pending.
+available for tasks whose trusted academic rule snapshot has been registered.
+
+## Local HTTP boundary
+
+`easyformat.rule_snapshots.RuleSnapshotStore` accepts a validated
+`AcademicFormatRuleSet` only through its internal `register` method. It saves
+one immutable, hash-checked snapshot for each task. There is no HTTP route for
+uploading or replacing executable rules. The dual-file upload and automatic
+Brief parse workflow remain separate development work.
+
+`easyformat.local_api.bind_local_api` reserves a random `127.0.0.1` port,
+creates a session token and origin-bound FastAPI app, and returns a binding
+whose `serve()` method starts Uvicorn on that reserved socket. The desktop
+shell must keep the token within its own UI. Every API request needs the
+`X-EasyFormat-Session` header; browser `Origin` must match the bound local URL.
+The API disables documentation routes, rejects non-loopback Host headers and
+does not enable cross-origin access.
+
+For an internally provisioned task, the current routes are:
+
+| Route | Action |
+| --- | --- |
+| `GET /api/tasks/{task_id}` | Read working version and rule snapshot ID |
+| `GET /api/tasks/{task_id}/versions` | List version metadata without disk paths |
+| `GET /api/tasks/{task_id}/versions/{version_id}/body-alignment/review` | Read target review and review hash |
+| `POST .../body-alignment/confirm` | Record a complete paragraph classification and return an executable plan |
+| `POST .../body-alignment/execute` | Rebuild the plan from trusted rules and the saved decision, then publish one version |
+| `GET /api/tasks/{task_id}/versions/{version_id}/artifacts/{kind}` | Download registered DOCX, JSON/Markdown report or PDF preview |
+
+The confirmation and execution requests use the versioned contracts in
+`contracts/body-scope-confirmation/` and `contracts/body-plan-execution/`.
+They carry an expected DOCX hash and separate request IDs. The execution
+request cannot submit rule text, values, target paths or an editor manifest.
+The server rechecks the plan before the editor runs. This API currently
+supports one unambiguous, explicit Brief rule for body paragraph alignment;
+it is not yet the full upload and formatting application.
 
 Run the storage checks with:
 
@@ -92,4 +127,5 @@ Run the storage checks with:
 .\.venv\Scripts\python.exe -m pytest -q tests\version_store
 .\.venv\Scripts\python.exe -m pytest -q tests\workflow
 .\.venv\Scripts\python.exe -m pytest -q tests\target_planning
+.\.venv\Scripts\python.exe -m pytest -q tests\local_api
 ```
