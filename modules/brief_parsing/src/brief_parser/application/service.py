@@ -7,13 +7,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from brief_parser.adapters.input_security import FileSecurityValidator
-from brief_parser.application.bundle import build_parse_bundle
+from brief_parser.application.bundle import build_academic_parse_bundle, build_parse_bundle
 from brief_parser.application.output_compilation import OutputCompiler
 from brief_parser.application.pipeline import BriefParsingPipeline, ParsePipelineRequest
 from brief_parser.application.resource_limits import ParseResourceLimits
+from brief_parser.domain.academic_bundle import AcademicParseBundle
 from brief_parser.domain.bundle import ParseBundle
 from brief_parser.domain.domain_pack import DomainPack
 from brief_parser.domain.requirement_ir import DomainPackRef
+from brief_parser.domain.pipeline import PipelineResult
 from brief_parser.errors import BriefParserError, ErrorCode
 
 
@@ -103,6 +105,49 @@ class BriefParserService:
             ) from exc
 
     async def parse(self, request: ParseServiceRequest) -> ParseBundle:
+        pipeline_result, pack = await self._run_pipeline(request)
+        outputs = self._compiler.compile(
+            pipeline_result.requirement_ir,
+            pack,
+            task_types=request.requested_task_types,
+        )
+        return build_parse_bundle(pipeline_result, outputs)
+
+    async def parse_academic(self, request: ParseServiceRequest) -> AcademicParseBundle:
+        """Parse academic Brief facts without producing a generic ExecutionBrief."""
+        if (request.domain_pack_id != "academic_paper"
+                or request.requested_task_types != ("format_academic_paper",)):
+            raise BriefParserError(
+                ErrorCode.INVALID_REQUEST,
+                "论文 parse-only 仅接受 format_academic_paper 任务标识。",
+            )
+        pipeline_result, pack = await self._run_pipeline(request)
+        outputs = self._compiler.compile_parse_only(pipeline_result.requirement_ir, pack)
+        return build_academic_parse_bundle(pipeline_result, outputs)
+
+    async def parse_academic_with_timeout(
+        self,
+        request: ParseServiceRequest,
+        *,
+        timeout_seconds: float,
+    ) -> AcademicParseBundle:
+        if timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be positive")
+        try:
+            return await asyncio.wait_for(
+                self.parse_academic(request), timeout=timeout_seconds,
+            )
+        except TimeoutError as exc:
+            raise BriefParserError(
+                ErrorCode.PROVIDER_TRANSIENT,
+                "论文 Parse Job 超过允许执行时间。",
+                retryable=True,
+                details={"timeout_seconds": timeout_seconds},
+            ) from exc
+
+    async def _run_pipeline(
+        self, request: ParseServiceRequest,
+    ) -> tuple[PipelineResult, DomainPack]:
         if not request.source_paths and not request.text_sources:
             raise BriefParserError(ErrorCode.INVALID_REQUEST, "至少需要一个输入 Source。")
         self._resource_limits.validate_source_count(
@@ -162,12 +207,7 @@ class BriefParserService:
                 locale=request.locale,
             )
         )
-        outputs = self._compiler.compile(
-            pipeline_result.requirement_ir,
-            pack,
-            task_types=request.requested_task_types,
-        )
-        return build_parse_bundle(pipeline_result, outputs)
+        return pipeline_result, pack
 
 
 def _semantic_version_key(version: str) -> tuple[int, int, int]:

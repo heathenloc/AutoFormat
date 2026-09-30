@@ -2,6 +2,21 @@
   "schema_version": "brief-parser-local-changes/1.0",
   "changes": [
     {
+      "path": "src/brief_parser/application/bundle.py",
+      "sha256": "4a479c783bda9f11836c011472aaf472aaa9945cb26588cd15d279afe4c46d8c",
+      "reason": "Build a separate academic parse-only Bundle with shared validated diagnostics."
+    },
+    {
+      "path": "src/brief_parser/application/output_compilation.py",
+      "sha256": "3034de72d30296a80705995ad3c87decf1753cb7a93e154e8eb1a0c6a3ec150a",
+      "reason": "Project academic IR and Markdown without creating a generic ExecutionBrief."
+    },
+    {
+      "path": "src/brief_parser/application/service.py",
+      "sha256": "621932bdb56b239e3d91bfed3c106e612883c6632131703ae393a5dc314ff54d",
+      "reason": "Expose a dedicated academic parse-only service path using the existing secured pipeline."
+    },
+    {
       "path": "tests/unit/test_domain_pack_loader.py",
       "sha256": "d62e1ff42c5c84fa0c6adf3369b3d13088cb85cfc82cbb3bbb81ab603f1dfe8d",
       "reason": "Include the EasyFormat academic_paper pack in copied-parser loader regression coverage."

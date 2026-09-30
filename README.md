@@ -39,9 +39,11 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   supports V0→V1, later edits, and request replay. Rule extraction, broader
   formatting properties, feedback decisions, API authorization, and UI remain
   separate development work.
-- The academic projection is not yet connected to the parser's Parse Bundle
-  service or the DOCX target planner. Source classification must come from a
-  trusted step; an unclassified IR item never becomes a formatting rule.
+- A dedicated academic parse-only service path now returns a versioned
+  `AcademicParseBundle` without a generic `ExecutionBrief`. The semantic
+  compiler accepts that Bundle, while source classification still must come
+  from a trusted step. The DOCX target planner and user-facing API remain to
+  be connected; an unclassified IR item never becomes a formatting rule.
 
 ## Local checks
 

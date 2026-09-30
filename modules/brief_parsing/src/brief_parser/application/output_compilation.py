@@ -107,3 +107,21 @@ class OutputCompiler:
             execution_briefs=execution_briefs,
             result_markdown=markdown,
         )
+
+    def compile_parse_only(
+        self,
+        requirement_ir: RequirementIR,
+        domain_pack: DomainPack,
+    ) -> CompiledParseOutputs:
+        """Project validated facts and diagnostics without a generic task brief."""
+        if (domain_pack.id != "academic_paper"
+                or requirement_ir.domain_pack.id != domain_pack.id
+                or requirement_ir.domain_pack.version != domain_pack.version):
+            raise ValueError("Academic parse-only requires the matching domain pack.")
+        issues = self._context_compiler.validate_domain(requirement_ir, domain_pack)
+        projected_ir = project_domain_issues(requirement_ir, issues)
+        return CompiledParseOutputs(
+            requirement_ir=projected_ir,
+            execution_briefs={},
+            result_markdown=self._renderer.render(projected_ir, {}),
+        )

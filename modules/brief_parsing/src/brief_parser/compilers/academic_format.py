@@ -16,6 +16,7 @@ from brief_parser.domain.academic_format import (
     AcademicTarget,
     AcademicValue,
 )
+from brief_parser.domain.academic_bundle import AcademicParseBundle
 from brief_parser.domain.domain_pack import DomainPack
 from brief_parser.domain.enums import (
     DownstreamPolicy,
@@ -44,6 +45,20 @@ _NEGATION = re.compile(r"不得|不要|不应|禁止|避免|\bnot\b|\bprohibit(?
 class AcademicFormatCompiler:
     """Only an exact, classified body alignment becomes a verified semantic rule."""
 
+    def compile_bundle(
+        self,
+        bundle: AcademicParseBundle,
+        domain_pack: DomainPack,
+        *,
+        explicit_requirement_ids: Collection[str],
+    ) -> AcademicFormatRuleSet:
+        """Use the versioned parse-only Bundle as the source of rules and evidence."""
+        return self.compile(
+            bundle.requirement_ir,
+            domain_pack,
+            explicit_requirement_ids=explicit_requirement_ids,
+        )
+
     def compile(
         self,
         requirement_ir: RequirementIR,
@@ -62,7 +77,9 @@ class AcademicFormatCompiler:
         if not explicit <= known_ids:
             raise ValueError("Source classification names an unknown Requirement.")
 
-        conflicted = {item_id for conflict in requirement_ir.conflicts for item_id in conflict.items}
+        conflicted = {
+            item_id for conflict in requirement_ir.conflicts for item_id in conflict.items
+        }
         blocked_evidence = {
             evidence_id
             for item in requirement_ir.unresolved_items
@@ -87,11 +104,13 @@ class AcademicFormatCompiler:
                     evidence_ids=list(requirement.evidence_refs),
                 ))
                 continue
-            # _problem guarantees a supported string alignment with one exact token.
+            # _problem guarantees a supported text alignment with one exact token.
             value = requirement.value.amount
             assert isinstance(value, str)
+            normalized = _normalize_alignment(value)
+            assert normalized is not None
             quote = " ".join(item.quote for item in evidence)
-            term = _ALIGNMENT_TERMS[value].search(quote)
+            term = _ALIGNMENT_TERMS[normalized].search(quote)
             assert term is not None
             rules.append(AcademicFormatRule(
                 rule_id=f"fmt_{requirement.id}",
@@ -106,7 +125,7 @@ class AcademicFormatCompiler:
                 ),
                 property_id="paragraph.alignment",
                 value=AcademicValue(
-                    original_text=term.group(), normalized=value,
+                    original_text=term.group(), normalized=normalized,
                     unit=None, dictionary_version="academic-alignment/1.0",
                 ),
                 requested_scope="same_kind", effective_scope="same_kind",
@@ -156,14 +175,24 @@ class AcademicFormatCompiler:
             return ("unsupported", "目标范围不是明确的全部正文段落。", "等待范围规划器支持。")
         value = requirement.value.amount
         if (requirement.value.type != "paragraph_alignment"
-                or not isinstance(value, str) or value not in _ALIGNMENT_TERMS
+                or not isinstance(value, str) or _normalize_alignment(value) is None
                 or requirement.value.unit is not None):
             return ("unsupported", "尚不支持此论文格式属性或值。", "保留原文供后续处理。")
+        normalized = _normalize_alignment(value)
+        assert normalized is not None
         quote = " ".join(item.quote for item in evidence)
         matched = {name for name, pattern in _ALIGNMENT_TERMS.items() if pattern.search(quote)}
-        if matched != {value} or _NEGATION.search(quote):
+        if matched != {normalized} or _NEGATION.search(quote):
             return (
                 "value_evidence_mismatch", "规范值不能由唯一且肯定的原文对齐词证明。",
                 "核对原文及属性归一结果。",
             )
         return None
+
+
+def _normalize_alignment(value: str) -> str | None:
+    if value in _ALIGNMENT_TERMS:
+        return value
+    matches = [name for name, pattern in _ALIGNMENT_TERMS.items()
+               if pattern.fullmatch(value.strip())]
+    return matches[0] if len(matches) == 1 else None
