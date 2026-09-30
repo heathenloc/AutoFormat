@@ -1,4 +1,4 @@
-"""Loopback-only HTTP boundary for a trusted, pre-parsed academic task.
+"""Loopback-only HTTP boundary for academic intake and confirmed edits.
 
 The browser can classify targets and request execution, but cannot upload rules,
 choose a server-side file path, or supply the editor manifest.
@@ -13,12 +13,14 @@ from pathlib import Path
 from typing import Annotated, Callable, Literal
 from urllib.parse import urlsplit
 
-from fastapi import FastAPI, Request
+from brief_parser.errors import BriefParserError, ErrorCode
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 
+from .academic_intake import AcademicTaskIntake
 from .preview import PreviewError, PreviewRenderer
 from .rule_snapshots import RuleSnapshotError, RuleSnapshotStore
 from .target_planning import (
@@ -85,8 +87,9 @@ def create_local_api(
     indexer: DotnetTargetIndexer, editor: DotnetEditor,
     renderer_factory: Callable[[Path], PreviewRenderer],
     session_token: str, allowed_origin: str, font_fingerprint: str,
+    intake: AcademicTaskIntake | None = None,
 ) -> FastAPI:
-    """Create routes for tasks already provisioned by the trusted parse workflow.
+    """Create routes for trusted intake and tasks with confirmed rules.
 
     The host must bind this app to 127.0.0.1 on a random port and give the
     session token only to its own UI. No rule registration route is exposed.
@@ -127,9 +130,89 @@ def create_local_api(
                        WorkflowError, PreviewError):
         app.add_exception_handler(known_type, known_failure)
 
+    @app.exception_handler(BriefParserError)
+    async def parse_failure(_: Request, error: BriefParserError):
+        input_error = error.code in {
+            ErrorCode.INVALID_REQUEST, ErrorCode.SOURCE_UNSUPPORTED,
+            ErrorCode.SOURCE_TOO_LARGE, ErrorCode.SOURCE_TOO_MANY_PAGES,
+            ErrorCode.SOURCE_EXTRACTED_TOO_LARGE, ErrorCode.SOURCE_MIME_MISMATCH,
+            ErrorCode.SOURCE_TEXT_ENCODING, ErrorCode.SOURCE_ARCHIVE_INVALID,
+            ErrorCode.SOURCE_ARCHIVE_PATH_TRAVERSAL, ErrorCode.SOURCE_ARCHIVE_BOMB,
+            ErrorCode.SOURCE_XML_UNSAFE, ErrorCode.SOURCE_MACRO_ENABLED,
+            ErrorCode.SOURCE_ENCRYPTED, ErrorCode.SOURCE_PDF_INVALID,
+            ErrorCode.SOURCE_SCANNED_PDF,
+        }
+        return _error("unsafe_input" if input_error else "validation_failed",
+                      error.safe_message, code=422 if input_error else 503)
+
+    if intake is not None:
+        async def read_bounded(upload: UploadFile) -> bytes:
+            chunks: list[bytes] = []
+            total = 0
+            while chunk := await upload.read(1024 * 1024):
+                total += len(chunk)
+                if total > intake.max_file_bytes:
+                    raise VersionStoreError("unsafe_input", "Upload exceeds the size limit.")
+                chunks.append(chunk)
+            return b"".join(chunks)
+
+        @app.post("/api/tasks")
+        async def create_task(
+            request_id: str = Form(pattern=r"^[a-f0-9]{32}$"),
+            model_processing_acknowledged: bool = Form(),
+            brief: UploadFile = File(), paper: UploadFile = File(),
+        ):
+            if not model_processing_acknowledged:
+                raise VersionStoreError(
+                    "needs_user_input", "Acknowledge Brief model processing before upload.")
+            brief_bytes = await read_bounded(brief)
+            paper_bytes = await read_bounded(paper)
+            result = await intake.create(
+                request_id=request_id, brief_filename=brief.filename or "",
+                brief=brief_bytes, paper_filename=paper.filename or "",
+                paper=paper_bytes,
+                model_processing_acknowledged=model_processing_acknowledged,
+            )
+            return {
+                "schema_version": "task-intake/1.0",
+                "status": "needs_user_input", "phase": result.phase,
+                "task_id": result.version.task_id,
+                "base_version_id": result.version.version_id,
+                "base_docx_sha256": result.version.docx_sha256,
+                "parse_artifact_id": result.bundle.manifest.artifact_id,
+                "parse_readiness": result.bundle.requirement_ir.readiness,
+                "requirement_count": len(result.bundle.requirement_ir.requirements),
+                "replayed": result.replayed,
+                "next_action": (
+                    "Review parse diagnostics; incomplete parsing cannot authorize edits."
+                    if result.phase == "parse_review" else
+                    "Review Brief requirements and classify their source before editing."
+                ),
+            }
+
+        @app.get("/api/tasks/{task_id}/academic-parse")
+        def get_academic_parse(task_id: str):
+            return intake.load_bundle(task_id).model_dump(mode="json")
+
     @app.get("/api/tasks/{task_id}")
     def get_task(task_id: str):
-        snapshot = snapshots.load(task_id)
+        if intake is not None:
+            store.get_academic_intake(task_id)
+        try:
+            snapshot = snapshots.load(task_id)
+        except RuleSnapshotError as error:
+            if (error.status != "needs_user_input" or intake is None or
+                    store.get_academic_intake(task_id) is None):
+                raise
+            bundle = intake.load_bundle(task_id)
+            return {
+                "status": "needs_user_input",
+                "phase": ("parse_review" if bundle.requirement_ir.readiness == "incomplete"
+                          else "source_classification"),
+                "task_id": task_id,
+                "working_version_id": store.working_version_id(task_id),
+                "rules_snapshot_id": None,
+            }
         return {
             "status": "ready",
             "task_id": task_id,
@@ -298,6 +381,7 @@ def bind_local_api(
     indexer: DotnetTargetIndexer, editor: DotnetEditor,
     renderer_factory: Callable[[Path], PreviewRenderer],
     font_fingerprint: str,
+    intake: AcademicTaskIntake | None = None,
 ) -> BoundLocalApi:
     """Reserve a random 127.0.0.1 port before building the origin-bound app."""
     listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -310,7 +394,7 @@ def bind_local_api(
         app = create_local_api(
             store=store, snapshots=snapshots, indexer=indexer, editor=editor,
             renderer_factory=renderer_factory, session_token=token,
-            allowed_origin=url, font_fingerprint=font_fingerprint,
+            allowed_origin=url, font_fingerprint=font_fingerprint, intake=intake,
         )
         return BoundLocalApi(app, url, token, listener)
     except BaseException:

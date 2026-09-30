@@ -76,6 +76,30 @@ class DecisionRecord:
     schema_version: str = "decision-event/1.0"
 
 
+@dataclass(frozen=True, slots=True)
+class AcademicIntakeInput:
+    request_id: str
+    input_fingerprint: str
+    brief_path: Path
+    brief_suffix: str
+    brief_sha256: str
+    bundle_path: Path
+    bundle_sha256: str
+    model_processing_acknowledged: bool
+
+
+@dataclass(frozen=True, slots=True)
+class AcademicIntakeRecord:
+    task_id: str
+    base_version_id: str
+    request_id: str
+    input_fingerprint: str
+    brief_path: Path
+    brief_sha256: str
+    bundle_path: Path
+    bundle_sha256: str
+
+
 def new_id() -> str:
     return secrets.token_hex(16)
 
@@ -199,6 +223,17 @@ class VersionStore:
                     created_at TEXT NOT NULL,
                     UNIQUE (task_id, request_id)
                 );
+                CREATE TABLE IF NOT EXISTS academic_intakes (
+                    task_id TEXT PRIMARY KEY REFERENCES tasks(task_id),
+                    base_version_id TEXT NOT NULL REFERENCES versions(version_id),
+                    request_id TEXT NOT NULL UNIQUE,
+                    input_fingerprint TEXT NOT NULL,
+                    brief_path TEXT NOT NULL,
+                    brief_sha256 TEXT NOT NULL,
+                    bundle_path TEXT NOT NULL,
+                    bundle_sha256 TEXT NOT NULL,
+                    model_processing_acknowledged INTEGER NOT NULL CHECK (model_processing_acknowledged = 1)
+                );
             """)
 
     def _artifact_path(self, relative_path: str) -> Path:
@@ -213,10 +248,28 @@ class VersionStore:
         stage.mkdir()
         return stage
 
-    def create_task(self, source_docx: Path) -> VersionRecord:
+    def create_task(
+        self, source_docx: Path, *, intake: AcademicIntakeInput | None = None,
+    ) -> VersionRecord:
         """Copy a checked original into an immutable V0 task directory."""
         if source_docx.is_symlink() or not source_docx.is_file():
             raise VersionStoreError("unsafe_input", "Original DOCX is unavailable or redirected.")
+        if intake is not None:
+            _require_id(intake.request_id, "intake request")
+            if (intake.model_processing_acknowledged is not True or
+                    intake.brief_suffix not in {".txt", ".pdf", ".docx"} or
+                    any(not re.fullmatch(r"[a-f0-9]{64}", digest) for digest in (
+                        intake.input_fingerprint, intake.brief_sha256,
+                        intake.bundle_sha256,
+                    )) or
+                    any(path.is_symlink() or not path.is_file() for path in (
+                        intake.brief_path, intake.bundle_path,
+                    ))):
+                raise VersionStoreError("unsafe_input", "Academic intake files are invalid.")
+            previous = self.find_academic_intake_request(
+                intake.request_id, intake.input_fingerprint)
+            if previous is not None:
+                return previous
         source_hash = _sha256(source_docx)
         task_id, version_id = new_id(), new_id()
         stage = self._new_stage()
@@ -233,9 +286,40 @@ class VersionStore:
                 raise VersionStoreError(error.status, str(error)) from error
             if _sha256(source_docx) != source_hash or staged_hash != source_hash:
                 raise VersionStoreError("unsafe_input", "Original DOCX changed while being stored.")
+            if intake is not None:
+                academic_dir = stage / "academic"
+                academic_dir.mkdir()
+                staged_brief = academic_dir / f"brief{intake.brief_suffix}"
+                staged_bundle = academic_dir / "parse-bundle.json"
+                shutil.copyfile(intake.brief_path, staged_brief)
+                shutil.copyfile(intake.bundle_path, staged_bundle)
+                if (_sha256(intake.brief_path) != intake.brief_sha256 or
+                        _sha256(staged_brief) != intake.brief_sha256 or
+                        _sha256(intake.bundle_path) != intake.bundle_sha256 or
+                        _sha256(staged_bundle) != intake.bundle_sha256):
+                    raise VersionStoreError("unsafe_input", "Academic intake changed during staging.")
             created_at = _utc_now()
             docx_path = f"tasks/{task_id}/versions/{version_id}/document.docx"
             with self._transaction() as connection:
+                if intake is not None:
+                    prior = connection.execute(
+                        "SELECT task_id, input_fingerprint FROM academic_intakes WHERE request_id=?",
+                        (intake.request_id,),
+                    ).fetchone()
+                    if prior is not None:
+                        if prior["input_fingerprint"] != intake.input_fingerprint:
+                            raise VersionStoreError("blocked_conflict", "Intake request ID was reused.")
+                        existing = connection.execute(
+                            "SELECT * FROM versions WHERE task_id=? AND kind='original'",
+                            (prior["task_id"],),
+                        ).fetchone()
+                        if existing is None:
+                            raise VersionStoreError("validation_failed", "Prior intake V0 is unavailable.")
+                        if (existing["status"] != "ready" or
+                                not self._recoverable_hash_match(
+                                    existing["docx_path"], existing["docx_sha256"])):
+                            raise VersionStoreError("validation_failed", "Prior intake V0 is invalid.")
+                        return self._row_to_record(existing)
                 connection.execute(
                     "INSERT INTO tasks VALUES (?, ?, ?)", (task_id, version_id, created_at)
                 )
@@ -245,6 +329,16 @@ class VersionStore:
                         docx_path, docx_sha256, created_at
                     ) VALUES (?, ?, NULL, 0, 'original', 'ready', ?, ?, ?)
                 """, (version_id, task_id, docx_path, source_hash, created_at))
+                if intake is not None:
+                    connection.execute("""
+                        INSERT INTO academic_intakes VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                    """, (
+                        task_id, version_id, intake.request_id, intake.input_fingerprint,
+                        f"tasks/{task_id}/academic/brief{intake.brief_suffix}",
+                        intake.brief_sha256,
+                        f"tasks/{task_id}/academic/parse-bundle.json",
+                        intake.bundle_sha256,
+                    ))
                 if task_root.exists():
                     raise VersionStoreError("validation_failed", "Task directory already exists.")
                 stage.rename(task_root)
@@ -257,6 +351,56 @@ class VersionStore:
             raise
         finally:
             _safe_remove_directory(stage, self.staging_dir, self.root)
+
+    def find_academic_intake_request(
+        self, request_id: str, fingerprint: str,
+    ) -> VersionRecord | None:
+        _require_id(request_id, "intake request")
+        if not re.fullmatch(r"[a-f0-9]{64}", fingerprint):
+            raise VersionStoreError("validation_failed", "Intake fingerprint is invalid.")
+        with self._transaction() as connection:
+            row = connection.execute("""
+                SELECT v.*, a.input_fingerprint, a.brief_path, a.brief_sha256,
+                       a.bundle_path, a.bundle_sha256
+                FROM academic_intakes a JOIN versions v ON v.version_id=a.base_version_id
+                WHERE a.request_id=?
+            """, (request_id,)).fetchone()
+        if row is None:
+            return None
+        if row["input_fingerprint"] != fingerprint:
+            raise VersionStoreError("blocked_conflict", "Intake request ID was reused.")
+        if (row["status"] != "ready" or
+                any(not self._recoverable_hash_match(row[path], row[digest])
+                    for path, digest in (("docx_path", "docx_sha256"),
+                                         ("brief_path", "brief_sha256"),
+                                         ("bundle_path", "bundle_sha256")))):
+            raise VersionStoreError("validation_failed", "Prior intake artifact is unavailable.")
+        return self._row_to_record(row)
+
+    def get_academic_intake(self, task_id: str) -> AcademicIntakeRecord | None:
+        _require_id(task_id, "task")
+        with self._transaction() as connection:
+            row = connection.execute(
+                """SELECT a.*, v.status AS base_status, v.docx_path, v.docx_sha256
+                   FROM academic_intakes a JOIN versions v ON v.version_id=a.base_version_id
+                   WHERE a.task_id=?""", (task_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        if (row["base_status"] != "ready" or
+                any(not self._recoverable_hash_match(row[path], row[digest])
+                    for path, digest in (("docx_path", "docx_sha256"),
+                                         ("brief_path", "brief_sha256"),
+                                         ("bundle_path", "bundle_sha256")))):
+            raise VersionStoreError("validation_failed", "Academic intake artifact is unavailable.")
+        return AcademicIntakeRecord(
+            task_id=task_id, base_version_id=row["base_version_id"],
+            request_id=row["request_id"], input_fingerprint=row["input_fingerprint"],
+            brief_path=self._artifact_path(row["brief_path"]),
+            brief_sha256=row["brief_sha256"],
+            bundle_path=self._artifact_path(row["bundle_path"]),
+            bundle_sha256=row["bundle_sha256"],
+        )
 
     def publish_version(
         self,
@@ -653,6 +797,7 @@ class VersionStore:
             raise VersionStoreError("validation_failed", "Artifact kind is not registered.")
         _require_id(task_id, "task")
         _require_id(version_id, "version")
+        self.get_academic_intake(task_id)
         with self._transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM versions WHERE task_id=? AND version_id=? AND status='ready'",
@@ -726,6 +871,14 @@ class VersionStore:
                     connection.execute(
                         "UPDATE versions SET status='validation_failed' WHERE version_id=?",
                         (row["version_id"],),
+                    )
+            for row in connection.execute("SELECT * FROM academic_intakes").fetchall():
+                if any(not self._recoverable_hash_match(row[path], row[digest])
+                       for path, digest in (("brief_path", "brief_sha256"),
+                                            ("bundle_path", "bundle_sha256"))):
+                    connection.execute(
+                        "UPDATE versions SET status='validation_failed' WHERE task_id=?",
+                        (row["task_id"],),
                     )
 
     def _recoverable_hash_match(self, relative_path: str, expected_hash: str) -> bool:

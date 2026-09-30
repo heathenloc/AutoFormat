@@ -91,8 +91,20 @@ available for tasks whose trusted academic rule snapshot has been registered.
 `easyformat.rule_snapshots.RuleSnapshotStore` accepts a validated
 `AcademicFormatRuleSet` only through its internal `register` method. It saves
 one immutable, hash-checked snapshot for each task. There is no HTTP route for
-uploading or replacing executable rules. The dual-file upload and automatic
-Brief parse workflow remain separate development work.
+uploading or replacing executable rules.
+
+When the host injects `AcademicTaskIntake`, `POST /api/tasks` accepts one school
+Brief (`.txt`, `.docx` or text PDF) and one paper DOCX. The request includes an
+idempotency ID and acknowledgement that the configured model may process the
+Brief. Uploads are size bounded and checked by the copied parser's input
+validator; only the Brief is passed to `parse_academic_with_timeout`. The
+Brief, validated `AcademicParseBundle` and immutable V0 are published in one
+version-store transaction. Reusing the request ID with different bytes returns
+a conflict. `GET /api/tasks/{task_id}/academic-parse` returns the Parse Bundle
+for evidence review. Incomplete parsing remains in `parse_review`; other
+parsed tasks wait at `source_classification`. Neither state registers an
+executable rule snapshot. A later source-classification decision must
+explicitly authorize Brief requirements before rule compilation.
 
 `easyformat.local_api.bind_local_api` reserves a random `127.0.0.1` port,
 creates a session token and origin-bound FastAPI app, and returns a binding
@@ -106,7 +118,9 @@ For an internally provisioned task, the current routes are:
 
 | Route | Action |
 | --- | --- |
+| `POST /api/tasks` | Upload Brief and paper, run academic parse-only, create V0 |
 | `GET /api/tasks/{task_id}` | Read working version and rule snapshot ID |
+| `GET /api/tasks/{task_id}/academic-parse` | Read stored Parse Bundle and evidence |
 | `GET /api/tasks/{task_id}/versions` | List version metadata without disk paths |
 | `GET /api/tasks/{task_id}/versions/{version_id}/body-alignment/review` | Read target review and review hash |
 | `POST .../body-alignment/confirm` | Record a complete paragraph classification and return an executable plan |
@@ -118,8 +132,9 @@ The confirmation and execution requests use the versioned contracts in
 They carry an expected DOCX hash and separate request IDs. The execution
 request cannot submit rule text, values, target paths or an editor manifest.
 The server rechecks the plan before the editor runs. This API currently
-supports one unambiguous, explicit Brief rule for body paragraph alignment;
-it is not yet the full upload and formatting application.
+executes one unambiguous, explicit Brief rule for body paragraph alignment
+after trusted source classification and snapshot registration; the
+classification decision and UI remain to be implemented.
 
 Run the storage checks with:
 
@@ -128,4 +143,5 @@ Run the storage checks with:
 .\.venv\Scripts\python.exe -m pytest -q tests\workflow
 .\.venv\Scripts\python.exe -m pytest -q tests\target_planning
 .\.venv\Scripts\python.exe -m pytest -q tests\local_api
+.\.venv\Scripts\python.exe -m pytest -q tests\academic_intake
 ```

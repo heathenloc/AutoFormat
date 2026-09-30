@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/task-intake/1.0",
+  "title": "Academic task intake response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "phase", "task_id", "base_version_id", "base_docx_sha256", "parse_artifact_id", "parse_readiness", "requirement_count", "replayed", "next_action"],
+  "properties": {
+    "schema_version": {"const": "task-intake/1.0"},
+    "status": {"const": "needs_user_input"},
+    "phase": {"type": "string", "enum": ["parse_review", "source_classification"]},
+    "task_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+    "base_version_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+    "base_docx_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "parse_artifact_id": {"type": "string", "minLength": 1},
+    "parse_readiness": {"type": "string", "enum": ["complete", "usable_with_warnings", "incomplete"]},
+    "requirement_count": {"type": "integer", "minimum": 0},
+    "replayed": {"type": "boolean"},
+    "next_action": {"type": "string", "minLength": 1}
+  }
+}

@@ -50,10 +50,12 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   the review hash; eligible body paragraphs then form a typed `edit-plan/1.0`.
   The batch workflow rechecks the plan and decision, edits one candidate DOCX,
   and publishes one version with per-target verification, report and preview.
-  A session-protected local API now exposes review, confirmation, execution,
-  version listing and registered artifact downloads for tasks provisioned by
-  the trusted parse workflow. Dual-file upload, automatic parser orchestration,
-  the UI and broader formatting properties remain to be built.
+  A session-protected local API now accepts a school Brief and paper DOCX,
+  calls the copied parser's academic parse-only path, and stores the Brief,
+  Parse Bundle and V0 together. It exposes parse review, body-scope review,
+  confirmation, execution, version listing and registered artifact downloads.
+  Source classification, the UI and broader formatting properties remain to
+  be built.
 
 ## Local checks
 
@@ -73,6 +75,7 @@ dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/workflow
 ./.venv/Scripts/python.exe -m pytest -q tests/target_planning
 ./.venv/Scripts/python.exe -m pytest -q tests/local_api
+./.venv/Scripts/python.exe -m pytest -q tests/academic_intake
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately
