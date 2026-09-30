@@ -23,6 +23,9 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   selections. The C# index requires trusted version and preview metadata
   before locating a selection. Repeated text and complex paragraphs pause for
   user targeting. This read-only anchor is not an edit command.
+- A local SQLite version store now publishes immutable V0/V1 and later
+  branches, checks every artifact hash, and keeps user decisions separate from
+  DOCX versions. It is not yet connected to the full task workflow or UI.
 
 ## Local checks
 
@@ -37,6 +40,7 @@ cd ../..
 dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业论文模板2026.docx
 dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/preview
+./.venv/Scripts/python.exe -m pytest -q tests/version_store
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/version-node/1.0",
+  "title": "Immutable EasyFormat version node",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "task_id", "version_id", "parent_version_id",
+    "sequence", "kind", "status", "docx_sha256", "docx_relative_path",
+    "report_json_relative_path", "report_markdown_relative_path",
+    "preview_relative_path", "preview_metadata_relative_path",
+    "preview_artifact_id", "renderer_id", "renderer_version",
+    "references", "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "version-node/1.0" },
+    "task_id": { "$ref": "#/$defs/id" },
+    "version_id": { "$ref": "#/$defs/id" },
+    "parent_version_id": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "kind": { "enum": ["original", "output"] },
+    "status": { "enum": ["ready", "validation_failed"] },
+    "docx_sha256": { "$ref": "#/$defs/hash" },
+    "docx_relative_path": {
+      "type": "string",
+      "pattern": "^tasks/[a-f0-9]{32}/versions/[a-f0-9]{32}/document\\.docx$"
+    },
+    "report_json_relative_path": { "type": ["string", "null"] },
+    "report_markdown_relative_path": { "type": ["string", "null"] },
+    "preview_relative_path": { "type": ["string", "null"] },
+    "preview_metadata_relative_path": { "type": ["string", "null"] },
+    "preview_artifact_id": { "type": ["string", "null"] },
+    "renderer_id": { "type": ["string", "null"] },
+    "renderer_version": { "type": ["string", "null"] },
+    "references": {
+      "anyOf": [{ "$ref": "#/$defs/references" }, { "type": "null" }]
+    },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "original" } } },
+      "then": {
+        "properties": {
+          "sequence": { "const": 0 },
+          "parent_version_id": { "type": "null" },
+          "report_json_relative_path": { "type": "null" },
+          "report_markdown_relative_path": { "type": "null" },
+          "preview_relative_path": { "type": "null" },
+          "preview_metadata_relative_path": { "type": "null" },
+          "preview_artifact_id": { "type": "null" },
+          "renderer_id": { "type": "null" },
+          "renderer_version": { "type": "null" },
+          "references": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "output" } } },
+      "then": {
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1 },
+          "parent_version_id": { "$ref": "#/$defs/id" },
+          "report_json_relative_path": { "type": "string", "minLength": 1 },
+          "report_markdown_relative_path": { "type": "string", "minLength": 1 },
+          "preview_relative_path": { "type": "string", "minLength": 1 },
+          "preview_metadata_relative_path": { "type": "string", "minLength": 1 },
+          "preview_artifact_id": { "type": "string", "minLength": 1 },
+          "renderer_id": { "type": "string", "minLength": 1 },
+          "renderer_version": { "type": "string", "minLength": 1 },
+          "references": { "$ref": "#/$defs/references" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rules_snapshot_id", "brief_version_id", "edit_plan_id",
+        "font_fingerprint", "template_version_id", "decision_version_id"
+      ],
+      "properties": {
+        "rules_snapshot_id": { "type": "string", "minLength": 1 },
+        "brief_version_id": { "type": "string", "minLength": 1 },
+        "edit_plan_id": { "type": "string", "minLength": 1 },
+        "font_fingerprint": { "type": "string", "minLength": 1 },
+        "template_version_id": { "type": ["string", "null"] },
+        "decision_version_id": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
