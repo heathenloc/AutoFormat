@@ -1,0 +1,9 @@
+{
+  "schema_version": "edit-result-prototype/1.0",
+  "status": "ready",
+  "operation_id": "op-example-1",
+  "before_direct_alignment": null,
+  "after_direct_alignment": "center",
+  "output_docx_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "reason": "Verified paragraph alignment; source DOCX unchanged."
+}

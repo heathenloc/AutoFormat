@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/edit-result/prototype-1.0",
+  "title": "Verified result of one typed DOCX edit prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "status", "operation_id", "before_direct_alignment",
+    "after_direct_alignment", "output_docx_sha256", "reason"
+  ],
+  "properties": {
+    "schema_version": { "const": "edit-result-prototype/1.0" },
+    "status": {
+      "enum": [
+        "ready", "already_satisfied", "needs_user_input", "unsupported_property",
+        "stale_base_version", "ambiguous_target", "validation_failed"
+      ]
+    },
+    "operation_id": { "type": "string" },
+    "before_direct_alignment": {
+      "oneOf": [{ "enum": ["left", "center", "right", "both"] }, { "type": "null" }]
+    },
+    "after_direct_alignment": {
+      "oneOf": [{ "enum": ["left", "center", "right", "both"] }, { "type": "null" }]
+    },
+    "output_docx_sha256": {
+      "oneOf": [{ "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }, { "type": "null" }]
+    },
+    "reason": { "type": "string", "minLength": 1 }
+  }
+}

@@ -12,8 +12,10 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 - `services/docx_engine/EasyFormat.DocxIndex` is a read-only DOCX paragraph
   index and exact selection anchor prototype. Its unique matches are safe
   candidates for later verification, not permission to edit yet.
-- The production editor, renderer, feedback workflow, version store, and UI
-  have not been implemented.
+- `services/docx_engine/EasyFormat.DocxEditor` applies one typed paragraph
+  alignment operation to a new DOCX copy and verifies the result. The full
+  rule planner, renderer, feedback workflow, version store, and UI have not
+  been implemented.
 
 ## Local checks
 
@@ -26,6 +28,7 @@ cd modules/brief_parsing
 ../../.venv/Scripts/python.exe -m pytest -q --ignore=tests/contract/test_infrastructure_baseline.py
 cd ../..
 dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业论文模板2026.docx
+dotnet run --project tests/DocxEditor.Checks
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

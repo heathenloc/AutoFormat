@@ -1,0 +1,14 @@
+{
+  "schema_version": "edit-manifest-prototype/1.0",
+  "operation_id": "op-example-1",
+  "rule_id": "rule-example-1",
+  "base_version_id": "version-example-0",
+  "base_docx_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "input_file": "v0.docx",
+  "output_file": "v1.docx",
+  "target_object_id": "p:000002",
+  "expected_paragraph_text_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "property": "paragraph.alignment",
+  "value": "center",
+  "effective_scope": "paragraph"
+}

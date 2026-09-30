@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/edit-manifest/prototype-1.0",
+  "title": "Typed paragraph alignment operation prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "operation_id", "rule_id", "base_version_id",
+    "base_docx_sha256", "input_file", "output_file", "target_object_id",
+    "expected_paragraph_text_sha256", "property", "value", "effective_scope"
+  ],
+  "properties": {
+    "schema_version": { "const": "edit-manifest-prototype/1.0" },
+    "operation_id": { "type": "string", "minLength": 1 },
+    "rule_id": { "type": "string", "minLength": 1 },
+    "base_version_id": { "type": "string", "minLength": 1 },
+    "base_docx_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "input_file": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\\.docx$" },
+    "output_file": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}\\.docx$" },
+    "target_object_id": { "type": "string", "pattern": "^p:[0-9]{6,}$" },
+    "expected_paragraph_text_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "property": { "const": "paragraph.alignment" },
+    "value": { "enum": ["left", "center", "right", "both"] },
+    "effective_scope": { "const": "paragraph" }
+  }
+}
