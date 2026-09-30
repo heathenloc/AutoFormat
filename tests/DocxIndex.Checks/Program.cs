@@ -18,6 +18,9 @@ const string mainDocument = """
         <w:tbl><w:tr><w:tc><w:p><w:r><w:t>表格内容</w:t></w:r></w:p></w:tc></w:tr></w:tbl>
         <w:p><w:r><w:t>修订段落</w:t></w:r><w:del><w:r><w:delText>删除的文字</w:delText></w:r></w:del></w:p>
         <w:p><w:r><w:rPr><w:vanish/></w:rPr><w:t>隐藏文字</w:t></w:r></w:p>
+        <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>第一章</w:t></w:r></w:p>
+        <w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t>列表项</w:t></w:r></w:p>
+        <w:p><w:pPr><w:pStyle w:val="CustomBody"/></w:pPr><w:r><w:t>自定义样式</w:t></w:r></w:p>
       </w:body>
     </w:document>
     """;
@@ -31,11 +34,23 @@ using (var archive = ZipFile.Open(docxPath, ZipArchiveMode.Create))
 
 var originalHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(docxPath)));
 var index = DocxTextIndex.Build(docxPath);
-Require(index.Paragraphs.Count == 6, "Nested table paragraph is indexed once.");
+Require(index.Paragraphs.Count == 9, "Nested table paragraph is indexed once.");
 Require(index.Paragraphs[0].Text == "这是正文。", "Text spans DOCX runs.");
 Require(index.Paragraphs[3].Text == "表格内容", "Table cell text is indexed.");
 Require(index.Paragraphs[3].XmlPath.Contains("tbl[1]/tr[1]/tc[1]/p[1]", StringComparison.Ordinal),
     "Table path identifies the cell.");
+Require(index.Paragraphs[0].RoleCandidate == "body_candidate" &&
+    index.Paragraphs[0].RoleEvidence == "normal_style_only",
+    "Normal style is only a body candidate.");
+Require(index.Paragraphs[3].RoleCandidate == "table_cell" &&
+    index.Paragraphs[3].RoleEvidence == "inside_table",
+    "Table cell is kept outside body paragraph candidates.");
+Require(index.Paragraphs[6].RoleCandidate == "heading_candidate" &&
+    index.Paragraphs[6].RoleEvidence == "built_in_heading_style",
+    "Built-in heading style is recognized without treating it as body.");
+Require(index.Paragraphs[7].RoleEvidence == "numbering_properties" &&
+    index.Paragraphs[8].RoleEvidence == "no_reliable_body_role",
+    "List and custom style paragraphs require classification.");
 
 var hint = new SelectionHint("selection-hint-prototype/1.0", "version-1", index.Sha256,
     "preview-1", "libreoffice", "test", "正文", "这是", "。", 1, 10, 12);

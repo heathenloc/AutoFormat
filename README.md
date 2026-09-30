@@ -42,8 +42,13 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 - A dedicated academic parse-only service path now returns a versioned
   `AcademicParseBundle` without a generic `ExecutionBrief`. The semantic
   compiler accepts that Bundle, while source classification still must come
-  from a trusted step. The DOCX target planner and user-facing API remain to
-  be connected; an unclassified IR item never becomes a formatting rule.
+  from a trusted step; an unclassified IR item never becomes a formatting rule.
+- The DOCX index now exposes a versioned, read-only target profile. The API
+  checks the index binary and DOCX hashes, then produces a non-executable
+  review for a global body alignment rule. `Normal` style is only a body
+  candidate; custom styles, tables, headings, and complex paragraphs remain
+  visible for classification. Confirmed scope, executable multi-target plans,
+  and the user-facing API are still to be connected.
 
 ## Local checks
 
@@ -61,6 +66,7 @@ dotnet run --project tests/DocxEditor.Checks
 ./.venv/Scripts/python.exe -m pytest -q tests/version_store
 ./.venv/Scripts/python.exe -m pytest -q tests/reports
 ./.venv/Scripts/python.exe -m pytest -q tests/workflow
+./.venv/Scripts/python.exe -m pytest -q tests/target_planning
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately

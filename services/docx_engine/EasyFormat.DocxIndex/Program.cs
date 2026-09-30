@@ -1,12 +1,14 @@
 using System.Text.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
 using EasyFormat.DocxIndex;
 
-if (args.Length < 2 || args[0] is not ("index" or "locate") ||
+if (args.Length < 2 || args[0] is not ("index" or "inspect" or "locate") ||
     (args[0] == "locate" && args.Length != 4) ||
-    (args[0] == "index" && args.Length != 2))
+    ((args[0] is "index" or "inspect") && args.Length != 2))
 {
-    Console.Error.WriteLine("Usage: EasyFormat.DocxIndex index <docx> | locate <docx> <selection-json> <trusted-preview-binding-json>");
+    Console.Error.WriteLine("Usage: EasyFormat.DocxIndex index|inspect <docx> | locate <docx> <selection-json> <trusted-preview-binding-json>");
     return 2;
 }
 
@@ -22,6 +24,29 @@ try
             sha256 = document.Sha256,
             paragraph_count = document.Paragraphs.Count,
             nonempty_paragraph_count = document.Paragraphs.Count(p => p.Text.Length > 0),
+        };
+    }
+    else if (args[0] == "inspect")
+    {
+        result = new
+        {
+            schema_version = "docx-target-index/1.0",
+            sha256 = document.Sha256,
+            paragraph_count = document.Paragraphs.Count,
+            paragraphs = document.Paragraphs.Select(paragraph => new
+            {
+                object_id = paragraph.ObjectId,
+                xml_path = paragraph.XmlPath,
+                style_id = paragraph.StyleId,
+                text_sha256 = Convert.ToHexString(SHA256.HashData(
+                    Encoding.UTF8.GetBytes(paragraph.Text))).ToLowerInvariant(),
+                text_preview = paragraph.Text.Length <= 120
+                    ? paragraph.Text : paragraph.Text[..120],
+                is_empty = paragraph.Text.Length == 0,
+                requires_manual_targeting = paragraph.RequiresManualTargeting,
+                role_candidate = paragraph.RoleCandidate,
+                role_evidence = paragraph.RoleEvidence,
+            }),
         };
     }
     else

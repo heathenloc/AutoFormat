@@ -71,9 +71,19 @@ same published version only for matching rule input. Template observations,
 free-text feedback and general rule planning are not accepted by this narrow
 entry point.
 
+`easyformat.target_planning.DotnetTargetIndexer` runs the pinned C# `inspect`
+command against a version-bound DOCX and validates its target index. The
+`build_body_alignment_review` function combines that index with the typed
+academic rule set. Its `target-review-plan/1.0` lists every paragraph's
+candidate role and review disposition but always has an empty executable
+operation list. A `Normal` style paragraph is not proof of the paper's body
+scope. The selected DOCX hash must be supplied from trusted version storage;
+the review does not authorize the paragraph editor.
+
 Run the storage checks with:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q tests\version_store
 .\.venv\Scripts\python.exe -m pytest -q tests\workflow
+.\.venv\Scripts\python.exe -m pytest -q tests\target_planning
 ```

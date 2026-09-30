@@ -7,7 +7,8 @@ using System.Xml.Linq;
 namespace EasyFormat.DocxIndex;
 
 public sealed record IndexedParagraph(
-    string ObjectId, string XmlPath, string? StyleId, string Text, bool RequiresManualTargeting);
+    string ObjectId, string XmlPath, string? StyleId, string Text, bool RequiresManualTargeting,
+    string RoleCandidate, string RoleEvidence);
 
 public sealed record DocumentIndex(string Sha256, IReadOnlyList<IndexedParagraph> Paragraphs);
 
@@ -63,7 +64,9 @@ public static class DocxTextIndex
                 GetPath(paragraph, body),
                 style,
                 text,
-                RequiresManualTargeting(paragraph)));
+                RequiresManualTargeting(paragraph),
+                RoleCandidate(paragraph, style, text),
+                RoleEvidence(paragraph, style, text)));
         }
 
         return new DocumentIndex(hash, paragraphs);
@@ -100,6 +103,32 @@ public static class DocxTextIndex
             node.Name == W + "object" || node.Name == W + "vanish" ||
             node.Name == W + "webHidden");
     }
+
+    private static string RoleCandidate(XElement paragraph, string? style, string text)
+    {
+        if (paragraph.Ancestors(W + "tbl").Any()) return "table_cell";
+        if (IsHeadingStyle(style)) return "heading_candidate";
+        if (text.Length == 0 || RequiresManualTargeting(paragraph) ||
+            paragraph.Element(W + "pPr")?.Element(W + "numPr") is not null)
+            return "unclassified";
+        // Normal is a weak candidate, not proof of the academic body role.
+        return style == "Normal" ? "body_candidate" : "unclassified";
+    }
+
+    private static string RoleEvidence(XElement paragraph, string? style, string text)
+    {
+        if (paragraph.Ancestors(W + "tbl").Any()) return "inside_table";
+        if (IsHeadingStyle(style)) return "built_in_heading_style";
+        if (text.Length == 0) return "empty_paragraph";
+        if (RequiresManualTargeting(paragraph)) return "complex_or_hidden_content";
+        if (paragraph.Element(W + "pPr")?.Element(W + "numPr") is not null)
+            return "numbering_properties";
+        return style == "Normal" ? "normal_style_only" : "no_reliable_body_role";
+    }
+
+    private static bool IsHeadingStyle(string? style) =>
+        style is { Length: 8 } && style.StartsWith("Heading", StringComparison.Ordinal) &&
+        style[7] is >= '1' and <= '9';
 
     private static string GetPath(XElement element, XElement body)
     {
