@@ -1,0 +1,200 @@
+{
+  "$defs": {
+    "ModelRole": {
+      "enum": [
+        "extractor",
+        "auditor",
+        "resolver",
+        "offline_judge"
+      ],
+      "title": "ModelRole",
+      "type": "string"
+    },
+    "ProviderCallRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "completion_status": {
+          "enum": [
+            "completed",
+            "refused",
+            "incomplete"
+          ],
+          "title": "Completion Status",
+          "type": "string"
+        },
+        "input_tokens": {
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "model_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "provider_alias": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Provider Alias",
+          "type": "string"
+        },
+        "provider_request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Provider Request Id"
+        },
+        "retry_count": {
+          "minimum": 0,
+          "title": "Retry Count",
+          "type": "integer"
+        },
+        "role": {
+          "$ref": "#/$defs/ModelRole"
+        }
+      },
+      "required": [
+        "role",
+        "provider_alias",
+        "model_id",
+        "provider_request_id",
+        "completion_status",
+        "input_tokens",
+        "output_tokens",
+        "latency_ms",
+        "retry_count"
+      ],
+      "title": "ProviderCallRecord",
+      "type": "object"
+    },
+    "StageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "item_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "stage": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Stage",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "status",
+        "duration_ms"
+      ],
+      "title": "StageRecord",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.briefparser.local/parse-diagnostics/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "conflict_count": {
+      "minimum": 0,
+      "title": "Conflict Count",
+      "type": "integer"
+    },
+    "coverage_ratio": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Coverage Ratio",
+      "type": "number"
+    },
+    "provider_calls": {
+      "items": {
+        "$ref": "#/$defs/ProviderCallRecord"
+      },
+      "title": "Provider Calls",
+      "type": "array"
+    },
+    "readiness_reason_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Readiness Reason Codes",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "parse-diagnostics/1.0",
+      "default": "parse-diagnostics/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/StageRecord"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "unresolved_count": {
+      "minimum": 0,
+      "title": "Unresolved Count",
+      "type": "integer"
+    },
+    "warning_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warning Codes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "conflict_count",
+    "unresolved_count",
+    "coverage_ratio"
+  ],
+  "title": "ParseDiagnostics",
+  "type": "object"
+}

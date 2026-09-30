@@ -1,0 +1,51 @@
+{
+  "categories": [
+    {
+      "aliases": [
+        "研究问题",
+        "research question"
+      ],
+      "id": "research_question",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "引用格式",
+        "citation style"
+      ],
+      "id": "citation_style",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "字数",
+        "word count"
+      ],
+      "id": "word_count",
+      "risk": "high"
+    }
+  ],
+  "compilers": [],
+  "id": "academic_paper_example",
+  "locales": [
+    "zh-CN",
+    "en-US"
+  ],
+  "modality_lexicon": {
+    "must": [
+      "必须",
+      "must"
+    ],
+    "must_not": [
+      "不得",
+      "must not"
+    ],
+    "should": [
+      "建议",
+      "should"
+    ]
+  },
+  "schema_version": "domain-pack/1.0",
+  "validators": [],
+  "version": "1.0.0"
+}

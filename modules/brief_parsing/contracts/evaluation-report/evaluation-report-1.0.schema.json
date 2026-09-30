@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "CostReport": {
+      "additionalProperties": false,
+      "properties": {
+        "estimated_cost_usd": {
+          "minimum": 0.0,
+          "title": "Estimated Cost Usd",
+          "type": "number"
+        },
+        "input_tokens": {
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "priced_call_count": {
+          "minimum": 0,
+          "title": "Priced Call Count",
+          "type": "integer"
+        },
+        "pricing_version": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pricing Version"
+        },
+        "unpriced_call_count": {
+          "minimum": 0,
+          "title": "Unpriced Call Count",
+          "type": "integer"
+        },
+        "unpriced_model_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unpriced Model Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "input_tokens",
+        "output_tokens",
+        "estimated_cost_usd",
+        "priced_call_count",
+        "unpriced_call_count"
+      ],
+      "title": "CostReport",
+      "type": "object"
+    },
+    "EvaluationMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "classified_clause_coverage": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Classified Clause Coverage",
+          "type": "number"
+        },
+        "conflict_recall": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Conflict Recall",
+          "type": "number"
+        },
+        "critical_precision": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Critical Precision",
+          "type": "number"
+        },
+        "critical_recall": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Critical Recall",
+          "type": "number"
+        },
+        "critical_without_evidence": {
+          "minimum": 0,
+          "title": "Critical Without Evidence",
+          "type": "integer"
+        },
+        "evidence_locatable_rate": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Evidence Locatable Rate",
+          "type": "number"
+        },
+        "fact_recall": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Fact Recall",
+          "type": "number"
+        },
+        "prompt_injection_failures": {
+          "minimum": 0,
+          "title": "Prompt Injection Failures",
+          "type": "integer"
+        },
+        "readiness_accuracy": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Readiness Accuracy",
+          "type": "number"
+        },
+        "schema_success_rate": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Schema Success Rate",
+          "type": "number"
+        },
+        "unresolved_recall": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Unresolved Recall",
+          "type": "number"
+        }
+      },
+      "required": [
+        "schema_success_rate",
+        "evidence_locatable_rate",
+        "critical_without_evidence",
+        "critical_precision",
+        "critical_recall",
+        "conflict_recall",
+        "classified_clause_coverage",
+        "prompt_injection_failures",
+        "readiness_accuracy",
+        "fact_recall",
+        "unresolved_recall"
+      ],
+      "title": "EvaluationMetrics",
+      "type": "object"
+    },
+    "ReleaseGate": {
+      "additionalProperties": false,
+      "properties": {
+        "actual": {
+          "minimum": 0.0,
+          "title": "Actual",
+          "type": "number"
+        },
+        "comparison": {
+          "enum": [
+            "gte",
+            "lte"
+          ],
+          "title": "Comparison",
+          "type": "string"
+        },
+        "metric": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "threshold": {
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        }
+      },
+      "required": [
+        "metric",
+        "comparison",
+        "actual",
+        "threshold",
+        "passed"
+      ],
+      "title": "ReleaseGate",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.briefparser.local/evaluation-report/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cost": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CostReport"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "dataset_case_count": {
+      "minimum": 0,
+      "title": "Dataset Case Count",
+      "type": "integer"
+    },
+    "dataset_version": {
+      "title": "Dataset Version",
+      "type": "string"
+    },
+    "gates": {
+      "items": {
+        "$ref": "#/$defs/ReleaseGate"
+      },
+      "title": "Gates",
+      "type": "array"
+    },
+    "invalid_case_ids": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Invalid Case Ids",
+      "type": "array"
+    },
+    "metrics": {
+      "$ref": "#/$defs/EvaluationMetrics"
+    },
+    "missing_case_ids": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Missing Case Ids",
+      "type": "array"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "prediction_count": {
+      "minimum": 0,
+      "title": "Prediction Count",
+      "type": "integer"
+    },
+    "report_version": {
+      "const": "evaluation-report/1.0",
+      "default": "evaluation-report/1.0",
+      "title": "Report Version",
+      "type": "string"
+    },
+    "unexpected_case_ids": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unexpected Case Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "dataset_version",
+    "dataset_case_count",
+    "prediction_count",
+    "metrics",
+    "gates",
+    "passed"
+  ],
+  "title": "EvaluationReport",
+  "type": "object"
+}

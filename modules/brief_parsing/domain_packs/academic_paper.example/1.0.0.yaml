@@ -1,0 +1,20 @@
+schema_version: domain-pack/1.0
+id: academic_paper_example
+version: 1.0.0
+locales: [zh-CN, en-US]
+categories:
+  - id: research_question
+    aliases: [研究问题, research question]
+    risk: high
+  - id: citation_style
+    aliases: [引用格式, citation style]
+    risk: normal
+  - id: word_count
+    aliases: [字数, word count]
+    risk: high
+modality_lexicon:
+  must: [必须, must]
+  must_not: [不得, must not]
+  should: [建议, should]
+validators: []
+compilers: []

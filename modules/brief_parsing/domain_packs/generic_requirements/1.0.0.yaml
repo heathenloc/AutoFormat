@@ -1,0 +1,33 @@
+schema_version: domain-pack/1.0
+id: generic_requirements
+version: 1.0.0
+locales: [zh-CN, en-US]
+categories:
+  - id: deliverable
+    aliases: [交付物, output, deliverable]
+    risk: high
+  - id: format
+    aliases: [格式, format]
+    risk: normal
+  - id: length
+    aliases: [长度, 字数, length]
+    risk: high
+  - id: deadline
+    aliases: [截止时间, 交付日期, deadline]
+    risk: high
+  - id: content
+    aliases: [内容, content]
+    risk: normal
+  - id: safety
+    aliases: [安全, 合规, safety]
+    risk: critical
+  - id: reference
+    aliases: [参考, reference]
+    risk: low
+modality_lexicon:
+  must: [必须, 务必, 需要, must, required]
+  must_not: [不得, 禁止, 避免, must not, prohibited]
+  should: [建议, 最好, should, recommended]
+  may: [可以, 可选, may, optional]
+validators: [date_validator]
+compilers: [write_ad_script]

@@ -1,0 +1,105 @@
+{
+  "categories": [
+    {
+      "aliases": [
+        "交付物",
+        "output",
+        "deliverable"
+      ],
+      "id": "deliverable",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "格式",
+        "format"
+      ],
+      "id": "format",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "长度",
+        "字数",
+        "length"
+      ],
+      "id": "length",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "截止时间",
+        "交付日期",
+        "deadline"
+      ],
+      "id": "deadline",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "内容",
+        "content"
+      ],
+      "id": "content",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "安全",
+        "合规",
+        "safety"
+      ],
+      "id": "safety",
+      "risk": "critical"
+    },
+    {
+      "aliases": [
+        "参考",
+        "reference"
+      ],
+      "id": "reference",
+      "risk": "low"
+    }
+  ],
+  "compilers": [
+    "write_ad_script"
+  ],
+  "id": "generic_requirements",
+  "locales": [
+    "zh-CN",
+    "en-US"
+  ],
+  "modality_lexicon": {
+    "may": [
+      "可以",
+      "可选",
+      "may",
+      "optional"
+    ],
+    "must": [
+      "必须",
+      "务必",
+      "需要",
+      "must",
+      "required"
+    ],
+    "must_not": [
+      "不得",
+      "禁止",
+      "避免",
+      "must not",
+      "prohibited"
+    ],
+    "should": [
+      "建议",
+      "最好",
+      "should",
+      "recommended"
+    ]
+  },
+  "schema_version": "domain-pack/1.0",
+  "validators": [
+    "date_validator"
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,1909 @@
+{
+  "$defs": {
+    "AppliedDefault": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "source"
+      ],
+      "title": "AppliedDefault",
+      "type": "object"
+    },
+    "Conflict": {
+      "additionalProperties": false,
+      "properties": {
+        "downstream_policy": {
+          "$ref": "#/$defs/DownstreamPolicy"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Items",
+          "type": "array"
+        },
+        "reason_code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "topic",
+        "severity",
+        "items",
+        "reason_code",
+        "downstream_policy"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "ConsumerPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "must_enforce_blockers": {
+          "default": true,
+          "title": "Must Enforce Blockers",
+          "type": "boolean"
+        },
+        "must_not_infer_unresolved": {
+          "default": true,
+          "title": "Must Not Infer Unresolved",
+          "type": "boolean"
+        }
+      },
+      "title": "ConsumerPolicy",
+      "type": "object"
+    },
+    "DomainPackRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "title": "DomainPackRef",
+      "type": "object"
+    },
+    "DownstreamPolicy": {
+      "enum": [
+        "enforce",
+        "prefer",
+        "inform",
+        "do_not_assume",
+        "block"
+      ],
+      "title": "DownstreamPolicy",
+      "type": "string"
+    },
+    "EvidenceBackedItem": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "origin": {
+          "default": "source",
+          "enum": [
+            "source",
+            "user_revision"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "verification_basis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verification Basis",
+          "type": "array"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "verification_status",
+        "evidence_refs"
+      ],
+      "title": "EvidenceBackedItem",
+      "type": "object"
+    },
+    "EvidenceMatchStatus": {
+      "enum": [
+        "exact",
+        "normalized",
+        "invalid"
+      ],
+      "title": "EvidenceMatchStatus",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "integer"
+        },
+        "evidence_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "index_basis": {
+          "const": "unicode_code_point",
+          "default": "unicode_code_point",
+          "title": "Index Basis",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "match_status": {
+          "$ref": "#/$defs/EvidenceMatchStatus"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "quote_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Quote Sha256",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_id",
+        "block_id",
+        "start",
+        "end",
+        "quote",
+        "quote_sha256",
+        "locator",
+        "match_status"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "ExecutionBrief": {
+      "additionalProperties": false,
+      "properties": {
+        "additional_constraints": {
+          "items": {
+            "$ref": "#/$defs/ExecutionConstraint"
+          },
+          "title": "Additional Constraints",
+          "type": "array"
+        },
+        "applied_defaults": {
+          "items": {
+            "$ref": "#/$defs/AppliedDefault"
+          },
+          "title": "Applied Defaults",
+          "type": "array"
+        },
+        "consumer_policy": {
+          "$ref": "#/$defs/ConsumerPolicy"
+        },
+        "deliverables": {
+          "items": {
+            "$ref": "#/$defs/ExecutionConstraint"
+          },
+          "title": "Deliverables",
+          "type": "array"
+        },
+        "facts": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Facts",
+          "type": "object"
+        },
+        "hard_constraints": {
+          "items": {
+            "$ref": "#/$defs/ExecutionConstraint"
+          },
+          "title": "Hard Constraints",
+          "type": "array"
+        },
+        "locale": {
+          "default": "zh-CN",
+          "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+          "title": "Locale",
+          "type": "string"
+        },
+        "objective": {
+          "items": {
+            "$ref": "#/$defs/ExecutionItem"
+          },
+          "title": "Objective",
+          "type": "array"
+        },
+        "preferences": {
+          "items": {
+            "$ref": "#/$defs/ExecutionConstraint"
+          },
+          "title": "Preferences",
+          "type": "array"
+        },
+        "prohibitions": {
+          "items": {
+            "$ref": "#/$defs/ExecutionConstraint"
+          },
+          "title": "Prohibitions",
+          "type": "array"
+        },
+        "readiness": {
+          "$ref": "#/$defs/ExecutionReadiness"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/ExecutionItem"
+          },
+          "title": "References",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "execution-brief/1.0",
+          "default": "execution-brief/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_artifact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Artifact Id",
+          "type": "string"
+        },
+        "source_artifact_version": {
+          "exclusiveMinimum": 0,
+          "title": "Source Artifact Version",
+          "type": "integer"
+        },
+        "task_type": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Task Type",
+          "type": "string"
+        },
+        "unresolved": {
+          "items": {
+            "$ref": "#/$defs/ExecutionUnresolved"
+          },
+          "title": "Unresolved",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_type",
+        "source_artifact_id",
+        "source_artifact_version",
+        "readiness"
+      ],
+      "title": "ExecutionBrief",
+      "type": "object"
+    },
+    "ExecutionConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "downstream_policy": {
+          "$ref": "#/$defs/DownstreamPolicy"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/Priority"
+        },
+        "source_requirement_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Requirement Id"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "priority",
+        "downstream_policy"
+      ],
+      "title": "ExecutionConstraint",
+      "type": "object"
+    },
+    "ExecutionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "source_requirement_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Requirement Id"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value"
+      ],
+      "title": "ExecutionItem",
+      "type": "object"
+    },
+    "ExecutionReadiness": {
+      "enum": [
+        "ready",
+        "ready_with_warnings",
+        "blocked"
+      ],
+      "title": "ExecutionReadiness",
+      "type": "string"
+    },
+    "ExecutionUnresolved": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "downstream_policy": {
+          "enum": [
+            "do_not_assume",
+            "block"
+          ],
+          "title": "Downstream Policy",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "topic",
+        "description",
+        "downstream_policy"
+      ],
+      "title": "ExecutionUnresolved",
+      "type": "object"
+    },
+    "Extension": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Payload",
+          "type": "object"
+        },
+        "version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "version"
+      ],
+      "title": "Extension",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "Modality": {
+      "enum": [
+        "must",
+        "must_not",
+        "should",
+        "may",
+        "informational"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "ModelRole": {
+      "enum": [
+        "extractor",
+        "auditor",
+        "resolver",
+        "offline_judge"
+      ],
+      "title": "ModelRole",
+      "type": "string"
+    },
+    "Operator": {
+      "enum": [
+        "eq",
+        "neq",
+        "lt",
+        "lte",
+        "gt",
+        "gte",
+        "between",
+        "in",
+        "contains",
+        "matches",
+        "before",
+        "after",
+        "custom"
+      ],
+      "title": "Operator",
+      "type": "string"
+    },
+    "ParseDiagnostics": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict_count": {
+          "minimum": 0,
+          "title": "Conflict Count",
+          "type": "integer"
+        },
+        "coverage_ratio": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Coverage Ratio",
+          "type": "number"
+        },
+        "provider_calls": {
+          "items": {
+            "$ref": "#/$defs/ProviderCallRecord"
+          },
+          "title": "Provider Calls",
+          "type": "array"
+        },
+        "readiness_reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Readiness Reason Codes",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "parse-diagnostics/1.0",
+          "default": "parse-diagnostics/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stages": {
+          "items": {
+            "$ref": "#/$defs/StageRecord"
+          },
+          "title": "Stages",
+          "type": "array"
+        },
+        "unresolved_count": {
+          "minimum": 0,
+          "title": "Unresolved Count",
+          "type": "integer"
+        },
+        "warning_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warning Codes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "conflict_count",
+        "unresolved_count",
+        "coverage_ratio"
+      ],
+      "title": "ParseDiagnostics",
+      "type": "object"
+    },
+    "ParseManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_version": {
+          "exclusiveMinimum": 0,
+          "title": "Artifact Version",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "domain_pack": {
+          "$ref": "#/$defs/DomainPackRef"
+        },
+        "locale": {
+          "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+          "title": "Locale",
+          "type": "string"
+        },
+        "model_routes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Model Routes",
+          "type": "object"
+        },
+        "pipeline_version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Pipeline Version",
+          "type": "string"
+        },
+        "prompt_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Prompt Versions",
+          "type": "object"
+        },
+        "provider_calls": {
+          "items": {
+            "$ref": "#/$defs/ProviderCallRecord"
+          },
+          "title": "Provider Calls",
+          "type": "array"
+        },
+        "readiness_reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Readiness Reason Codes",
+          "type": "array"
+        },
+        "request_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Fingerprint",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "requested_task_types": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Requested Task Types",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "parse-manifest/1.0",
+          "default": "parse-manifest/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/PipelineSourceRecord"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "stages": {
+          "items": {
+            "$ref": "#/$defs/StageRecord"
+          },
+          "title": "Stages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "request_fingerprint",
+        "artifact_id",
+        "artifact_version",
+        "created_at",
+        "locale",
+        "pipeline_version",
+        "domain_pack",
+        "requested_task_types",
+        "prompt_versions",
+        "model_routes",
+        "sources",
+        "stages",
+        "provider_calls",
+        "readiness_reason_codes"
+      ],
+      "title": "ParseManifest",
+      "type": "object"
+    },
+    "ParseRenderings": {
+      "additionalProperties": false,
+      "properties": {
+        "markdown": {
+          "minLength": 1,
+          "title": "Markdown",
+          "type": "string"
+        }
+      },
+      "required": [
+        "markdown"
+      ],
+      "title": "ParseRenderings",
+      "type": "object"
+    },
+    "PipelineInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "model_configs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Model Configs",
+          "type": "object"
+        },
+        "parser_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Parser Versions",
+          "type": "object"
+        },
+        "prompt_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Prompt Versions",
+          "type": "object"
+        },
+        "version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "PipelineInfo",
+      "type": "object"
+    },
+    "PipelineSourceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "extraction_status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "failed"
+          ],
+          "title": "Extraction Status",
+          "type": "string"
+        },
+        "parser_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Parser Id",
+          "type": "string"
+        },
+        "parser_version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "sha256",
+        "parser_id",
+        "parser_version",
+        "extraction_status"
+      ],
+      "title": "PipelineSourceRecord",
+      "type": "object"
+    },
+    "Priority": {
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "ProviderCallRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "completion_status": {
+          "enum": [
+            "completed",
+            "refused",
+            "incomplete"
+          ],
+          "title": "Completion Status",
+          "type": "string"
+        },
+        "input_tokens": {
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "model_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "provider_alias": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Provider Alias",
+          "type": "string"
+        },
+        "provider_request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Provider Request Id"
+        },
+        "retry_count": {
+          "minimum": 0,
+          "title": "Retry Count",
+          "type": "integer"
+        },
+        "role": {
+          "$ref": "#/$defs/ModelRole"
+        }
+      },
+      "required": [
+        "role",
+        "provider_alias",
+        "model_id",
+        "provider_request_id",
+        "completion_status",
+        "input_tokens",
+        "output_tokens",
+        "latency_ms",
+        "retry_count"
+      ],
+      "title": "ProviderCallRecord",
+      "type": "object"
+    },
+    "QualityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "blocker_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Blocker Count",
+          "type": "integer"
+        },
+        "classified_clause_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Classified Clause Count",
+          "type": "integer"
+        },
+        "clause_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Clause Count",
+          "type": "integer"
+        },
+        "conflict_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Conflict Count",
+          "type": "integer"
+        },
+        "coverage_ratio": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Coverage Ratio",
+          "type": "number"
+        },
+        "evidence_validity_ratio": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Evidence Validity Ratio",
+          "type": "number"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "numeric_validation_ratio": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Numeric Validation Ratio",
+          "type": "number"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "provider_call_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Provider Call Count",
+          "type": "integer"
+        },
+        "readiness_reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Readiness Reason Codes",
+          "type": "array"
+        },
+        "source_extraction_quality": {
+          "additionalProperties": {
+            "enum": [
+              "complete",
+              "degraded",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "title": "Source Extraction Quality",
+          "type": "object"
+        },
+        "unclassified_clause_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unclassified Clause Count",
+          "type": "integer"
+        },
+        "unresolved_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unresolved Count",
+          "type": "integer"
+        }
+      },
+      "title": "QualityMetrics",
+      "type": "object"
+    },
+    "Readiness": {
+      "enum": [
+        "complete",
+        "usable_with_warnings",
+        "incomplete"
+      ],
+      "title": "Readiness",
+      "type": "string"
+    },
+    "ReferenceItem": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "origin": {
+          "default": "source",
+          "enum": [
+            "source",
+            "user_revision"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "relation": {
+          "default": "context",
+          "enum": [
+            "inspiration",
+            "may_emulate",
+            "must_not_copy",
+            "context"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "verification_basis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verification Basis",
+          "type": "array"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "verification_status",
+        "evidence_refs"
+      ],
+      "title": "ReferenceItem",
+      "type": "object"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RequirementCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "custom_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Category"
+        },
+        "downstream_policy": {
+          "$ref": "#/$defs/DownstreamPolicy"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "machine_checkability": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Machine Checkability",
+          "type": "string"
+        },
+        "modality": {
+          "$ref": "#/$defs/Modality"
+        },
+        "operator": {
+          "$ref": "#/$defs/Operator"
+        },
+        "origin": {
+          "default": "source",
+          "enum": [
+            "source",
+            "user_revision"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/Priority"
+        },
+        "scope": {
+          "$ref": "#/$defs/RequirementScope"
+        },
+        "semantic_key": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Key",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/RequirementValue"
+        },
+        "verification_basis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Verification Basis",
+          "type": "array"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "semantic_key",
+        "category",
+        "label",
+        "subject",
+        "modality",
+        "operator",
+        "value",
+        "scope",
+        "priority",
+        "machine_checkability",
+        "verification_status",
+        "evidence_refs",
+        "downstream_policy"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "RequirementCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "expression": {
+          "minLength": 1,
+          "title": "Expression",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression",
+        "evidence_refs"
+      ],
+      "title": "RequirementCondition",
+      "type": "object"
+    },
+    "RequirementIR": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_version": {
+          "exclusiveMinimum": 0,
+          "title": "Artifact Version",
+          "type": "integer"
+        },
+        "conflicts": {
+          "items": {
+            "$ref": "#/$defs/Conflict"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "domain_pack": {
+          "$ref": "#/$defs/DomainPackRef"
+        },
+        "evidence_index": {
+          "additionalProperties": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Evidence Index",
+          "type": "object"
+        },
+        "extensions": {
+          "items": {
+            "$ref": "#/$defs/Extension"
+          },
+          "title": "Extensions",
+          "type": "array"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/EvidenceBackedItem"
+          },
+          "title": "Facts",
+          "type": "array"
+        },
+        "locale": {
+          "default": "zh-CN",
+          "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+          "title": "Locale",
+          "type": "string"
+        },
+        "objectives": {
+          "items": {
+            "$ref": "#/$defs/EvidenceBackedItem"
+          },
+          "title": "Objectives",
+          "type": "array"
+        },
+        "pipeline": {
+          "$ref": "#/$defs/PipelineInfo"
+        },
+        "quality": {
+          "$ref": "#/$defs/QualityMetrics"
+        },
+        "readiness": {
+          "$ref": "#/$defs/Readiness"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/ReferenceItem"
+          },
+          "title": "References",
+          "type": "array"
+        },
+        "request_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/Requirement"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "requirement-ir/1.0",
+          "default": "requirement-ir/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_manifest": {
+          "items": {
+            "$ref": "#/$defs/SourceManifest"
+          },
+          "minItems": 1,
+          "title": "Source Manifest",
+          "type": "array"
+        },
+        "unclassified_content": {
+          "items": {
+            "$ref": "#/$defs/UnclassifiedContent"
+          },
+          "title": "Unclassified Content",
+          "type": "array"
+        },
+        "unresolved_items": {
+          "items": {
+            "$ref": "#/$defs/UnresolvedItem"
+          },
+          "title": "Unresolved Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "artifact_version",
+        "request_id",
+        "created_at",
+        "readiness",
+        "domain_pack",
+        "pipeline",
+        "source_manifest",
+        "quality"
+      ],
+      "title": "RequirementIR",
+      "type": "object"
+    },
+    "RequirementScope": {
+      "additionalProperties": false,
+      "properties": {
+        "applies_to": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Applies To",
+          "type": "array"
+        },
+        "excludes": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Excludes",
+          "type": "array"
+        }
+      },
+      "title": "RequirementScope",
+      "type": "object"
+    },
+    "RequirementValue": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type",
+        "amount"
+      ],
+      "title": "RequirementValue",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "blocker",
+        "warning",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SourceLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "section_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Section Path",
+          "type": "array"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        }
+      },
+      "title": "SourceLocator",
+      "type": "object"
+    },
+    "SourceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_size": {
+          "minimum": 0,
+          "title": "Byte Size",
+          "type": "integer"
+        },
+        "client_source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Client Source Id",
+          "type": "string"
+        },
+        "extraction_status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "failed"
+          ],
+          "title": "Extraction Status",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "txt",
+            "docx",
+            "pdf"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "language_hints": {
+          "items": {
+            "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+            "type": "string"
+          },
+          "title": "Language Hints",
+          "type": "array"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "parser_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Parser Id",
+          "type": "string"
+        },
+        "parser_version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "client_source_id",
+        "kind",
+        "media_type",
+        "byte_size",
+        "sha256",
+        "parser_id",
+        "parser_version",
+        "extraction_status"
+      ],
+      "title": "SourceManifest",
+      "type": "object"
+    },
+    "StageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "item_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "stage": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Stage",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "status",
+        "duration_ms"
+      ],
+      "title": "StageRecord",
+      "type": "object"
+    },
+    "UnclassifiedContent": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "reason_code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "evidence_refs",
+        "reason_code"
+      ],
+      "title": "UnclassifiedContent",
+      "type": "object"
+    },
+    "UnresolvedItem": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "downstream_policy": {
+          "enum": [
+            "do_not_assume",
+            "block"
+          ],
+          "title": "Downstream Policy",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "reason_code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "topic",
+        "description",
+        "severity",
+        "reason_code",
+        "evidence_refs",
+        "downstream_policy"
+      ],
+      "title": "UnresolvedItem",
+      "type": "object"
+    },
+    "VerificationStatus": {
+      "enum": [
+        "verified",
+        "verified_with_warning",
+        "unresolved",
+        "invalid"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.briefparser.local/parse-bundle/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Host-neutral result consumed by CLI, standalone API, or future integrations.",
+  "properties": {
+    "bundle_version": {
+      "const": "parse-bundle/1.0",
+      "default": "parse-bundle/1.0",
+      "title": "Bundle Version",
+      "type": "string"
+    },
+    "diagnostics": {
+      "$ref": "#/$defs/ParseDiagnostics"
+    },
+    "execution_briefs": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ExecutionBrief"
+      },
+      "propertyNames": {
+        "maxLength": 200,
+        "minLength": 1
+      },
+      "title": "Execution Briefs",
+      "type": "object"
+    },
+    "manifest": {
+      "$ref": "#/$defs/ParseManifest"
+    },
+    "renderings": {
+      "$ref": "#/$defs/ParseRenderings"
+    },
+    "requirement_ir": {
+      "$ref": "#/$defs/RequirementIR"
+    }
+  },
+  "required": [
+    "manifest",
+    "requirement_ir",
+    "execution_briefs",
+    "renderings",
+    "diagnostics"
+  ],
+  "title": "ParseBundle",
+  "type": "object"
+}

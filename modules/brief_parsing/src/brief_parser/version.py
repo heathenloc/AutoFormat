@@ -1,0 +1,12 @@
+"""Package, pipeline, and public contract versions."""
+
+__version__ = "0.9.0"
+PIPELINE_VERSION = "1.2.0"
+PARSE_BUNDLE_VERSION = "parse-bundle/1.0"
+PARSE_DIAGNOSTICS_VERSION = "parse-diagnostics/1.0"
+REQUIREMENT_IR_SCHEMA_VERSION = "requirement-ir/1.0"
+PARSE_MANIFEST_SCHEMA_VERSION = "parse-manifest/1.0"
+EXECUTION_BRIEF_SCHEMA_VERSION = "execution-brief/1.0"
+DOMAIN_PACK_SCHEMA_VERSION = "domain-pack/1.0"
+GOLDEN_DATASET_SCHEMA_VERSION = "golden-dataset/1.0"
+EVALUATION_REPORT_SCHEMA_VERSION = "evaluation-report/1.0"

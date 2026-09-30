@@ -1,0 +1,338 @@
+{
+  "$defs": {
+    "CoverageClassification": {
+      "enum": [
+        "fact",
+        "objective",
+        "requirement",
+        "reference",
+        "context",
+        "duplicate",
+        "unclassified"
+      ],
+      "title": "CoverageClassification",
+      "type": "string"
+    },
+    "GoldenAnnotations": {
+      "additionalProperties": false,
+      "properties": {
+        "clause_ledger": {
+          "items": {
+            "$ref": "#/$defs/GoldenClause"
+          },
+          "minItems": 1,
+          "title": "Clause Ledger",
+          "type": "array"
+        },
+        "conflicts": {
+          "items": {
+            "$ref": "#/$defs/GoldenConflict"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "evidence_quotes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Quotes",
+          "type": "array"
+        },
+        "expected_readiness": {
+          "$ref": "#/$defs/Readiness"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/GoldenFact"
+          },
+          "title": "Facts",
+          "type": "array"
+        },
+        "prompt_injection": {
+          "default": false,
+          "title": "Prompt Injection",
+          "type": "boolean"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/GoldenRequirement"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "unresolved": {
+          "items": {
+            "$ref": "#/$defs/GoldenUnresolved"
+          },
+          "title": "Unresolved",
+          "type": "array"
+        }
+      },
+      "required": [
+        "clause_ledger",
+        "expected_readiness"
+      ],
+      "title": "GoldenAnnotations",
+      "type": "object"
+    },
+    "GoldenClause": {
+      "additionalProperties": false,
+      "properties": {
+        "classification": {
+          "$ref": "#/$defs/CoverageClassification"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "classification"
+      ],
+      "title": "GoldenClause",
+      "type": "object"
+    },
+    "GoldenConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic",
+        "severity"
+      ],
+      "title": "GoldenConflict",
+      "type": "object"
+    },
+    "GoldenDatasetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "$ref": "#/$defs/GoldenAnnotations"
+        },
+        "category": {
+          "enum": [
+            "advertising",
+            "edge",
+            "general"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "domain_pack_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Domain Pack Id",
+          "type": "string"
+        },
+        "domain_pack_version": {
+          "title": "Domain Pack Version",
+          "type": "string"
+        },
+        "locale": {
+          "default": "zh-CN",
+          "title": "Locale",
+          "type": "string"
+        },
+        "repeat": {
+          "exclusiveMinimum": 0,
+          "title": "Repeat",
+          "type": "integer"
+        },
+        "requested_task_types": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Requested Task Types",
+          "type": "array"
+        },
+        "source_template": {
+          "minLength": 1,
+          "title": "Source Template",
+          "type": "string"
+        },
+        "template_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "category",
+        "repeat",
+        "domain_pack_id",
+        "domain_pack_version",
+        "requested_task_types",
+        "source_template",
+        "annotations"
+      ],
+      "title": "GoldenDatasetTemplate",
+      "type": "object"
+    },
+    "GoldenFact": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_quotes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Quotes",
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "evidence_quotes"
+      ],
+      "title": "GoldenFact",
+      "type": "object"
+    },
+    "GoldenRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_quotes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Quotes",
+          "type": "array"
+        },
+        "priority": {
+          "$ref": "#/$defs/Priority"
+        },
+        "semantic_key": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "semantic_key",
+        "priority",
+        "evidence_quotes"
+      ],
+      "title": "GoldenRequirement",
+      "type": "object"
+    },
+    "GoldenUnresolved": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic",
+        "severity"
+      ],
+      "title": "GoldenUnresolved",
+      "type": "object"
+    },
+    "Priority": {
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "Readiness": {
+      "enum": [
+        "complete",
+        "usable_with_warnings",
+        "incomplete"
+      ],
+      "title": "Readiness",
+      "type": "string"
+    },
+    "Severity": {
+      "enum": [
+        "blocker",
+        "warning",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.briefparser.local/golden-dataset/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "dataset_version": {
+      "const": "golden-dataset/1.0",
+      "title": "Dataset Version",
+      "type": "string"
+    },
+    "expected_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "advertising",
+          "edge",
+          "general"
+        ]
+      },
+      "title": "Expected Counts",
+      "type": "object"
+    },
+    "provenance": {
+      "enum": [
+        "synthetic",
+        "public_license",
+        "deidentified"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "templates": {
+      "items": {
+        "$ref": "#/$defs/GoldenDatasetTemplate"
+      },
+      "minItems": 1,
+      "title": "Templates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "dataset_version",
+    "provenance",
+    "expected_counts",
+    "templates"
+  ],
+  "title": "GoldenDatasetSource",
+  "type": "object"
+}

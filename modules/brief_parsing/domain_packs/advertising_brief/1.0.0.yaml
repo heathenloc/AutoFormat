@@ -1,0 +1,49 @@
+schema_version: domain-pack/1.0
+id: advertising_brief
+version: 1.0.0
+locales: [zh-CN]
+categories:
+  - id: brand
+    aliases: [品牌, brand]
+    risk: high
+  - id: audience
+    aliases: [目标受众, 人群, audience]
+    risk: high
+  - id: objective
+    aliases: [传播目标, 营销目标, objective]
+    risk: high
+  - id: deliverable
+    aliases: [交付物, 成片, deliverable]
+    risk: high
+  - id: duration
+    aliases: [时长, 片长, 视频长度]
+    risk: high
+  - id: call_to_action
+    aliases: [CTA, 行动号召, 引导语]
+    risk: critical
+  - id: talking_point
+    aliases: [卖点, 信息点, talking point]
+    risk: high
+  - id: prohibited_content
+    aliases: [禁用内容, 禁止项, prohibited content]
+    risk: critical
+  - id: disclosure
+    aliases: [广告披露, 声明, disclosure]
+    risk: critical
+  - id: tone
+    aliases: [语气, 调性, tone]
+    risk: normal
+  - id: platform
+    aliases: [平台, 渠道, platform]
+    risk: normal
+  - id: deadline
+    aliases: [截止时间, 交付日期, deadline]
+    risk: high
+modality_lexicon:
+  must: [必须, 务必, 需要]
+  must_not: [不得, 禁止, 避免]
+  should: [建议, 最好]
+  may: [可以, 可选]
+  informational: [仅供参考, 背景信息]
+validators: [duration_validator, date_validator]
+compilers: [write_ad_script]

@@ -1,0 +1,16 @@
+# Local build and runtime artifacts
+runtime/
+.venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/bin/
+**/obj/
+**/dist/
+**/build/
+**/node_modules/
+**/.env
+**/.env.*
+!**/.env.example

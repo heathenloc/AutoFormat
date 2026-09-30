@@ -1,0 +1,3 @@
+# Keep the imported Brief Parsing snapshot byte-for-byte stable across platforms.
+# Other project files also retain their authored line endings.
+* -text

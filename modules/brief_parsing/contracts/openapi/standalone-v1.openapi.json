@@ -1,0 +1,2449 @@
+{
+  "components": {
+    "schemas": {
+      "AppliedDefault": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "source": {
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value",
+          "source"
+        ],
+        "title": "AppliedDefault",
+        "type": "object"
+      },
+      "Body_create_parse_job_v1_parse_jobs_post": {
+        "properties": {
+          "request": {
+            "title": "Request",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "request",
+          "sources"
+        ],
+        "title": "Body_create_parse_job_v1_parse_jobs_post",
+        "type": "object"
+      },
+      "Conflict": {
+        "additionalProperties": false,
+        "properties": {
+          "downstream_policy": {
+            "$ref": "#/components/schemas/DownstreamPolicy"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 2,
+            "title": "Items",
+            "type": "array"
+          },
+          "reason_code": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason Code",
+            "type": "string"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "topic": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "topic",
+          "severity",
+          "items",
+          "reason_code",
+          "downstream_policy"
+        ],
+        "title": "Conflict",
+        "type": "object"
+      },
+      "ConsumerPolicy": {
+        "additionalProperties": false,
+        "properties": {
+          "must_enforce_blockers": {
+            "default": true,
+            "title": "Must Enforce Blockers",
+            "type": "boolean"
+          },
+          "must_not_infer_unresolved": {
+            "default": true,
+            "title": "Must Not Infer Unresolved",
+            "type": "boolean"
+          }
+        },
+        "title": "ConsumerPolicy",
+        "type": "object"
+      },
+      "CreateParseJobResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Job Id",
+            "type": "string"
+          },
+          "result_url": {
+            "title": "Result Url",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "status_url": {
+            "title": "Status Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "status",
+          "status_url",
+          "result_url"
+        ],
+        "title": "CreateParseJobResponse",
+        "type": "object"
+      },
+      "DomainPackRef": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "title": "DomainPackRef",
+        "type": "object"
+      },
+      "DownstreamPolicy": {
+        "enum": [
+          "enforce",
+          "prefer",
+          "inform",
+          "do_not_assume",
+          "block"
+        ],
+        "title": "DownstreamPolicy",
+        "type": "string"
+      },
+      "ErrorCode": {
+        "enum": [
+          "INVALID_REQUEST",
+          "SOURCE_UNSUPPORTED",
+          "SOURCE_TOO_LARGE",
+          "SOURCE_TOO_MANY_PAGES",
+          "SOURCE_EXTRACTED_TOO_LARGE",
+          "SOURCE_MIME_MISMATCH",
+          "SOURCE_TEXT_ENCODING",
+          "SOURCE_ARCHIVE_INVALID",
+          "SOURCE_ARCHIVE_PATH_TRAVERSAL",
+          "SOURCE_ARCHIVE_BOMB",
+          "SOURCE_XML_UNSAFE",
+          "SOURCE_MACRO_ENABLED",
+          "SOURCE_ENCRYPTED",
+          "SOURCE_PDF_INVALID",
+          "SOURCE_SCANNED_PDF",
+          "SOURCE_EXTRACTION_FAILED",
+          "SOURCE_EXTRACTION_QUALITY",
+          "SOURCE_PARSER_TIMEOUT",
+          "SOURCE_PARSER_RESOURCE_LIMIT",
+          "CLAUSE_TOO_LARGE",
+          "CLAUSE_EVIDENCE_INVALID",
+          "DOMAIN_PACK_INVALID",
+          "JOB_NOT_FOUND",
+          "JOB_NOT_READY",
+          "PROVIDER_TRANSIENT",
+          "PROVIDER_REFUSAL",
+          "PROVIDER_OUTPUT_INVALID",
+          "EVIDENCE_INVALID",
+          "IDEMPOTENCY_CONFLICT",
+          "INTERNAL_ERROR"
+        ],
+        "title": "ErrorCode",
+        "type": "string"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable",
+          "details"
+        ],
+        "title": "ErrorDetail",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          },
+          "trace_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Trace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "trace_id"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "EvidenceBackedItem": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "origin": {
+            "default": "source",
+            "enum": [
+              "source",
+              "user_revision"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "verification_basis": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Verification Basis",
+            "type": "array"
+          },
+          "verification_status": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value",
+          "verification_status",
+          "evidence_refs"
+        ],
+        "title": "EvidenceBackedItem",
+        "type": "object"
+      },
+      "EvidenceMatchStatus": {
+        "enum": [
+          "exact",
+          "normalized",
+          "invalid"
+        ],
+        "title": "EvidenceMatchStatus",
+        "type": "string"
+      },
+      "EvidenceReference": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Block Id",
+            "type": "string"
+          },
+          "end": {
+            "exclusiveMinimum": 0.0,
+            "title": "End",
+            "type": "integer"
+          },
+          "evidence_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "index_basis": {
+            "const": "unicode_code_point",
+            "default": "unicode_code_point",
+            "title": "Index Basis",
+            "type": "string"
+          },
+          "locator": {
+            "$ref": "#/components/schemas/SourceLocator"
+          },
+          "match_status": {
+            "$ref": "#/components/schemas/EvidenceMatchStatus"
+          },
+          "quote": {
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "quote_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Quote Sha256",
+            "type": "string"
+          },
+          "source_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "start": {
+            "minimum": 0.0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "source_id",
+          "block_id",
+          "start",
+          "end",
+          "quote",
+          "quote_sha256",
+          "locator",
+          "match_status"
+        ],
+        "title": "EvidenceReference",
+        "type": "object"
+      },
+      "ExecutionBrief": {
+        "additionalProperties": false,
+        "properties": {
+          "additional_constraints": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionConstraint"
+            },
+            "title": "Additional Constraints",
+            "type": "array"
+          },
+          "applied_defaults": {
+            "items": {
+              "$ref": "#/components/schemas/AppliedDefault"
+            },
+            "title": "Applied Defaults",
+            "type": "array"
+          },
+          "consumer_policy": {
+            "$ref": "#/components/schemas/ConsumerPolicy"
+          },
+          "deliverables": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionConstraint"
+            },
+            "title": "Deliverables",
+            "type": "array"
+          },
+          "facts": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Facts",
+            "type": "object"
+          },
+          "hard_constraints": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionConstraint"
+            },
+            "title": "Hard Constraints",
+            "type": "array"
+          },
+          "locale": {
+            "default": "zh-CN",
+            "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "objective": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionItem"
+            },
+            "title": "Objective",
+            "type": "array"
+          },
+          "preferences": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionConstraint"
+            },
+            "title": "Preferences",
+            "type": "array"
+          },
+          "prohibitions": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionConstraint"
+            },
+            "title": "Prohibitions",
+            "type": "array"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/ExecutionReadiness"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionItem"
+            },
+            "title": "References",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "execution-brief/1.0",
+            "default": "execution-brief/1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_artifact_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source Artifact Id",
+            "type": "string"
+          },
+          "source_artifact_version": {
+            "exclusiveMinimum": 0.0,
+            "title": "Source Artifact Version",
+            "type": "integer"
+          },
+          "task_type": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Task Type",
+            "type": "string"
+          },
+          "unresolved": {
+            "items": {
+              "$ref": "#/components/schemas/ExecutionUnresolved"
+            },
+            "title": "Unresolved",
+            "type": "array"
+          }
+        },
+        "required": [
+          "task_type",
+          "source_artifact_id",
+          "source_artifact_version",
+          "readiness"
+        ],
+        "title": "ExecutionBrief",
+        "type": "object"
+      },
+      "ExecutionConstraint": {
+        "additionalProperties": false,
+        "properties": {
+          "condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition"
+          },
+          "downstream_policy": {
+            "$ref": "#/components/schemas/DownstreamPolicy"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "source_requirement_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Requirement Id"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value",
+          "priority",
+          "downstream_policy"
+        ],
+        "title": "ExecutionConstraint",
+        "type": "object"
+      },
+      "ExecutionItem": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "source_requirement_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Requirement Id"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value"
+        ],
+        "title": "ExecutionItem",
+        "type": "object"
+      },
+      "ExecutionReadiness": {
+        "enum": [
+          "ready",
+          "ready_with_warnings",
+          "blocked"
+        ],
+        "title": "ExecutionReadiness",
+        "type": "string"
+      },
+      "ExecutionUnresolved": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "downstream_policy": {
+            "enum": [
+              "do_not_assume",
+              "block"
+            ],
+            "title": "Downstream Policy",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "topic": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "topic",
+          "description",
+          "downstream_policy"
+        ],
+        "title": "ExecutionUnresolved",
+        "type": "object"
+      },
+      "Extension": {
+        "additionalProperties": false,
+        "properties": {
+          "namespace": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Namespace",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Payload",
+            "type": "object"
+          },
+          "version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "version"
+        ],
+        "title": "Extension",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "ok",
+              "ready",
+              "not_ready"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "JobStatus": {
+        "enum": [
+          "queued",
+          "validating_input",
+          "extracting",
+          "quality_checking",
+          "segmenting",
+          "extracting_requirements",
+          "auditing_coverage",
+          "validating_requirements",
+          "resolving",
+          "compiling",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "title": "JobStatus",
+        "type": "string"
+      },
+      "JsonValue": {},
+      "Modality": {
+        "enum": [
+          "must",
+          "must_not",
+          "should",
+          "may",
+          "informational"
+        ],
+        "title": "Modality",
+        "type": "string"
+      },
+      "ModelRole": {
+        "enum": [
+          "extractor",
+          "auditor",
+          "resolver",
+          "offline_judge"
+        ],
+        "title": "ModelRole",
+        "type": "string"
+      },
+      "Operator": {
+        "enum": [
+          "eq",
+          "neq",
+          "lt",
+          "lte",
+          "gt",
+          "gte",
+          "between",
+          "in",
+          "contains",
+          "matches",
+          "before",
+          "after",
+          "custom"
+        ],
+        "title": "Operator",
+        "type": "string"
+      },
+      "ParseBundle": {
+        "additionalProperties": false,
+        "description": "Host-neutral result consumed by CLI, standalone API, or future integrations.",
+        "properties": {
+          "bundle_version": {
+            "const": "parse-bundle/1.0",
+            "default": "parse-bundle/1.0",
+            "title": "Bundle Version",
+            "type": "string"
+          },
+          "diagnostics": {
+            "$ref": "#/components/schemas/ParseDiagnostics"
+          },
+          "execution_briefs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ExecutionBrief"
+            },
+            "propertyNames": {
+              "maxLength": 200,
+              "minLength": 1
+            },
+            "title": "Execution Briefs",
+            "type": "object"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/ParseManifest"
+          },
+          "renderings": {
+            "$ref": "#/components/schemas/ParseRenderings"
+          },
+          "requirement_ir": {
+            "$ref": "#/components/schemas/RequirementIR"
+          }
+        },
+        "required": [
+          "manifest",
+          "requirement_ir",
+          "execution_briefs",
+          "renderings",
+          "diagnostics"
+        ],
+        "title": "ParseBundle",
+        "type": "object"
+      },
+      "ParseDiagnostics": {
+        "additionalProperties": false,
+        "properties": {
+          "conflict_count": {
+            "minimum": 0.0,
+            "title": "Conflict Count",
+            "type": "integer"
+          },
+          "coverage_ratio": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Coverage Ratio",
+            "type": "number"
+          },
+          "provider_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderCallRecord"
+            },
+            "title": "Provider Calls",
+            "type": "array"
+          },
+          "readiness_reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Readiness Reason Codes",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "parse-diagnostics/1.0",
+            "default": "parse-diagnostics/1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageRecord"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "unresolved_count": {
+            "minimum": 0.0,
+            "title": "Unresolved Count",
+            "type": "integer"
+          },
+          "warning_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warning Codes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "conflict_count",
+          "unresolved_count",
+          "coverage_ratio"
+        ],
+        "title": "ParseDiagnostics",
+        "type": "object"
+      },
+      "ParseJobStatusResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "job_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Job Id",
+            "type": "string"
+          },
+          "readiness": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Readiness"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          }
+        },
+        "required": [
+          "job_id",
+          "status"
+        ],
+        "title": "ParseJobStatusResponse",
+        "type": "object"
+      },
+      "ParseManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "artifact_version": {
+            "exclusiveMinimum": 0.0,
+            "title": "Artifact Version",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "domain_pack": {
+            "$ref": "#/components/schemas/DomainPackRef"
+          },
+          "locale": {
+            "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "model_routes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Model Routes",
+            "type": "object"
+          },
+          "pipeline_version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Pipeline Version",
+            "type": "string"
+          },
+          "prompt_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Prompt Versions",
+            "type": "object"
+          },
+          "provider_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderCallRecord"
+            },
+            "title": "Provider Calls",
+            "type": "array"
+          },
+          "readiness_reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Readiness Reason Codes",
+            "type": "array"
+          },
+          "request_fingerprint": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Request Fingerprint",
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "requested_task_types": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Requested Task Types",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "parse-manifest/1.0",
+            "default": "parse-manifest/1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/PipelineSourceRecord"
+            },
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageRecord"
+            },
+            "title": "Stages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "request_id",
+          "request_fingerprint",
+          "artifact_id",
+          "artifact_version",
+          "created_at",
+          "locale",
+          "pipeline_version",
+          "domain_pack",
+          "requested_task_types",
+          "prompt_versions",
+          "model_routes",
+          "sources",
+          "stages",
+          "provider_calls",
+          "readiness_reason_codes"
+        ],
+        "title": "ParseManifest",
+        "type": "object"
+      },
+      "ParseRenderings": {
+        "additionalProperties": false,
+        "properties": {
+          "markdown": {
+            "minLength": 1,
+            "title": "Markdown",
+            "type": "string"
+          }
+        },
+        "required": [
+          "markdown"
+        ],
+        "title": "ParseRenderings",
+        "type": "object"
+      },
+      "PipelineInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "model_configs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Model Configs",
+            "type": "object"
+          },
+          "parser_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Parser Versions",
+            "type": "object"
+          },
+          "prompt_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Prompt Versions",
+            "type": "object"
+          },
+          "version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "PipelineInfo",
+        "type": "object"
+      },
+      "PipelineSourceRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "extraction_status": {
+            "enum": [
+              "complete",
+              "incomplete",
+              "failed"
+            ],
+            "title": "Extraction Status",
+            "type": "string"
+          },
+          "parser_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Parser Id",
+            "type": "string"
+          },
+          "parser_version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "source_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "sha256",
+          "parser_id",
+          "parser_version",
+          "extraction_status"
+        ],
+        "title": "PipelineSourceRecord",
+        "type": "object"
+      },
+      "Priority": {
+        "enum": [
+          "critical",
+          "high",
+          "normal",
+          "low"
+        ],
+        "title": "Priority",
+        "type": "string"
+      },
+      "ProviderCallRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "completion_status": {
+            "enum": [
+              "completed",
+              "refused",
+              "incomplete"
+            ],
+            "title": "Completion Status",
+            "type": "string"
+          },
+          "input_tokens": {
+            "minimum": 0.0,
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "latency_ms": {
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "model_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Model Id",
+            "type": "string"
+          },
+          "output_tokens": {
+            "minimum": 0.0,
+            "title": "Output Tokens",
+            "type": "integer"
+          },
+          "provider_alias": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Provider Alias",
+            "type": "string"
+          },
+          "provider_request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Request Id"
+          },
+          "retry_count": {
+            "minimum": 0.0,
+            "title": "Retry Count",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ModelRole"
+          }
+        },
+        "required": [
+          "role",
+          "provider_alias",
+          "model_id",
+          "provider_request_id",
+          "completion_status",
+          "input_tokens",
+          "output_tokens",
+          "latency_ms",
+          "retry_count"
+        ],
+        "title": "ProviderCallRecord",
+        "type": "object"
+      },
+      "QualityMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "blocker_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Blocker Count",
+            "type": "integer"
+          },
+          "classified_clause_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Classified Clause Count",
+            "type": "integer"
+          },
+          "clause_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Clause Count",
+            "type": "integer"
+          },
+          "conflict_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Conflict Count",
+            "type": "integer"
+          },
+          "coverage_ratio": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Coverage Ratio",
+            "type": "number"
+          },
+          "evidence_validity_ratio": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Evidence Validity Ratio",
+            "type": "number"
+          },
+          "input_tokens": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "latency_ms": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "numeric_validation_ratio": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Numeric Validation Ratio",
+            "type": "number"
+          },
+          "output_tokens": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Output Tokens",
+            "type": "integer"
+          },
+          "provider_call_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Provider Call Count",
+            "type": "integer"
+          },
+          "readiness_reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Readiness Reason Codes",
+            "type": "array"
+          },
+          "source_extraction_quality": {
+            "additionalProperties": {
+              "enum": [
+                "complete",
+                "degraded",
+                "failed"
+              ],
+              "type": "string"
+            },
+            "title": "Source Extraction Quality",
+            "type": "object"
+          },
+          "unclassified_clause_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Unclassified Clause Count",
+            "type": "integer"
+          },
+          "unresolved_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Unresolved Count",
+            "type": "integer"
+          }
+        },
+        "title": "QualityMetrics",
+        "type": "object"
+      },
+      "Readiness": {
+        "enum": [
+          "complete",
+          "usable_with_warnings",
+          "incomplete"
+        ],
+        "title": "Readiness",
+        "type": "string"
+      },
+      "ReferenceItem": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "origin": {
+            "default": "source",
+            "enum": [
+              "source",
+              "user_revision"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "relation": {
+            "default": "context",
+            "enum": [
+              "inspiration",
+              "may_emulate",
+              "must_not_copy",
+              "context"
+            ],
+            "title": "Relation",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "verification_basis": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Verification Basis",
+            "type": "array"
+          },
+          "verification_status": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value",
+          "verification_status",
+          "evidence_refs"
+        ],
+        "title": "ReferenceItem",
+        "type": "object"
+      },
+      "Requirement": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Category",
+            "type": "string"
+          },
+          "condition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequirementCondition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "custom_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Category"
+          },
+          "downstream_policy": {
+            "$ref": "#/components/schemas/DownstreamPolicy"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "machine_checkability": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Machine Checkability",
+            "type": "string"
+          },
+          "modality": {
+            "$ref": "#/components/schemas/Modality"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/Operator"
+          },
+          "origin": {
+            "default": "source",
+            "enum": [
+              "source",
+              "user_revision"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/RequirementScope"
+          },
+          "semantic_key": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Semantic Key",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Subject",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/RequirementValue"
+          },
+          "verification_basis": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Verification Basis",
+            "type": "array"
+          },
+          "verification_status": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          }
+        },
+        "required": [
+          "id",
+          "semantic_key",
+          "category",
+          "label",
+          "subject",
+          "modality",
+          "operator",
+          "value",
+          "scope",
+          "priority",
+          "machine_checkability",
+          "verification_status",
+          "evidence_refs",
+          "downstream_policy"
+        ],
+        "title": "Requirement",
+        "type": "object"
+      },
+      "RequirementCondition": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "expression": {
+            "minLength": 1,
+            "title": "Expression",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expression",
+          "evidence_refs"
+        ],
+        "title": "RequirementCondition",
+        "type": "object"
+      },
+      "RequirementIR": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "artifact_version": {
+            "exclusiveMinimum": 0.0,
+            "title": "Artifact Version",
+            "type": "integer"
+          },
+          "conflicts": {
+            "items": {
+              "$ref": "#/components/schemas/Conflict"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "domain_pack": {
+            "$ref": "#/components/schemas/DomainPackRef"
+          },
+          "evidence_index": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "propertyNames": {
+              "maxLength": 200,
+              "minLength": 1
+            },
+            "title": "Evidence Index",
+            "type": "object"
+          },
+          "extensions": {
+            "items": {
+              "$ref": "#/components/schemas/Extension"
+            },
+            "title": "Extensions",
+            "type": "array"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceBackedItem"
+            },
+            "title": "Facts",
+            "type": "array"
+          },
+          "locale": {
+            "default": "zh-CN",
+            "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "objectives": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceBackedItem"
+            },
+            "title": "Objectives",
+            "type": "array"
+          },
+          "pipeline": {
+            "$ref": "#/components/schemas/PipelineInfo"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/QualityMetrics"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/Readiness"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/ReferenceItem"
+            },
+            "title": "References",
+            "type": "array"
+          },
+          "request_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "requirements": {
+            "items": {
+              "$ref": "#/components/schemas/Requirement"
+            },
+            "title": "Requirements",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "requirement-ir/1.0",
+            "default": "requirement-ir/1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_manifest": {
+            "items": {
+              "$ref": "#/components/schemas/SourceManifest"
+            },
+            "minItems": 1,
+            "title": "Source Manifest",
+            "type": "array"
+          },
+          "unclassified_content": {
+            "items": {
+              "$ref": "#/components/schemas/UnclassifiedContent"
+            },
+            "title": "Unclassified Content",
+            "type": "array"
+          },
+          "unresolved_items": {
+            "items": {
+              "$ref": "#/components/schemas/UnresolvedItem"
+            },
+            "title": "Unresolved Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "artifact_version",
+          "request_id",
+          "created_at",
+          "readiness",
+          "domain_pack",
+          "pipeline",
+          "source_manifest",
+          "quality"
+        ],
+        "title": "RequirementIR",
+        "type": "object"
+      },
+      "RequirementScope": {
+        "additionalProperties": false,
+        "properties": {
+          "applies_to": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Applies To",
+            "type": "array"
+          },
+          "excludes": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Excludes",
+            "type": "array"
+          }
+        },
+        "title": "RequirementScope",
+        "type": "object"
+      },
+      "RequirementValue": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "type": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Type",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "type",
+          "amount"
+        ],
+        "title": "RequirementValue",
+        "type": "object"
+      },
+      "Severity": {
+        "enum": [
+          "blocker",
+          "warning",
+          "info"
+        ],
+        "title": "Severity",
+        "type": "string"
+      },
+      "SourceLocator": {
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "paragraph": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paragraph"
+          },
+          "section_path": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Section Path",
+            "type": "array"
+          },
+          "table": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Table"
+          }
+        },
+        "title": "SourceLocator",
+        "type": "object"
+      },
+      "SourceManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_size": {
+            "minimum": 0.0,
+            "title": "Byte Size",
+            "type": "integer"
+          },
+          "client_source_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Client Source Id",
+            "type": "string"
+          },
+          "extraction_status": {
+            "enum": [
+              "complete",
+              "incomplete",
+              "failed"
+            ],
+            "title": "Extraction Status",
+            "type": "string"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "kind": {
+            "enum": [
+              "text",
+              "txt",
+              "docx",
+              "pdf"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "language_hints": {
+            "items": {
+              "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+              "type": "string"
+            },
+            "title": "Language Hints",
+            "type": "array"
+          },
+          "media_type": {
+            "title": "Media Type",
+            "type": "string"
+          },
+          "parser_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Parser Id",
+            "type": "string"
+          },
+          "parser_version": {
+            "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "source_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "source_id",
+          "client_source_id",
+          "kind",
+          "media_type",
+          "byte_size",
+          "sha256",
+          "parser_id",
+          "parser_version",
+          "extraction_status"
+        ],
+        "title": "SourceManifest",
+        "type": "object"
+      },
+      "StageRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_ms": {
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "item_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Item Count",
+            "type": "integer"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "stage": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Stage",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "completed",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "status",
+          "duration_ms"
+        ],
+        "title": "StageRecord",
+        "type": "object"
+      },
+      "UnclassifiedContent": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "reason_code": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "evidence_refs",
+          "reason_code"
+        ],
+        "title": "UnclassifiedContent",
+        "type": "object"
+      },
+      "UnresolvedItem": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "downstream_policy": {
+            "enum": [
+              "do_not_assume",
+              "block"
+            ],
+            "title": "Downstream Policy",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "reason_code": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason Code",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "topic": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "topic",
+          "description",
+          "severity",
+          "reason_code",
+          "evidence_refs",
+          "downstream_policy"
+        ],
+        "title": "UnresolvedItem",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VerificationStatus": {
+        "enum": [
+          "verified",
+          "verified_with_warning",
+          "unresolved",
+          "invalid"
+        ],
+        "title": "VerificationStatus",
+        "type": "string"
+      },
+      "VersionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "domain_pack": {
+            "title": "Domain Pack",
+            "type": "string"
+          },
+          "execution_brief": {
+            "title": "Execution Brief",
+            "type": "string"
+          },
+          "package": {
+            "title": "Package",
+            "type": "string"
+          },
+          "parse_bundle": {
+            "title": "Parse Bundle",
+            "type": "string"
+          },
+          "parse_manifest": {
+            "title": "Parse Manifest",
+            "type": "string"
+          },
+          "pipeline": {
+            "title": "Pipeline",
+            "type": "string"
+          },
+          "requirement_ir": {
+            "title": "Requirement Ir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "package",
+          "pipeline",
+          "parse_bundle",
+          "parse_manifest",
+          "requirement_ir",
+          "execution_brief",
+          "domain_pack"
+        ],
+        "title": "VersionResponse",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Brief Parser Standalone API",
+    "version": "0.9.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "health_live_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health Live"
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "health_ready_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health Ready"
+      }
+    },
+    "/v1/parse-jobs": {
+      "post": {
+        "operationId": "create_parse_job_v1_parse_jobs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_parse_job_v1_parse_jobs_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateParseJobResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Parse Job"
+      }
+    },
+    "/v1/parse-jobs/{job_id}": {
+      "delete": {
+        "operationId": "delete_parse_job_v1_parse_jobs__job_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Parse Job"
+      },
+      "get": {
+        "operationId": "get_parse_job_v1_parse_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseJobStatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Parse Job"
+      }
+    },
+    "/v1/parse-jobs/{job_id}/result": {
+      "get": {
+        "operationId": "get_parse_job_result_v1_parse_jobs__job_id__result_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseBundle"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Parse Job Result"
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "version_version_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Version"
+      }
+    }
+  }
+}

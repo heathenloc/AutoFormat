@@ -1,0 +1,367 @@
+{
+  "$defs": {
+    "AppliedDefault": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "source"
+      ],
+      "title": "AppliedDefault",
+      "type": "object"
+    },
+    "ConsumerPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "must_enforce_blockers": {
+          "default": true,
+          "title": "Must Enforce Blockers",
+          "type": "boolean"
+        },
+        "must_not_infer_unresolved": {
+          "default": true,
+          "title": "Must Not Infer Unresolved",
+          "type": "boolean"
+        }
+      },
+      "title": "ConsumerPolicy",
+      "type": "object"
+    },
+    "DownstreamPolicy": {
+      "enum": [
+        "enforce",
+        "prefer",
+        "inform",
+        "do_not_assume",
+        "block"
+      ],
+      "title": "DownstreamPolicy",
+      "type": "string"
+    },
+    "ExecutionConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "downstream_policy": {
+          "$ref": "#/$defs/DownstreamPolicy"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/Priority"
+        },
+        "source_requirement_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Requirement Id"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "priority",
+        "downstream_policy"
+      ],
+      "title": "ExecutionConstraint",
+      "type": "object"
+    },
+    "ExecutionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "source_requirement_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Requirement Id"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value"
+      ],
+      "title": "ExecutionItem",
+      "type": "object"
+    },
+    "ExecutionReadiness": {
+      "enum": [
+        "ready",
+        "ready_with_warnings",
+        "blocked"
+      ],
+      "title": "ExecutionReadiness",
+      "type": "string"
+    },
+    "ExecutionUnresolved": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "downstream_policy": {
+          "enum": [
+            "do_not_assume",
+            "block"
+          ],
+          "title": "Downstream Policy",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "topic": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "topic",
+        "description",
+        "downstream_policy"
+      ],
+      "title": "ExecutionUnresolved",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "Priority": {
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.creatorsvoice.local/execution-brief/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "additional_constraints": {
+      "items": {
+        "$ref": "#/$defs/ExecutionConstraint"
+      },
+      "title": "Additional Constraints",
+      "type": "array"
+    },
+    "applied_defaults": {
+      "items": {
+        "$ref": "#/$defs/AppliedDefault"
+      },
+      "title": "Applied Defaults",
+      "type": "array"
+    },
+    "consumer_policy": {
+      "$ref": "#/$defs/ConsumerPolicy"
+    },
+    "deliverables": {
+      "items": {
+        "$ref": "#/$defs/ExecutionConstraint"
+      },
+      "title": "Deliverables",
+      "type": "array"
+    },
+    "facts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Facts",
+      "type": "object"
+    },
+    "hard_constraints": {
+      "items": {
+        "$ref": "#/$defs/ExecutionConstraint"
+      },
+      "title": "Hard Constraints",
+      "type": "array"
+    },
+    "locale": {
+      "default": "zh-CN",
+      "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+      "title": "Locale",
+      "type": "string"
+    },
+    "objective": {
+      "items": {
+        "$ref": "#/$defs/ExecutionItem"
+      },
+      "title": "Objective",
+      "type": "array"
+    },
+    "preferences": {
+      "items": {
+        "$ref": "#/$defs/ExecutionConstraint"
+      },
+      "title": "Preferences",
+      "type": "array"
+    },
+    "prohibitions": {
+      "items": {
+        "$ref": "#/$defs/ExecutionConstraint"
+      },
+      "title": "Prohibitions",
+      "type": "array"
+    },
+    "readiness": {
+      "$ref": "#/$defs/ExecutionReadiness"
+    },
+    "references": {
+      "items": {
+        "$ref": "#/$defs/ExecutionItem"
+      },
+      "title": "References",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "execution-brief/1.0",
+      "default": "execution-brief/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_artifact_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_version": {
+      "exclusiveMinimum": 0,
+      "title": "Source Artifact Version",
+      "type": "integer"
+    },
+    "task_type": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Task Type",
+      "type": "string"
+    },
+    "unresolved": {
+      "items": {
+        "$ref": "#/$defs/ExecutionUnresolved"
+      },
+      "title": "Unresolved",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_type",
+    "source_artifact_id",
+    "source_artifact_version",
+    "readiness"
+  ],
+  "title": "ExecutionBrief",
+  "type": "object"
+}

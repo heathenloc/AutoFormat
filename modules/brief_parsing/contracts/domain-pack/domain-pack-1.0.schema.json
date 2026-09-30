@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "DomainCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "risk": {
+          "$ref": "#/$defs/Priority",
+          "default": "normal"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DomainCategory",
+      "type": "object"
+    },
+    "Modality": {
+      "enum": [
+        "must",
+        "must_not",
+        "should",
+        "may",
+        "informational"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "Priority": {
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.creatorsvoice.local/domain-pack/1.0/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "categories": {
+      "items": {
+        "$ref": "#/$defs/DomainCategory"
+      },
+      "title": "Categories",
+      "type": "array"
+    },
+    "compilers": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Compilers",
+      "type": "array"
+    },
+    "id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "locales": {
+      "items": {
+        "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\\d{3})?$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Locales",
+      "type": "array"
+    },
+    "modality_lexicon": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/Modality"
+      },
+      "title": "Modality Lexicon",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "domain-pack/1.0",
+      "default": "domain-pack/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "validators": {
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Validators",
+      "type": "array"
+    },
+    "version": {
+      "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "locales"
+  ],
+  "title": "DomainPack",
+  "type": "object"
+}
