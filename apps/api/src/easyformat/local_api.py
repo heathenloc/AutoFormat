@@ -6,6 +6,7 @@ choose a server-side file path, or supply the editor manifest.
 
 from __future__ import annotations
 
+import json
 import secrets
 import socket
 from dataclasses import dataclass, field
@@ -18,9 +19,11 @@ from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.concurrency import run_in_threadpool
 import uvicorn
 
 from .academic_intake import AcademicTaskIntake
+from .initial_draft import InitialDraftPublisher
 from .preview import PreviewError, PreviewRenderer
 from .rule_snapshots import RuleSnapshotError, RuleSnapshotStore
 from .target_planning import (
@@ -146,6 +149,11 @@ def create_local_api(
                       error.safe_message, code=422 if input_error else 503)
 
     if intake is not None:
+        initial_draft = InitialDraftPublisher(
+            store=store, renderer_factory=renderer_factory,
+            font_fingerprint=font_fingerprint,
+        )
+
         async def read_bounded(upload: UploadFile) -> bytes:
             chunks: list[bytes] = []
             total = 0
@@ -173,20 +181,28 @@ def create_local_api(
                 paper=paper_bytes,
                 model_processing_acknowledged=model_processing_acknowledged,
             )
+            first = await run_in_threadpool(
+                initial_draft.publish, result.version, result.bundle)
+            report = json.loads(store.artifact_path(
+                first.task_id, first.version_id, "report_json").read_text(encoding="utf-8"))
             return {
-                "schema_version": "task-intake/1.0",
-                "status": "needs_user_input", "phase": result.phase,
+                "schema_version": "task-intake/1.1",
+                "status": "ready", "phase": "initial_draft_ready",
                 "task_id": result.version.task_id,
                 "base_version_id": result.version.version_id,
                 "base_docx_sha256": result.version.docx_sha256,
+                "initial_version_id": first.version_id,
+                "initial_docx_sha256": first.docx_sha256,
+                "initial_format_status": report["summary"]["format_status"],
+                "pending_count": report["summary"]["pending_count"],
                 "parse_artifact_id": result.bundle.manifest.artifact_id,
                 "parse_readiness": result.bundle.requirement_ir.readiness,
                 "requirement_count": len(result.bundle.requirement_ir.requirements),
                 "replayed": result.replayed,
                 "next_action": (
-                    "Review parse diagnostics; incomplete parsing cannot authorize edits."
-                    if result.phase == "parse_review" else
-                    "Review Brief requirements and classify their source before editing."
+                    "当前初稿未作格式修改，请查看报告。"
+                    if report["summary"]["format_status"] == "unassessed" else
+                    "下载初稿后可查看待处理项或在预览中微调。"
                 ),
             }
 
@@ -204,14 +220,26 @@ def create_local_api(
             if (error.status != "needs_user_input" or intake is None or
                     store.get_academic_intake(task_id) is None):
                 raise
-            bundle = intake.load_bundle(task_id)
+            versions = store.list_versions(task_id)
+            initial = next((item for item in versions if item.kind == "output"), None)
+            if initial is None:
+                return {
+                    "status": "render_failed", "phase": "initial_draft_pending",
+                    "task_id": task_id,
+                    "working_version_id": store.working_version_id(task_id),
+                    "initial_version_id": None,
+                    "rules_snapshot_id": None,
+                }
+            report = json.loads(store.artifact_path(
+                task_id, initial.version_id, "report_json").read_text(encoding="utf-8"))
             return {
-                "status": "needs_user_input",
-                "phase": ("parse_review" if bundle.requirement_ir.readiness == "incomplete"
-                          else "source_classification"),
+                "status": "ready", "phase": "initial_draft_ready",
                 "task_id": task_id,
                 "working_version_id": store.working_version_id(task_id),
+                "initial_version_id": initial.version_id,
                 "rules_snapshot_id": None,
+                "initial_format_status": report["summary"]["format_status"],
+                "pending_count": report["summary"]["pending_count"],
             }
         return {
             "status": "ready",

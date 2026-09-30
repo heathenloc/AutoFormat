@@ -52,10 +52,12 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   and publishes one version with per-target verification, report and preview.
   A session-protected local API now accepts a school Brief and paper DOCX,
   calls the copied parser's academic parse-only path, and stores the Brief,
-  Parse Bundle and V0 together. It exposes parse review, body-scope review,
-  confirmation, execution, version listing and registered artifact downloads.
-  Source classification, the UI and broader formatting properties remain to
-  be built.
+  Parse Bundle and V0 together. It immediately publishes a V1 DOCX, report
+  and preview before any selection or follow-up input. The current V1 publisher
+  is a transparent unchanged-copy baseline: automatic rule planning and broad
+  formatting coverage still need implementation before the product meets its
+  first-pass quality target. Review, confirmation, execution, version listing
+  and registered artifact downloads remain available for later edits.
 
 ## Local checks
 

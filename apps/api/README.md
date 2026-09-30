@@ -96,15 +96,20 @@ uploading or replacing executable rules.
 When the host injects `AcademicTaskIntake`, `POST /api/tasks` accepts one school
 Brief (`.txt`, `.docx` or text PDF) and one paper DOCX. The request includes an
 idempotency ID and acknowledgement that the configured model may process the
-Brief. Uploads are size bounded and checked by the copied parser's input
+Brief. The desktop UI supplies those protocol fields when the user submits the
+two files; it must show the Brief-processing disclosure without making source
+classification or preview text a third initial input. Uploads are size bounded and checked by the copied parser's input
 validator; only the Brief is passed to `parse_academic_with_timeout`. The
 Brief, validated `AcademicParseBundle` and immutable V0 are published in one
 version-store transaction. Reusing the request ID with different bytes returns
 a conflict. `GET /api/tasks/{task_id}/academic-parse` returns the Parse Bundle
-for evidence review. Incomplete parsing remains in `parse_review`; other
-parsed tasks wait at `source_classification`. Neither state registers an
-executable rule snapshot. A later source-classification decision must
-explicitly authorize Brief requirements before rule compilation.
+for evidence review. The upload route then publishes V1 with a DOCX, report
+and selectable preview before requesting any classification or preview
+selection. The current initial publisher copies V0 unchanged and reports all
+unplanned candidates; it does **not** yet achieve the product's target of
+automatically fixing most supported format problems. Automatic validation,
+planning and broad editor coverage remain development work. No unverified
+model candidate is promoted into an executable rule.
 
 `easyformat.local_api.bind_local_api` reserves a random `127.0.0.1` port,
 creates a session token and origin-bound FastAPI app, and returns a binding
@@ -118,7 +123,7 @@ For an internally provisioned task, the current routes are:
 
 | Route | Action |
 | --- | --- |
-| `POST /api/tasks` | Upload Brief and paper, run academic parse-only, create V0 |
+| `POST /api/tasks` | Upload Brief and paper, run academic parse-only, publish V0 and initial V1 |
 | `GET /api/tasks/{task_id}` | Read working version and rule snapshot ID |
 | `GET /api/tasks/{task_id}/academic-parse` | Read stored Parse Bundle and evidence |
 | `GET /api/tasks/{task_id}/versions` | List version metadata without disk paths |
@@ -127,14 +132,16 @@ For an internally provisioned task, the current routes are:
 | `POST .../body-alignment/execute` | Rebuild the plan from trusted rules and the saved decision, then publish one version |
 | `GET /api/tasks/{task_id}/versions/{version_id}/artifacts/{kind}` | Download registered DOCX, JSON/Markdown report or PDF preview |
 
-The confirmation and execution requests use the versioned contracts in
+The upload response uses `task-intake/1.1` and returns the initial V1 ID and
+its actual format status. The confirmation and execution requests use the versioned contracts in
 `contracts/body-scope-confirmation/` and `contracts/body-plan-execution/`.
 They carry an expected DOCX hash and separate request IDs. The execution
 request cannot submit rule text, values, target paths or an editor manifest.
 The server rechecks the plan before the editor runs. This API currently
 executes one unambiguous, explicit Brief rule for body paragraph alignment
-after trusted source classification and snapshot registration; the
-classification decision and UI remain to be implemented.
+after trusted rule snapshot registration. That narrower later-edit route is
+not part of the automatic first pass; the automatic planner and UI remain to
+be implemented.
 
 Run the storage checks with:
 

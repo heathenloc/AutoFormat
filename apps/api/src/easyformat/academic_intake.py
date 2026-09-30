@@ -16,7 +16,6 @@ from typing import Protocol
 from brief_parser.adapters.input_security import FileSecurityValidator
 from brief_parser.application.service import ParseServiceRequest
 from brief_parser.domain.academic_bundle import AcademicParseBundle
-from brief_parser.domain.enums import Readiness
 
 from .version_store import (
     AcademicIntakeInput, VersionRecord, VersionStore, VersionStoreError,
@@ -40,11 +39,6 @@ class AcademicIntakeResult:
     version: VersionRecord
     bundle: AcademicParseBundle
     replayed: bool
-
-    @property
-    def phase(self) -> str:
-        return ("parse_review" if self.bundle.requirement_ir.readiness == Readiness.INCOMPLETE
-                else "source_classification")
 
 
 class AcademicTaskIntake:
