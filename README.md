@@ -14,8 +14,11 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   candidates for later verification, not permission to edit yet.
 - `services/docx_engine/EasyFormat.DocxEditor` applies one typed paragraph
   alignment operation to a new DOCX copy and verifies the result. The full
-  rule planner, renderer, feedback workflow, version store, and UI have not
-  been implemented.
+  rule planner, feedback workflow, version store, and UI have not been
+  implemented.
+- `apps/api` now has a replaceable LibreOffice preview adapter. It produces
+  versioned PDF metadata and rejects unsafe input before launching the
+  renderer. See [local setup](docs/libreoffice-local-setup.md).
 
 ## Local checks
 
@@ -29,6 +32,7 @@ cd modules/brief_parsing
 cd ../..
 dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业论文模板2026.docx
 dotnet run --project tests/DocxEditor.Checks
+./.venv/Scripts/python.exe -m pytest -q tests/preview
 ```
 
 The four excluded infrastructure tests reference deployment files deliberately
@@ -36,6 +40,8 @@ omitted from the Brief Parsing copy (`Dockerfile`, `compose.yaml`, `deploy/`,
 and `.github/`). They are not tests of this project's parser runtime. Two
 Linux process isolation tests skip on Windows.
 
-The DOCX prototype requires .NET 10. Preview conversion has not been exercised
-because LibreOffice is not installed in the current development environment.
-See [the engine notes](services/docx_engine/README.md) for its exact boundary.
+The DOCX prototype requires .NET 10. Preview conversion has been exercised
+with a signed LibreOffice 26.8.0 administrative image in `E:\LibreOffice`;
+the school template remains blocked by the renderer's embedded-object safety
+check. See [the engine notes](services/docx_engine/README.md) and
+[preview setup](docs/libreoffice-local-setup.md) for current boundaries.

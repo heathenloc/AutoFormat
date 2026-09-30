@@ -1,0 +1,11 @@
+{
+  "schema_version": "preview-artifact/1.0",
+  "artifact_id": "preview-example-1",
+  "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "pdf_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "pdf_relative_path": "artifacts/previews/preview-example-1.pdf",
+  "page_count": 1,
+  "selectable_text_chars": 49,
+  "renderer_id": "libreoffice",
+  "renderer_version": "LibreOffice 26.8.0.3"
+}

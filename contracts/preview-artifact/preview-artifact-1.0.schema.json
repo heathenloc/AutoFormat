@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/preview-artifact/1.0",
+  "title": "Versioned selectable PDF preview artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "artifact_id", "source_sha256", "pdf_sha256",
+    "pdf_relative_path", "page_count", "selectable_text_chars",
+    "renderer_id", "renderer_version"
+  ],
+  "properties": {
+    "schema_version": { "const": "preview-artifact/1.0" },
+    "artifact_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$" },
+    "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "pdf_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "pdf_relative_path": {
+      "type": "string", "pattern": "^artifacts/previews/[A-Za-z0-9_-]{1,64}\\.pdf$"
+    },
+    "page_count": { "type": "integer", "minimum": 1 },
+    "selectable_text_chars": { "type": "integer", "minimum": 1 },
+    "renderer_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+    "renderer_version": { "type": "string", "minLength": 1 }
+  }
+}
