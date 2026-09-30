@@ -1,0 +1,70 @@
+schema_version: domain-pack/1.0
+id: academic_paper
+version: 1.0.0
+locales: [zh-CN, en-US]
+categories:
+  - id: page_setup
+    aliases: [页面设置, 纸张, 页边距, page setup]
+    risk: high
+  - id: cover
+    aliases: [封面, title page]
+    risk: high
+  - id: abstract
+    aliases: [摘要, abstract]
+    risk: high
+  - id: keywords
+    aliases: [关键词, keywords]
+    risk: normal
+  - id: body_text
+    aliases: [正文, 正文字体, body text]
+    risk: high
+  - id: heading
+    aliases: [标题, 章节标题, heading]
+    risk: high
+  - id: table_of_contents
+    aliases: [目录, contents]
+    risk: high
+  - id: page_number
+    aliases: [页码, pagination]
+    risk: high
+  - id: footnote
+    aliases: [脚注, footnote]
+    risk: normal
+  - id: endnote
+    aliases: [尾注, endnote]
+    risk: normal
+  - id: in_text_citation
+    aliases: [文中引用, citation]
+    risk: normal
+  - id: table
+    aliases: [表格, 三线表, table]
+    risk: high
+  - id: figure_caption
+    aliases: [图题, 图注, figure caption]
+    risk: normal
+  - id: bibliography
+    aliases: [参考文献, bibliography]
+    risk: high
+  - id: acknowledgements
+    aliases: [致谢, acknowledgements]
+    risk: normal
+  - id: declaration
+    aliases: [声明, 学术诚信声明, declaration]
+    risk: high
+  - id: appendix
+    aliases: [附录, appendix]
+    risk: normal
+  - id: submission_format
+    aliases: [提交格式, 文件格式, submission format]
+    risk: high
+  - id: word_count
+    aliases: [字数, word count]
+    risk: high
+modality_lexicon:
+  must: [必须, 应, 应当, 须, 要求, must, required]
+  must_not: [不得, 禁止, 不应, must not, prohibited]
+  should: [建议, 宜, should, recommended]
+  may: [可以, 可选, may, optional]
+  informational: [仅供参考, 示例, 背景, for reference]
+validators: []
+compilers: []

@@ -1,0 +1,209 @@
+{
+  "categories": [
+    {
+      "aliases": [
+        "页面设置",
+        "纸张",
+        "页边距",
+        "page setup"
+      ],
+      "id": "page_setup",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "封面",
+        "title page"
+      ],
+      "id": "cover",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "摘要",
+        "abstract"
+      ],
+      "id": "abstract",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "关键词",
+        "keywords"
+      ],
+      "id": "keywords",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "正文",
+        "正文字体",
+        "body text"
+      ],
+      "id": "body_text",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "标题",
+        "章节标题",
+        "heading"
+      ],
+      "id": "heading",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "目录",
+        "contents"
+      ],
+      "id": "table_of_contents",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "页码",
+        "pagination"
+      ],
+      "id": "page_number",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "脚注",
+        "footnote"
+      ],
+      "id": "footnote",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "尾注",
+        "endnote"
+      ],
+      "id": "endnote",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "文中引用",
+        "citation"
+      ],
+      "id": "in_text_citation",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "表格",
+        "三线表",
+        "table"
+      ],
+      "id": "table",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "图题",
+        "图注",
+        "figure caption"
+      ],
+      "id": "figure_caption",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "参考文献",
+        "bibliography"
+      ],
+      "id": "bibliography",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "致谢",
+        "acknowledgements"
+      ],
+      "id": "acknowledgements",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "声明",
+        "学术诚信声明",
+        "declaration"
+      ],
+      "id": "declaration",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "附录",
+        "appendix"
+      ],
+      "id": "appendix",
+      "risk": "normal"
+    },
+    {
+      "aliases": [
+        "提交格式",
+        "文件格式",
+        "submission format"
+      ],
+      "id": "submission_format",
+      "risk": "high"
+    },
+    {
+      "aliases": [
+        "字数",
+        "word count"
+      ],
+      "id": "word_count",
+      "risk": "high"
+    }
+  ],
+  "compilers": [],
+  "id": "academic_paper",
+  "locales": [
+    "zh-CN",
+    "en-US"
+  ],
+  "modality_lexicon": {
+    "informational": [
+      "仅供参考",
+      "示例",
+      "背景",
+      "for reference"
+    ],
+    "may": [
+      "可以",
+      "可选",
+      "may",
+      "optional"
+    ],
+    "must": [
+      "必须",
+      "应",
+      "应当",
+      "须",
+      "要求",
+      "must",
+      "required"
+    ],
+    "must_not": [
+      "不得",
+      "禁止",
+      "不应",
+      "must not",
+      "prohibited"
+    ],
+    "should": [
+      "建议",
+      "宜",
+      "should",
+      "recommended"
+    ]
+  },
+  "schema_version": "domain-pack/1.0",
+  "validators": [],
+  "version": "1.0.0"
+}

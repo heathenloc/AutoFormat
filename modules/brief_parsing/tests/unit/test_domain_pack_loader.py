@@ -28,6 +28,7 @@ def test_mvp_and_example_domain_packs_load_and_compile() -> None:
     catalog = loader.load_directory(DOMAIN_PACK_ROOT)
 
     assert set(catalog) == {
+        ("academic_paper", "1.0.0"),
         ("academic_paper_example", "1.0.0"),
         ("advertising_brief", "1.0.0"),
         ("generic_requirements", "1.0.0"),
@@ -35,6 +36,8 @@ def test_mvp_and_example_domain_packs_load_and_compile() -> None:
     assert catalog[("advertising_brief", "1.0.0")].compilers == [
         "write_ad_script"
     ]
+    assert catalog[("academic_paper", "1.0.0")].compilers == []
+    assert len(catalog[("academic_paper", "1.0.0")].categories) >= 18
     assert compile_domain_packs(check=True) == []
     for source in DOMAIN_PACK_ROOT.rglob("*.yaml"):
         assert loader.load_json(source.with_suffix(".json")) == loader.load_yaml(source)

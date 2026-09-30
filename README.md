@@ -7,8 +7,14 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
 ## Current development increment
 
 - The copied Brief Parsing source remains in `modules/brief_parsing/` and is
-  independent of the read-only source project. The 180 recorded source files
-  currently match `SOURCE_SNAPSHOT.json`.
+  independent of the read-only source project. Its 180-file source snapshot is
+  retained; intentional EasyFormat changes to copied files are pinned in
+  `LOCAL_CHANGES.json` and checked separately.
+- The copied parser now has a formal `academic_paper` Domain Pack covering
+  academic document categories. A separate `AcademicFormatCompiler` projects
+  validated, explicitly classified Requirement IR into versioned semantic
+  rules. Its first verified projection is an unambiguous, evidence-backed
+  body-paragraph alignment rule. Other items remain reported as issues.
 - `services/docx_engine/EasyFormat.DocxIndex` is a read-only DOCX paragraph
   index and exact selection anchor prototype. Its unique matches are safe
   candidates for later verification, not permission to edit yet.
@@ -33,6 +39,9 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   supports V0→V1, later edits, and request replay. Rule extraction, broader
   formatting properties, feedback decisions, API authorization, and UI remain
   separate development work.
+- The academic projection is not yet connected to the parser's Parse Bundle
+  service or the DOCX target planner. Source classification must come from a
+  trusted step; an unclassified IR item never becomes a formatting rule.
 
 ## Local checks
 

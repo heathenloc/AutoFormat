@@ -1,0 +1,10 @@
+{
+  "schema_version": "brief-parser-local-changes/1.0",
+  "changes": [
+    {
+      "path": "tests/unit/test_domain_pack_loader.py",
+      "sha256": "d62e1ff42c5c84fa0c6adf3369b3d13088cb85cfc82cbb3bbb81ab603f1dfe8d",
+      "reason": "Include the EasyFormat academic_paper pack in copied-parser loader regression coverage."
+    }
+  ]
+}

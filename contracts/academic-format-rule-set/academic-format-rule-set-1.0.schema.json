@@ -1,0 +1,491 @@
+{
+  "$defs": {
+    "AcademicFormatIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "next_action": {
+          "minLength": 1,
+          "title": "Next Action",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_requirement_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Requirement Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "needs_source_classification",
+            "pending_conflict",
+            "pending_condition",
+            "evidence_unverified",
+            "value_evidence_mismatch",
+            "unsupported",
+            "check_only",
+            "parse_incomplete"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_requirement_id",
+        "status",
+        "reason",
+        "next_action",
+        "evidence_ids"
+      ],
+      "title": "AcademicFormatIssue",
+      "type": "object"
+    },
+    "AcademicFormatRule": {
+      "additionalProperties": false,
+      "properties": {
+        "character_scope": {
+          "default": "all",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "decision_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Id"
+        },
+        "effective_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Effective Scope",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "property_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "resolution_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution Ref"
+        },
+        "rule_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "academic-format-rule/1.0",
+          "default": "academic-format-rule/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_artifact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Artifact Id",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "brief_explicit",
+            "template_observation_confirmed",
+            "user_feedback"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "source_requirement_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Requirement Id",
+          "type": "string"
+        },
+        "source_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Version",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "pending_conflict",
+            "pending_condition",
+            "check_only",
+            "unsupported"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/AcademicTarget"
+        },
+        "value": {
+          "$ref": "#/$defs/AcademicValue"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source_requirement_id",
+        "source_kind",
+        "source_artifact_id",
+        "source_version",
+        "evidence_refs",
+        "target",
+        "property_id",
+        "value",
+        "requested_scope",
+        "effective_scope",
+        "status",
+        "reason"
+      ],
+      "title": "AcademicFormatRule",
+      "type": "object"
+    },
+    "AcademicTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "object_kind": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Object Kind",
+          "type": "string"
+        },
+        "selector": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Selector",
+          "type": "string"
+        },
+        "semantic_role": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_kind",
+        "semantic_role",
+        "selector"
+      ],
+      "title": "AcademicTarget",
+      "type": "object"
+    },
+    "AcademicValue": {
+      "additionalProperties": false,
+      "properties": {
+        "dictionary_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Dictionary Version",
+          "type": "string"
+        },
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "original_text": {
+          "minLength": 1,
+          "title": "Original Text",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "original_text",
+        "normalized",
+        "dictionary_version"
+      ],
+      "title": "AcademicValue",
+      "type": "object"
+    },
+    "DomainPackRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "title": "DomainPackRef",
+      "type": "object"
+    },
+    "EvidenceMatchStatus": {
+      "enum": [
+        "exact",
+        "normalized",
+        "invalid"
+      ],
+      "title": "EvidenceMatchStatus",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "integer"
+        },
+        "evidence_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "index_basis": {
+          "const": "unicode_code_point",
+          "default": "unicode_code_point",
+          "title": "Index Basis",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "match_status": {
+          "$ref": "#/$defs/EvidenceMatchStatus"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "quote_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Quote Sha256",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_id",
+        "block_id",
+        "start",
+        "end",
+        "quote",
+        "quote_sha256",
+        "locator",
+        "match_status"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "SourceLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "section_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Section Path",
+          "type": "array"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        }
+      },
+      "title": "SourceLocator",
+      "type": "object"
+    }
+  },
+  "$id": "https://easyformat.local/contracts/academic-format-rule-set/1.0",
+  "additionalProperties": false,
+  "properties": {
+    "compiler_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Compiler Version",
+      "type": "string"
+    },
+    "domain_pack": {
+      "$ref": "#/$defs/DomainPackRef"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/AcademicFormatIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/AcademicFormatRule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "academic-format-rule-set/1.0",
+      "default": "academic-format-rule-set/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_artifact_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_version": {
+      "exclusiveMinimum": 0,
+      "title": "Source Artifact Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "source_artifact_id",
+    "source_artifact_version",
+    "domain_pack",
+    "rules",
+    "issues"
+  ],
+  "title": "AcademicFormatRuleSet",
+  "type": "object"
+}
