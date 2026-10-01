@@ -55,7 +55,7 @@ def build_academic_parse_bundle(
         raise ValueError("Academic parse-only output cannot contain ExecutionBriefs.")
     ir = outputs.requirement_ir
     return AcademicParseBundle(
-        bundle_version=("academic-parse-bundle/1.1" if format_ruleset is not None
+        bundle_version=("academic-parse-bundle/1.2" if format_ruleset is not None
                         else "academic-parse-bundle/1.0"),
         manifest=pipeline_result.manifest.model_copy(update={
             "readiness_reason_codes": ir.quality.readiness_reason_codes,

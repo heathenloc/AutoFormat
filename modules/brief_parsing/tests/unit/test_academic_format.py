@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = ROOT.parents[1] / "contracts" / "academic-format-rule-set" / (
     "academic-format-rule-set-1.1.schema.json"
 )
+CURRENT_CONTRACT = CONTRACT.with_name("academic-format-rule-set-1.2.schema.json")
 
 
 def _academic_ir() -> RequirementIR:
@@ -154,7 +155,7 @@ def test_incomplete_ir_and_unknown_property_are_reported() -> None:
 
 def test_schema_snapshot_matches_strict_model() -> None:
     expected = AcademicFormatRuleSet.model_json_schema()
-    expected["$id"] = "https://easyformat.local/contracts/academic-format-rule-set/1.1"
+    expected["$id"] = "https://easyformat.local/contracts/academic-format-rule-set/1.2"
     expected["properties"]["schema_version"].pop("enum")
-    expected["properties"]["schema_version"]["const"] = "academic-format-rule-set/1.1"
-    assert json.loads(CONTRACT.read_text(encoding="utf-8")) == expected
+    expected["properties"]["schema_version"]["const"] = "academic-format-rule-set/1.2"
+    assert json.loads(CURRENT_CONTRACT.read_text(encoding="utf-8")) == expected

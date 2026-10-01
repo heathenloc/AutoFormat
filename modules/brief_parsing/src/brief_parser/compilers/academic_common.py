@@ -22,10 +22,12 @@ from brief_parser.domain.enums import EvidenceMatchStatus
 from brief_parser.domain.requirement_ir import EvidenceReference, RequirementIR
 
 
-_VERSION = "academic-common-format/1.0"
+_VERSION = "academic-common-format/1.1"
 _TARGET = re.compile(
-    r"^(目录|一级标题|二级标题|三级标题|四级标题|正文段落|正文|摘要|关键词|"
-    r"图示|图题|图注|表格|参考文献|英文字母|英文字符|英数字|字母数字|页面|纸张|页码)"
+    r"^(?:(?:本?论文|学位论文)的?)?"
+    r"(目录|一级标题|二级标题|三级标题|四级标题|正文段落|正文|摘要|关键词|"
+    r"图示|图题|图注|表格|表头文字|表内文字|参考文献|英文字母和数字|"
+    r"英文及数字|字母与数字|英文字母|英文字符|英数字|字母数字|页面|纸张|页码)"
 )
 _LEVEL = {"一": 1, "二": 2, "三": 3, "四": 4, "1": 1, "2": 2, "3": 3, "4": 4}
 _HEADING = re.compile(r"([一二三四1-4])级标题")
@@ -55,7 +57,7 @@ _LINE_SPACING = re.compile(r"(?:行距\s*(?:为|是|:|：)?\s*(\d+(?:\.\d+)?)\s*
 _INDENT = re.compile(r"首行缩进\s*(\d+(?:\.\d+)?)\s*(字符|字|厘米|cm)", re.IGNORECASE)
 _EXAMPLE = re.compile(r"示例|样例|仅供参考|参考样式|例文|样本文字")
 _NEGATIVE = re.compile(r"不得|不要|不应|禁止|避免")
-_MODAL = re.compile(r"必须|应当|应|须|要求|统一|一律|采用|使用")
+_MODAL = re.compile(r"必须|应当|应|须|要求|统一|一律|采用|使用|设置为|设为|位于|置于|为")
 _FORMAT_CUE = re.compile(r"字体|字号|对齐|位置|边框|行距|缩进|页码|目录|加粗|格式|版式|分栏")
 _BODY_SHORTHAND = re.compile(r"^一律横排[，,]通栏")
 _LATIN_SHORTHAND = re.compile(r"字母[、和与,，]?数字全部使用", re.IGNORECASE)
@@ -64,6 +66,11 @@ _TABLE_SHORTHAND = re.compile(r"表格使用三线表")
 _FIGURE_CAPTION = re.compile(r"^图\s*\d+(?:\.\d+)?[^（(]*[（(]([^）)]*)[）)]")
 _CONDITIONAL = re.compile(r"如果|若|仅在|纸质版|电子版|系统上传|打印版")
 _ALTERNATIVE = re.compile(r"或者|或|[／/～~]")
+_BIBLIOGRAPHY_POSITION = re.compile(r"正文之后|正文后|论文末尾|文末|正文之前|正文前")
+_FOLLOWUP_START = re.compile(
+    r"^(?:字体|字号|加粗|不加粗|位置|对齐|边框|行距|首行缩进|"
+    r"表头|表内文字|表格内容|内容)"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,6 +84,7 @@ class _Item:
     character_scope: str = "all"
     problem: str | None = None
     issue_status: str | None = None
+    context_evidence: EvidenceReference | None = None
 
 
 class AcademicCommonFormatExtractor:
@@ -87,13 +95,31 @@ class AcademicCommonFormatExtractor:
             raise ValueError("Common academic extraction requires academic_paper IR.")
         sources = {source.source_id: source for source in ir.source_manifest}
         items: list[_Item] = []
-        for evidence in ir.evidence_index.values():
+        contexts: dict[tuple[str, str], tuple[str, EvidenceReference]] = {}
+        for evidence in sorted(ir.evidence_index.values(),
+                               key=lambda item: (item.source_id, item.block_id, item.start)):
             source = sources[evidence.source_id]
             if (evidence.match_status != EvidenceMatchStatus.EXACT
                     or source.extraction_status != "complete"
                     or evidence.locator.section_path[:1] in (["header"], ["footer"])):
                 continue
-            extracted = self._parse_evidence(evidence)
+            block_key = (evidence.source_id, evidence.block_id)
+            context = contexts.get(block_key)
+            extracted = self._parse_evidence(evidence, context)
+            target_match = _TARGET.match(evidence.quote.strip())
+            continued_toc = bool(
+                context and context[0] == "toc" and target_match
+                and target_match.group(1) in {"一级标题", "二级标题", "三级标题", "四级标题"}
+            )
+            if target_match and extracted and not _CONDITIONAL.search(evidence.quote):
+                contexts[block_key] = context if continued_toc else (
+                    self._role(target_match.group(1)), evidence
+                )
+            elif (_EXAMPLE.search(evidence.quote)
+                  or not _FOLLOWUP_START.match(evidence.quote.strip())):
+                contexts.pop(block_key, None)
+            if context and (target_match is None or continued_toc) and extracted:
+                extracted = [replace(item, context_evidence=context[1]) for item in extracted]
             if _CONDITIONAL.search(evidence.quote):
                 extracted = [replace(
                     item, value=None, issue_status="pending_condition",
@@ -119,7 +145,8 @@ class AcademicCommonFormatExtractor:
                     )),
                     reason=reason,
                     next_action="核对 Brief 原文并补充明确取值或对象范围。",
-                    evidence_ids=[item.evidence.evidence_id],
+                    evidence_ids=([item.context_evidence.evidence_id]
+                                  if item.context_evidence else []) + [item.evidence.evidence_id],
                     target=AcademicTarget(
                         object_kind=self._object_kind(item.role, item.property_id),
                         semantic_role=item.role, selector="semantic_role",
@@ -139,7 +166,8 @@ class AcademicCommonFormatExtractor:
                 source_kind="brief_explicit",
                 source_artifact_id=ir.artifact_id,
                 source_version=f"{ir.artifact_id}:v{ir.artifact_version}",
-                evidence_refs=[item.evidence], target=target,
+                evidence_refs=([item.context_evidence] if item.context_evidence else [])
+                + [item.evidence], target=target,
                 property_id=item.property_id,
                 value=AcademicValue(
                     original_text=item.original, normalized=item.value,
@@ -182,6 +210,8 @@ class AcademicCommonFormatExtractor:
                         "reason": "同一目标和属性存在不兼容的 Brief 明文取值。",
                     })
         return AcademicFormatRuleSet(
+            schema_version="academic-format-rule-set/1.2",
+            compiler_version="1.2.0",
             source_artifact_id=ir.artifact_id,
             source_artifact_version=ir.artifact_version,
             domain_pack=ir.domain_pack,
@@ -209,7 +239,10 @@ class AcademicCommonFormatExtractor:
             return "field"
         return "paragraph"
 
-    def _parse_evidence(self, evidence: EvidenceReference) -> list[_Item]:
+    def _parse_evidence(
+        self, evidence: EvidenceReference,
+        context: tuple[str, EvidenceReference] | None = None,
+    ) -> list[_Item]:
         text = evidence.quote.strip()
         match = _TARGET.match(text)
         if _EXAMPLE.search(text):
@@ -224,14 +257,20 @@ class AcademicCommonFormatExtractor:
             if (role.startswith("heading_") and evidence.locator.section_path
                     and re.sub(r"\s+", "", evidence.locator.section_path[-1]) == "目录"):
                 role = "toc_" + role
+            elif role.startswith("heading_") and context and context[0] == "toc":
+                role = "toc_" + role
             rest = text[match.end():].lstrip("：: ，,\t")
-            directive = bool(text[match.end():].startswith(("：", ":"))
+            directive = bool(re.search(r"[：:]", text[match.end():])
                              or _MODAL.search(text)
-                             or text[match.end():].lstrip().startswith("用"))
+                             or text[match.end():].lstrip().startswith("用")
+                             or (role.startswith("toc_heading_")
+                                 and context and context[0] == "toc"))
         elif _BODY_SHORTHAND.match(text):
             role, rest, directive = "body", text, True
         elif _LATIN_SHORTHAND.search(text):
             role, rest, directive = "latin_digits", text, True
+        elif context and _FOLLOWUP_START.match(text):
+            role, rest, directive = context[0], text, True
         elif _TABLE_SHORTHAND.search(text):
             role, rest, directive = "table", text[_TABLE_SHORTHAND.search(text).start():], True
         elif (figure := _FIGURE_CAPTION.match(text)) is not None:
@@ -251,15 +290,18 @@ class AcademicCommonFormatExtractor:
         if not rest:
             return []
         items: list[_Item] = []
+        active_role = role
         for token in re.split(r"[，,；;、]", rest):
             token = token.strip(" 。.\t")
             if not token:
                 continue
-            token_role, token = self._token_role(role, token)
+            token_role, token = self._token_role(active_role, token)
             if token_role is None:
                 items.append(_Item(evidence, role, "target.classification", token,
                                    None, problem="标题级别或作用对象表述不明确。"))
                 continue
+            if role != "toc":
+                active_role = token_role
             items.extend(self._parse_token(evidence, token_role, token, directive))
         return items
 
@@ -273,32 +315,41 @@ class AcademicCommonFormatExtractor:
             "目录": "toc", "正文段落": "body", "正文": "body",
             "摘要": "abstract", "关键词": "keywords", "图示": "figure_text",
             "图题": "figure_caption", "图注": "figure_caption", "表格": "table",
+            "表头文字": "table_header", "表内文字": "table_body",
             "参考文献": "bibliography", "英文字母": "latin_text",
             "英文字符": "latin_text", "英数字": "latin_text",
-            "字母数字": "latin_text", "页面": "page", "纸张": "page",
+            "字母数字": "latin_text", "英文字母和数字": "latin_digits",
+            "英文及数字": "latin_digits", "字母与数字": "latin_digits",
+            "页面": "page", "纸张": "page",
             "页码": "page_number",
         }[label]
 
     @staticmethod
     def _token_role(role: str, token: str) -> tuple[str | None, str]:
-        if role == "toc":
+        if role == "toc" or role.startswith("toc_heading_"):
             heading = _HEADING.search(token)
             if heading:
                 return f"toc_heading_{_LEVEL[heading.group(1)]}", token[heading.end():]
             if "号标题" in token:
                 return None, token
-        if role == "table":
+        if role in {"table", "table_header", "table_body"}:
+            if role != "table" and token.startswith(("边框", "三线表", "全框线", "无边框")):
+                return "table", token
             if token.startswith("表头"):
                 return "table_header", token[2:]
-            if token.startswith("内容"):
-                return "table_body", token[2:]
+            for prefix in ("表内文字", "表格内容", "内容"):
+                if token.startswith(prefix):
+                    return "table_body", token[len(prefix):]
+        if role in {"bibliography", "bibliography_heading"} and token.startswith("标题"):
+            return "bibliography_heading", token[2:]
         return role, token
 
     def _parse_token(self, evidence: EvidenceReference, role: str,
                      token: str, directive: bool) -> list[_Item]:
         result: list[_Item] = []
         char_scope = ("latin_digits" if role == "latin_digits" else
-                      "latin" if role == "latin_text" else "all")
+                      "latin" if role == "latin_text" else
+                      "chinese" if "中文字体" in token or "汉字字体" in token else "all")
 
         def add(prop: str, original: str, value: Any | None,
                 unit: str | None = None, problem: str | None = None) -> None:
@@ -306,7 +357,8 @@ class AcademicCommonFormatExtractor:
                                 unit, char_scope, problem))
 
         alignments = {_ALIGNMENT[m.group()] for m in _ALIGN_RE.finditer(token)}
-        if alignments or "位置" in token or "对齐" in token:
+        if (alignments or ("位置" in token or "对齐" in token)
+                and not (role == "bibliography" and _BIBLIOGRAPHY_POSITION.search(token))):
             property_id = ("document.position" if role == "bibliography"
                            and not alignments else "paragraph.alignment")
             if (len(alignments) == 1 and directive
@@ -318,6 +370,18 @@ class AcademicCommonFormatExtractor:
             else:
                 add(property_id, token, None,
                     problem="位置或对齐要求缺少唯一、肯定的取值。")
+
+        if role == "bibliography":
+            positions = {match.group() for match in _BIBLIOGRAPHY_POSITION.finditer(token)}
+            if positions:
+                normalized = {("before_body" if "前" in position else
+                               "document_end" if position in {"论文末尾", "文末"}
+                               else "after_body") for position in positions}
+                if len(normalized) == 1 and directive and not _ALTERNATIVE.search(token):
+                    add("document.position", token, next(iter(normalized)))
+                else:
+                    add("document.position", token, None,
+                        problem="参考文献位置存在多个取值或缺少明确要求语境。")
 
         fonts = {m.group().casefold(): m.group() for m in _FONT.finditer(token)}
         if fonts or "字体" in token:
@@ -414,12 +478,16 @@ class AcademicCommonFormatExtractor:
                     "lower_roman" if directive else None,
                     problem=None if directive else "页码格式缺少明确要求语境。")
 
-        if "图示在下" in token or "图示在上" in token:
-            add("caption.position", token,
-                None if _ALTERNATIVE.search(token) else
-                "below" if "图示在下" in token else "above",
-                problem=("图题位置包含多个取值。" if _ALTERNATIVE.search(token)
-                         else None))
+        caption_positions = set()
+        if re.search(r"图示在下|图(?:的)?下方", token):
+            caption_positions.add("below")
+        if re.search(r"图示在上|图(?:的)?上方", token):
+            caption_positions.add("above")
+        if caption_positions:
+            if len(caption_positions) == 1 and directive and not _ALTERNATIVE.search(token):
+                add("caption.position", token, next(iter(caption_positions)))
+            else:
+                add("caption.position", token, None, problem="图题位置包含多个取值。")
 
         margin = _MARGIN.search(token)
         if margin:

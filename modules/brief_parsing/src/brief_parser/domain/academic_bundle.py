@@ -15,8 +15,9 @@ from brief_parser.domain.requirement_ir import RequirementIR
 
 class AcademicParseBundle(StrictModel):
     bundle_version: Literal[
-        "academic-parse-bundle/1.0", "academic-parse-bundle/1.1"
-    ] = "academic-parse-bundle/1.1"
+        "academic-parse-bundle/1.0", "academic-parse-bundle/1.1",
+        "academic-parse-bundle/1.2",
+    ] = "academic-parse-bundle/1.2"
     manifest: ParseManifest
     requirement_ir: RequirementIR
     renderings: ParseRenderings
@@ -25,8 +26,13 @@ class AcademicParseBundle(StrictModel):
 
     @model_validator(mode="after")
     def validate_links(self) -> Self:
-        if ((self.bundle_version == "academic-parse-bundle/1.1")
-                != (self.format_ruleset is not None)):
+        expected_ruleset_version = {
+            "academic-parse-bundle/1.0": None,
+            "academic-parse-bundle/1.1": "academic-format-rule-set/1.1",
+            "academic-parse-bundle/1.2": "academic-format-rule-set/1.2",
+        }[self.bundle_version]
+        if ((self.format_ruleset.schema_version if self.format_ruleset else None)
+                != expected_ruleset_version):
             raise ValueError("academic bundle version and format ruleset differ")
         if self.manifest.requested_task_types != ["format_academic_paper"]:
             raise ValueError("academic parse bundle requires the academic task marker")
@@ -74,7 +80,12 @@ class AcademicParseBundle(StrictModel):
                     raise ValueError("academic format issue evidence differs from IR")
             # A stored handoff must be reproducible from the exact IR evidence;
             # validating only the quote hash would allow a changed format value.
-            from brief_parser.compilers.academic_common import AcademicCommonFormatExtractor
+            if self.bundle_version == "academic-parse-bundle/1.1":
+                from brief_parser.compilers.academic_common_v1_1 import (
+                    AcademicCommonFormatExtractor,
+                )
+            else:
+                from brief_parser.compilers.academic_common import AcademicCommonFormatExtractor
 
             if ruleset != AcademicCommonFormatExtractor().extract(self.requirement_ir):
                 raise ValueError("academic format ruleset differs from source evidence")

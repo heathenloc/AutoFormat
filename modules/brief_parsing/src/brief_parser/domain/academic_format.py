@@ -72,12 +72,13 @@ class AcademicFormatIssue(StrictModel):
 
 class AcademicFormatRuleSet(StrictModel):
     schema_version: Literal[
-        "academic-format-rule-set/1.0", "academic-format-rule-set/1.1"
-    ] = "academic-format-rule-set/1.1"
+        "academic-format-rule-set/1.0", "academic-format-rule-set/1.1",
+        "academic-format-rule-set/1.2",
+    ] = "academic-format-rule-set/1.2"
     source_artifact_id: Identifier
     source_artifact_version: Annotated[int, Field(gt=0)]
     domain_pack: DomainPackRef
-    compiler_version: Literal["1.0.0", "1.1.0"] = "1.1.0"
+    compiler_version: Literal["1.0.0", "1.1.0", "1.2.0"] = "1.2.0"
     rules: list[AcademicFormatRule]
     issues: list[AcademicFormatIssue]
 

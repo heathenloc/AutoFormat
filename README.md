@@ -11,10 +11,11 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   retained; intentional EasyFormat changes to copied files are pinned in
   `LOCAL_CHANGES.json` and checked separately.
 - The copied parser has a formal `academic_paper` Domain Pack and a deterministic
-  evidence pass for common paper formatting. `AcademicParseBundle/1.1` carries
-  an `AcademicFormatRuleSet/1.1` handoff with typed values and exact Brief
-  evidence. The supplied common-requirements DOCX yields four explicit rules
-  and 26 typed issues for missing or ambiguous values. The older
+  evidence pass for common paper formatting. `AcademicParseBundle/1.2` carries
+  an `AcademicFormatRuleSet/1.2` handoff with typed values and exact Brief
+  evidence. The supplied common-requirements DOCX is a capability checklist;
+  realistic Brief sentences with concrete values are covered by category tests.
+  The older
   `AcademicFormatCompiler` remains available for separately classified model
   candidates. See [the handoff guide](modules/brief_parsing/ACADEMIC_FORMAT_HANDOFF.md).
 - `services/docx_engine/EasyFormat.DocxIndex` is a read-only DOCX paragraph

@@ -104,7 +104,7 @@ Brief, validated `AcademicParseBundle` and immutable V0 are published in one
 version-store transaction. Reusing the request ID with different bytes returns
 a conflict. `GET /api/tasks/{task_id}/academic-parse` returns the Parse Bundle,
 including `format_ruleset`: typed academic rules, exact Brief evidence and
-machine-readable missing-value issues (`academic-parse-bundle/1.1`). The upload
+machine-readable missing-value issues (`academic-parse-bundle/1.2`). The upload
 route then publishes V1 with a DOCX, report
 and selectable preview before requesting any classification or preview
 selection. The current initial publisher copies V0 unchanged and reports all

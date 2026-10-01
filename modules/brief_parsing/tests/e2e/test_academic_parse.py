@@ -17,6 +17,9 @@ from brief_parser.application.service import (
     TextSourceInput,
 )
 from brief_parser.compilers.academic_format import AcademicFormatCompiler
+from brief_parser.compilers.academic_common_v1_1 import (
+    AcademicCommonFormatExtractor as LegacyAcademicCommonFormatExtractor,
+)
 from brief_parser.domain.academic_bundle import AcademicParseBundle
 from brief_parser.domain.enums import ModelRole
 from brief_parser.errors import BriefParserError, ErrorCode
@@ -32,7 +35,7 @@ from tests.e2e.test_pipeline import (
 
 ROOT = Path(__file__).resolve().parents[4]
 SCHEMA = ROOT / "contracts" / "academic-parse-bundle" / (
-    "academic-parse-bundle-1.1.schema.json"
+    "academic-parse-bundle-1.2.schema.json"
 )
 
 
@@ -71,7 +74,7 @@ async def test_parse_only_bundle_then_academic_ruleset() -> None:
         text_sources=(TextSourceInput(text=text, client_source_id="school-brief"),),
     )
     bundle = await service.parse_academic(request)
-    assert bundle.bundle_version == "academic-parse-bundle/1.1"
+    assert bundle.bundle_version == "academic-parse-bundle/1.2"
     assert bundle.format_ruleset is not None
     assert len(bundle.format_ruleset.rules) == 1
     assert bundle.format_ruleset.rules[0].property_id == "paragraph.alignment"
@@ -112,6 +115,21 @@ async def test_parse_only_bundle_then_academic_ruleset() -> None:
     with pytest.raises(ValidationError, match="differs from source evidence"):
         AcademicParseBundle.model_validate(changed_rule)
 
+    previous = bundle.model_dump(mode="python")
+    previous["bundle_version"] = "academic-parse-bundle/1.1"
+    previous["format_ruleset"] = LegacyAcademicCommonFormatExtractor().extract(
+        bundle.requirement_ir
+    ).model_dump(mode="python")
+    assert AcademicParseBundle.model_validate(previous).bundle_version == (
+        "academic-parse-bundle/1.1"
+    )
+    legacy_schema = json.loads(SCHEMA.with_name(
+        "academic-parse-bundle-1.1.schema.json"
+    ).read_text(encoding="utf-8"))
+    Draft202012Validator(legacy_schema).validate(
+        AcademicParseBundle.model_validate(previous).model_dump(mode="json")
+    )
+
     historical = bundle.model_dump(mode="python")
     historical["bundle_version"] = "academic-parse-bundle/1.0"
     historical.pop("format_ruleset")
@@ -131,10 +149,10 @@ async def test_academic_parse_rejects_wrong_task_marker_before_pipeline() -> Non
 
 def test_schema_snapshot_matches_model() -> None:
     expected = AcademicParseBundle.model_json_schema()
-    expected["$id"] = "https://easyformat.local/contracts/academic-parse-bundle/1.1"
+    expected["$id"] = "https://easyformat.local/contracts/academic-parse-bundle/1.2"
     expected["properties"]["bundle_version"].pop("enum")
-    expected["properties"]["bundle_version"]["const"] = "academic-parse-bundle/1.1"
+    expected["properties"]["bundle_version"]["const"] = "academic-parse-bundle/1.2"
     nested = expected["$defs"]["AcademicFormatRuleSet"]["properties"]["schema_version"]
     nested.pop("enum")
-    nested["const"] = "academic-format-rule-set/1.1"
+    nested["const"] = "academic-format-rule-set/1.2"
     assert json.loads(SCHEMA.read_text(encoding="utf-8")) == expected

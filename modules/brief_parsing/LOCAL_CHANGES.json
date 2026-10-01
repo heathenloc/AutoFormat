@@ -3,7 +3,7 @@
   "changes": [
     {
       "path": "src/brief_parser/application/bundle.py",
-      "sha256": "8e5e90a9d2cc1794ee3e1d985d8d5451a6bf1ece0bf63112de4196a081e8ca35",
+      "sha256": "3f44f2604a20656e8e5d218f7955f24886130234aea4ba8afc3d9eaae8a23134",
       "reason": "Include the evidence-bound academic format handoff in the versioned parse Bundle."
     },
     {

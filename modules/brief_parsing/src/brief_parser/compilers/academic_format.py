@@ -133,6 +133,8 @@ class AcademicFormatCompiler:
                 reason="Explicit source and one exact alignment value were verified.",
             ))
         return AcademicFormatRuleSet(
+            schema_version="academic-format-rule-set/1.1",
+            compiler_version="1.1.0",
             source_artifact_id=requirement_ir.artifact_id,
             source_artifact_version=requirement_ir.artifact_version,
             domain_pack=requirement_ir.domain_pack,

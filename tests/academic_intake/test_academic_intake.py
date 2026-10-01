@@ -152,13 +152,13 @@ def test_academic_intake_persists_parse_and_v0_without_executable_rules(setup):
     parsed = client.get(f"/api/tasks/{payload['task_id']}/academic-parse",
                         headers=headers)
     assert parsed.status_code == 200
-    assert parsed.json()["bundle_version"] == "academic-parse-bundle/1.1"
+    assert parsed.json()["bundle_version"] == "academic-parse-bundle/1.2"
     ruleset = parsed.json()["format_ruleset"]
     assert ruleset["rules"][0]["property_id"] == "paragraph.alignment"
     assert ruleset["rules"][0]["value"]["normalized"] == "center"
     assert parsed.json()["manifest"]["sources"][0]["sha256"] == hashlib.sha256(BRIEF).hexdigest()
     parse_schema = json.loads((ROOT / "contracts" / "academic-parse-bundle" /
-                               "academic-parse-bundle-1.1.schema.json").read_text(encoding="utf-8"))
+                                   "academic-parse-bundle-1.2.schema.json").read_text(encoding="utf-8"))
     Draft202012Validator(parse_schema).validate(parsed.json())
     assert intake.load_bundle(payload["task_id"]).manifest.requested_task_types == [
         "format_academic_paper"]
