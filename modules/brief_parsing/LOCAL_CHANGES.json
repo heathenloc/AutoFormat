@@ -3,8 +3,8 @@
   "changes": [
     {
       "path": "src/brief_parser/application/bundle.py",
-      "sha256": "4a479c783bda9f11836c011472aaf472aaa9945cb26588cd15d279afe4c46d8c",
-      "reason": "Build a separate academic parse-only Bundle with shared validated diagnostics."
+      "sha256": "8e5e90a9d2cc1794ee3e1d985d8d5451a6bf1ece0bf63112de4196a081e8ca35",
+      "reason": "Include the evidence-bound academic format handoff in the versioned parse Bundle."
     },
     {
       "path": "src/brief_parser/application/output_compilation.py",
@@ -13,8 +13,8 @@
     },
     {
       "path": "src/brief_parser/application/service.py",
-      "sha256": "621932bdb56b239e3d91bfed3c106e612883c6632131703ae393a5dc314ff54d",
-      "reason": "Expose a dedicated academic parse-only service path using the existing secured pipeline."
+      "sha256": "4448b1945c6c49df81100c78cd2b8d75078c5715a3cd516bd9d4585663a19fde",
+      "reason": "Produce typed common-format rules from the academic parse evidence without model-source classification."
     },
     {
       "path": "tests/unit/test_domain_pack_loader.py",

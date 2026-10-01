@@ -164,6 +164,8 @@ API、报告和 UI 复用相同的机器状态：`needs_user_input`、`blocked_c
 
 ## 6. Brief Parsing 副本的开发任务
 
+> 当前增量（2026-10-01）：复制版已新增基于精确 `Requirement IR` 原文证据的常见论文格式确定性提取；`AcademicParseBundle/1.1.format_ruleset` 向编辑侧提供 `AcademicFormatRuleSet/1.1`。上传的常见格式清单可识别 4 条有明确取值的规则和 26 条缺值或目标含糊的待处理项；项目内模板也已覆盖正文、标题层级、目录深度及英数字字体的明文写法。解析结果不等于已编辑的论文；复杂条件、完整模板观察和更广的编辑器能力仍按下列任务扩展。具体契约和限制见 [`ACADEMIC_FORMAT_HANDOFF.md`](modules/brief_parsing/ACADEMIC_FORMAT_HANDOFF.md)。
+
 1. 在复制版中把 `academic_paper.example` 扩展为正式 `academic_paper` Domain Pack。覆盖页面、正文、标题、目录、页码、脚注／尾注、引用、表格和可报告但暂不编辑的对象。
 2. 为 DOCX 模板增加只读结构／版式观察：节、纸张、页边距、样式继承、直接格式、表格边框、页眉页脚和字段等。每个观察值带来源和定位，不能冒充 Brief 文字要求。
 3. 增加区域角色、中文字号和单位词典、字符脚本范围、条件表达，以及“示例／背景／明确要求／模板观察”的区分。

@@ -6,6 +6,8 @@
 
 > 后续决策（2026-09-28）：格式编辑器契约、预览反馈和版本工作流已在 [EasyFormat 技术架构](EasyFormat_Technical_Architecture.md) 定稿。Brief Parsing 的开发副本已置于 [`modules/brief_parsing`](modules/brief_parsing/README.md)；原 `E:\Brief Parsing` 目录仅作只读参考。本文件中“编辑器契约待定”等早期表述以新文档为准。
 
+> 实施进展（2026-10-01）：论文领域包及常见格式的确定性证据提取已进入复制版，输出随 `AcademicParseBundle/1.1` 交给后续编辑器。样本中未给具体值的字体、字号等只生成带目标和属性的待处理项；不把模板视觉样式当成明文规则。当前支持范围与限制见 [论文格式交接说明](modules/brief_parsing/ACADEMIC_FORMAT_HANDOFF.md)。下文“现有模块与缺口”保留的是初始设计时的基线对比。
+
 ## 1. 目标与边界
 
 EasyFormat 在同一任务中接收学校 Brief 和论文初稿 DOCX。Brief Parsing 负责将 Brief 中的文字要求、模板呈现的版式及其证据整理为可审查、可修订的格式需求；论文格式编辑器负责后续的对象定位、修改和验证。解析器不能因模板看起来如此排版，就宣称学校明确要求如此排版。

@@ -11,6 +11,7 @@ from brief_parser.application.bundle import build_academic_parse_bundle, build_p
 from brief_parser.application.output_compilation import OutputCompiler
 from brief_parser.application.pipeline import BriefParsingPipeline, ParsePipelineRequest
 from brief_parser.application.resource_limits import ParseResourceLimits
+from brief_parser.compilers.academic_common import AcademicCommonFormatExtractor
 from brief_parser.domain.academic_bundle import AcademicParseBundle
 from brief_parser.domain.bundle import ParseBundle
 from brief_parser.domain.domain_pack import DomainPack
@@ -123,7 +124,12 @@ class BriefParserService:
             )
         pipeline_result, pack = await self._run_pipeline(request)
         outputs = self._compiler.compile_parse_only(pipeline_result.requirement_ir, pack)
-        return build_academic_parse_bundle(pipeline_result, outputs)
+        format_ruleset = AcademicCommonFormatExtractor().extract(
+            outputs.requirement_ir,
+        )
+        return build_academic_parse_bundle(
+            pipeline_result, outputs, format_ruleset=format_ruleset,
+        )
 
     async def parse_academic_with_timeout(
         self,

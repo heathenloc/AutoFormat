@@ -19,7 +19,7 @@ from tests.factories import requirement_ir_payload
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = ROOT.parents[1] / "contracts" / "academic-format-rule-set" / (
-    "academic-format-rule-set-1.0.schema.json"
+    "academic-format-rule-set-1.1.schema.json"
 )
 
 
@@ -154,5 +154,7 @@ def test_incomplete_ir_and_unknown_property_are_reported() -> None:
 
 def test_schema_snapshot_matches_strict_model() -> None:
     expected = AcademicFormatRuleSet.model_json_schema()
-    expected["$id"] = "https://easyformat.local/contracts/academic-format-rule-set/1.0"
+    expected["$id"] = "https://easyformat.local/contracts/academic-format-rule-set/1.1"
+    expected["properties"]["schema_version"].pop("enum")
+    expected["properties"]["schema_version"]["const"] = "academic-format-rule-set/1.1"
     assert json.loads(CONTRACT.read_text(encoding="utf-8")) == expected

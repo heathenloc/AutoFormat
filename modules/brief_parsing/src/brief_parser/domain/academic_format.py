@@ -60,19 +60,24 @@ class AcademicFormatIssue(StrictModel):
     status: Literal[
         "needs_source_classification", "pending_conflict", "pending_condition",
         "evidence_unverified", "value_evidence_mismatch", "unsupported",
-        "check_only", "parse_incomplete",
+        "check_only", "parse_incomplete", "needs_value", "ambiguous_target",
     ]
     reason: Annotated[str, Field(min_length=1)]
     next_action: Annotated[str, Field(min_length=1)]
     evidence_ids: list[Identifier]
+    target: AcademicTarget | None = None
+    property_id: Identifier | None = None
+    original_text: str | None = None
 
 
 class AcademicFormatRuleSet(StrictModel):
-    schema_version: Literal["academic-format-rule-set/1.0"] = "academic-format-rule-set/1.0"
+    schema_version: Literal[
+        "academic-format-rule-set/1.0", "academic-format-rule-set/1.1"
+    ] = "academic-format-rule-set/1.1"
     source_artifact_id: Identifier
     source_artifact_version: Annotated[int, Field(gt=0)]
     domain_pack: DomainPackRef
-    compiler_version: Literal["1.0.0"] = "1.0.0"
+    compiler_version: Literal["1.0.0", "1.1.0"] = "1.1.0"
     rules: list[AcademicFormatRule]
     issues: list[AcademicFormatIssue]
 

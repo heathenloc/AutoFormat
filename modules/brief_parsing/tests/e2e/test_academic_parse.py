@@ -32,7 +32,7 @@ from tests.e2e.test_pipeline import (
 
 ROOT = Path(__file__).resolve().parents[4]
 SCHEMA = ROOT / "contracts" / "academic-parse-bundle" / (
-    "academic-parse-bundle-1.0.schema.json"
+    "academic-parse-bundle-1.1.schema.json"
 )
 
 
@@ -71,7 +71,11 @@ async def test_parse_only_bundle_then_academic_ruleset() -> None:
         text_sources=(TextSourceInput(text=text, client_source_id="school-brief"),),
     )
     bundle = await service.parse_academic(request)
-    assert bundle.bundle_version == "academic-parse-bundle/1.0"
+    assert bundle.bundle_version == "academic-parse-bundle/1.1"
+    assert bundle.format_ruleset is not None
+    assert len(bundle.format_ruleset.rules) == 1
+    assert bundle.format_ruleset.rules[0].property_id == "paragraph.alignment"
+    assert bundle.format_ruleset.rules[0].value.normalized == "center"
     assert bundle.manifest.requested_task_types == ["format_academic_paper"]
     assert bundle.requirement_ir.domain_pack.id == "academic_paper"
     assert bundle.requirement_ir.evidence_index
@@ -103,6 +107,16 @@ async def test_parse_only_bundle_then_academic_ruleset() -> None:
     with pytest.raises(ValidationError, match="sources differ"):
         AcademicParseBundle.model_validate(changed_source)
 
+    changed_rule = bundle.model_dump(mode="python")
+    changed_rule["format_ruleset"]["rules"][0]["value"]["normalized"] = "right"
+    with pytest.raises(ValidationError, match="differs from source evidence"):
+        AcademicParseBundle.model_validate(changed_rule)
+
+    historical = bundle.model_dump(mode="python")
+    historical["bundle_version"] = "academic-parse-bundle/1.0"
+    historical.pop("format_ruleset")
+    assert AcademicParseBundle.model_validate(historical).format_ruleset is None
+
 
 async def test_academic_parse_rejects_wrong_task_marker_before_pipeline() -> None:
     service = _service("正文段落必须居中。")
@@ -117,5 +131,10 @@ async def test_academic_parse_rejects_wrong_task_marker_before_pipeline() -> Non
 
 def test_schema_snapshot_matches_model() -> None:
     expected = AcademicParseBundle.model_json_schema()
-    expected["$id"] = "https://easyformat.local/contracts/academic-parse-bundle/1.0"
+    expected["$id"] = "https://easyformat.local/contracts/academic-parse-bundle/1.1"
+    expected["properties"]["bundle_version"].pop("enum")
+    expected["properties"]["bundle_version"]["const"] = "academic-parse-bundle/1.1"
+    nested = expected["$defs"]["AcademicFormatRuleSet"]["properties"]["schema_version"]
+    nested.pop("enum")
+    nested["const"] = "academic-format-rule-set/1.1"
     assert json.loads(SCHEMA.read_text(encoding="utf-8")) == expected

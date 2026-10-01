@@ -10,11 +10,13 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   independent of the read-only source project. Its 180-file source snapshot is
   retained; intentional EasyFormat changes to copied files are pinned in
   `LOCAL_CHANGES.json` and checked separately.
-- The copied parser now has a formal `academic_paper` Domain Pack covering
-  academic document categories. A separate `AcademicFormatCompiler` projects
-  validated, explicitly classified Requirement IR into versioned semantic
-  rules. Its first verified projection is an unambiguous, evidence-backed
-  body-paragraph alignment rule. Other items remain reported as issues.
+- The copied parser has a formal `academic_paper` Domain Pack and a deterministic
+  evidence pass for common paper formatting. `AcademicParseBundle/1.1` carries
+  an `AcademicFormatRuleSet/1.1` handoff with typed values and exact Brief
+  evidence. The supplied common-requirements DOCX yields four explicit rules
+  and 26 typed issues for missing or ambiguous values. The older
+  `AcademicFormatCompiler` remains available for separately classified model
+  candidates. See [the handoff guide](modules/brief_parsing/ACADEMIC_FORMAT_HANDOFF.md).
 - `services/docx_engine/EasyFormat.DocxIndex` is a read-only DOCX paragraph
   index and exact selection anchor prototype. Its unique matches are safe
   candidates for later verification, not permission to edit yet.
@@ -39,10 +41,10 @@ boundaries are in [EasyFormat_Technical_Architecture.md](EasyFormat_Technical_Ar
   rule to the C# editor, LibreOffice preview, report, and version store. It
   supports V0→V1, later edits, and request replay. Rule extraction, broader
   formatting properties, feedback decisions, and UI remain separate work.
-- A dedicated academic parse-only service path now returns a versioned
-  `AcademicParseBundle` without a generic `ExecutionBrief`. The semantic
-  compiler accepts that Bundle, while source classification still must come
-  from a trusted step; an unclassified IR item never becomes a formatting rule.
+- The academic parse-only service returns a versioned Bundle without a generic
+  `ExecutionBrief`. Its literal-format pass does not require a user to classify
+  each explicit, deterministically verified line. Model-only candidates still
+  need a trusted classification before they can become rules.
 - The DOCX index exposes a versioned, read-only target profile, including
   direct paragraph alignment. The API checks the index binary and DOCX hashes
   before reviewing a global body rule. `Normal` is only a candidate. A complete
