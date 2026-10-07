@@ -1,0 +1,91 @@
+.technical-section { padding-block: 96px 112px; }
+.technical-section::before { content: ""; position: absolute; top: 0; inset-inline: var(--edge); height: 1px; background: linear-gradient(90deg, transparent, rgb(174 196 232 / 18%), transparent); }
+.technical-intro { max-width: 860px; }
+.technical-intro .technical-kicker { font-size: 18px; letter-spacing: 0.02em; }
+.technical-intro h2 { margin: 0; color: #edf2fb; font-size: clamp(30px, 3.2vw, 46px); font-weight: 500; line-height: 1.35; letter-spacing: -0.04em; text-wrap: balance; }
+.technical-intro > p:last-child { max-width: 790px; margin: 24px 0 0; color: #9ba9bf; font-size: 15px; line-height: 2; }
+.technical-modules { position: relative; margin-top: 96px; }
+.technical-modules::before { content: ""; position: absolute; top: 10px; bottom: 44px; left: 0; width: 1px; background: linear-gradient(#5b789f, #2b3e59 50%, transparent); }
+.technical-module { display: grid; grid-template-columns: minmax(200px, 0.75fr) minmax(0, 2fr); gap: 48px; padding: 0 0 72px 32px; margin-bottom: 72px; border-bottom: 1px solid rgb(172 192 229 / 12%); scroll-margin-top: 28px; }
+.technical-module:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: 0; }
+.module-heading { position: relative; }
+.module-heading::before { content: ""; position: absolute; left: -36px; top: 7px; width: 9px; height: 9px; border: 2px solid #8aabd4; border-radius: 50%; background: #101725; box-shadow: 0 0 0 6px #0c111b; }
+.module-number { color: #7896bd; font-family: Consolas, monospace; font-size: 10px; line-height: 1.8; letter-spacing: 0.06em; }
+.module-heading h3 { margin: 15px 0 18px; color: #dae5f7; font-size: 28px; font-weight: 500; letter-spacing: -0.025em; }
+.module-heading > p { max-width: 250px; margin: 0; color: #96a7c0; font-size: 15px; line-height: 1.9; }
+.module-stack { max-width: 250px; margin-top: 24px; color: #6e85a6; font-family: Consolas, monospace; font-size: 11px; line-height: 1.9; overflow-wrap: anywhere; }
+.module-details { min-width: 0; }
+.module-features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+.module-features h4 { margin: 0 0 12px; color: #c1d1e9; font-size: 15px; font-weight: 500; line-height: 1.7; }
+.module-features p { margin: 0; color: #8597b2; font-size: 13px; line-height: 1.95; }
+.rule-proof { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 32px; border: 1px solid #29394f; border-radius: 8px; background: rgb(13 21 33 / 65%); overflow: hidden; }
+.proof-source, .proof-schema { min-width: 0; padding: 22px; }
+.proof-schema { border-left: 1px solid #29394f; background: rgb(8 14 23 / 40%); }
+.detail-label { color: #6989b3; font-size: 10px; line-height: 1.8; letter-spacing: 0.025em; }
+.proof-source blockquote { margin: 18px 0; color: #c9d9ef; font-size: 16px; line-height: 1.8; }
+.proof-source p { margin: 0; color: #7d90ac; font-size: 12px; line-height: 1.9; }
+.proof-schema pre { margin: 14px 0 0; color: #9fbadd; font: 12px / 1.8 Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.confirmation-demo { padding: 24px; margin-top: 24px; border: 1px solid #344763; border-radius: 8px; background: linear-gradient(125deg, rgb(25 40 63 / 50%), rgb(13 21 34 / 60%)); scroll-margin-top: 28px; }
+.confirmation-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.confirmation-heading h4 { margin: 0; color: #c4d4ed; font-size: 14px; font-weight: 500; line-height: 1.8; }
+.confirmation-heading > span { color: #7f98ba; font-size: 10px; white-space: nowrap; }
+.confirmation-question { margin: 22px 0 14px; color: #d6e2f4; font-size: 16px; line-height: 1.8; }
+.confirmation-evidence { display: flex; flex-wrap: wrap; gap: 10px 24px; padding-left: 12px; border-left: 2px solid #4b6284; color: #8b9ebc; font-size: 12px; line-height: 1.9; }
+.confirmation-options { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; padding: 0; margin: 22px 0; border: 0; }
+.confirmation-options label { display: inline-flex; align-items: center; gap: 9px; padding: 12px 15px; border: 1px solid #3a4c67; border-radius: 6px; color: #a9bedb; font-size: 12px; line-height: 1.6; cursor: pointer; transition: background 200ms, border-color 200ms; }
+.confirmation-options label:hover { border-color: #6b88b0; background: rgb(116 154 207 / 5%); }
+.confirmation-options label:has(input:checked) { border-color: #85a9d8; background: rgb(116 154 207 / 10%); color: #d8e6fa; }
+.confirmation-options input { width: 14px; height: 14px; margin: 0; flex-shrink: 0; accent-color: #afcefa; }
+.confirmation-actions { display: none; flex-wrap: wrap; align-items: center; gap: 18px; }
+.js .confirmation-actions { display: flex; }
+.confirmation-actions .button { min-height: 42px; padding: 10px 16px; font-size: 12px; }
+.confirmation-actions .button:disabled { opacity: 0.35; pointer-events: none; }
+.demo-reset { min-height: 42px; padding: 8px 2px; border: 0; background: transparent; color: #8197b6; font-size: 12px; }
+.demo-reset:hover { color: #c4d7f1; }
+.confirmation-status { min-height: 24px; margin: 18px 0 0; color: #a1badb; font-size: 12px; line-height: 1.9; }
+.confirmation-footnote { margin: 14px 0 0; color: #7187a7; font-size: 11px; line-height: 1.9; }
+.engine-sequence { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 22px 0 0; margin: 32px 0 0; border-top: 1px solid #2b3b53; list-style: none; counter-reset: engine; }
+.engine-sequence li { counter-increment: engine; display: flex; flex-direction: column; gap: 10px; color: #9db4d4; font-size: 12px; line-height: 1.8; }
+.engine-sequence li::before { content: "0" counter(engine); color: #5a779e; font: 10px Consolas, monospace; }
+.refinement-loop { display: flex; align-items: center; gap: 14px; margin-top: 32px; padding: 20px 0 0; border-top: 1px solid #2b3b53; color: #8facd2; }
+.refinement-loop p { margin: 0; font-size: 12px; line-height: 1.95; }
+.prototype-showcase { margin: 104px 0 0; }
+.prototype-showcase figcaption .eyebrow { margin-bottom: 16px; }
+.prototype-showcase h3 { margin: 0; color: #dce7f8; font-size: clamp(24px, 2.5vw, 34px); font-weight: 500; line-height: 1.45; letter-spacing: -0.03em; }
+.prototype-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; padding: 38px 24px; margin-top: 32px; border: 1px dashed #384b68; border-radius: 10px; background: radial-gradient(ellipse at center, rgb(47 69 106 / 14%), transparent 75%); text-align: center; }
+.prototype-placeholder > .icon { width: 32px; height: 32px; margin-bottom: 22px; color: #617ea8; stroke-width: 1; }
+.prototype-placeholder > span { color: #a8bedc; font-size: 17px; line-height: 1.8; }
+.prototype-placeholder p { margin: 12px 0 0; color: #7088aa; font-size: 13px; line-height: 1.9; }
+.prototype-path { margin: 20px 0 0; color: #7188a8; font-size: 12px; line-height: 1.9; text-align: center; }
+
+@media (max-width: 1120px) {
+  .technical-module { grid-template-columns: minmax(180px, 0.65fr) minmax(0, 2fr); gap: 32px; }
+  .module-features { gap: 24px; }
+}
+@media (max-width: 980px) {
+  .technical-module { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  .module-heading > p, .module-stack { max-width: none; }
+  .module-heading h3 { margin-block: 12px; }
+  .module-stack { margin-top: 14px; }
+}
+
+@media (max-width: 600px) {
+  .technical-section { padding-block: 64px 76px; }
+  .technical-intro .technical-kicker { font-size: 16px; }
+  .technical-intro > p:last-child { font-size: 14px; }
+  .technical-modules { margin-top: 64px; }
+  .technical-module { padding-left: 20px; padding-bottom: 48px; margin-bottom: 48px; gap: 26px; }
+  .module-heading::before { left: -24px; }
+  .module-heading h3 { font-size: 25px; }
+  .module-features { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .rule-proof { grid-template-columns: minmax(0, 1fr); }
+  .proof-source, .proof-schema { padding: 20px; }
+  .proof-schema { border-left: 0; border-top: 1px solid #29394f; }
+  .confirmation-demo { padding: 20px 16px; }
+  .confirmation-options { flex-direction: column; }
+  .confirmation-options label { width: 100%; }
+  .engine-sequence { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  .refinement-loop { align-items: flex-start; }
+  .prototype-showcase { margin-top: 64px; }
+  .prototype-placeholder { min-height: 240px; padding-inline: 20px; }
+}
