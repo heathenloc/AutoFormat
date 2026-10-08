@@ -56,7 +56,6 @@
 .prototype-placeholder > .icon { width: 32px; height: 32px; margin-bottom: 22px; color: #617ea8; stroke-width: 1; }
 .prototype-placeholder > span { color: #a8bedc; font-size: 17px; line-height: 1.8; }
 .prototype-placeholder p { margin: 12px 0 0; color: #7088aa; font-size: 13px; line-height: 1.9; }
-.prototype-path { margin: 20px 0 0; color: #7188a8; font-size: 12px; line-height: 1.9; text-align: center; }
 
 @media (max-width: 1120px) {
   .technical-module { grid-template-columns: minmax(180px, 0.65fr) minmax(0, 2fr); gap: 32px; }

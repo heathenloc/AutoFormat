@@ -17,12 +17,41 @@
     path.setAttribute("data-edge", `${from}-${to}`);
     path.setAttribute("marker-end", `url(#wf-arrow-${kind})`);
     path.setAttribute("pathLength", "1");
-    path.style.setProperty("--edge-delay", `${index * 55}ms`);
+    path.style.setProperty("--edge-delay", `${240 + (index % 3) * 100}ms`);
     paths.append(path);
     return path;
   });
   nodes.forEach((node, key) => node.style.setProperty("--node-delay", `${["U", "A", "B", "Q", "C", "D", "E", "F", "G", "H", "I", "J"].indexOf(key) * 65}ms`));
   let queued = false;
+  let revealQueued = false;
+  const reachedNodes = new Set();
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  function revealEdges() {
+    revealQueued = false;
+    if (reducedMotion.matches || !document.documentElement.classList.contains("motion-ready")) {
+      edgePaths.forEach(path => path.classList.add("is-visible"));
+    } else {
+      // Wait until both endpoints have reached the reading area. Nodes above the
+      // viewport count as reached, so anchor jumps do not leave missing edges.
+      const readingLine = innerHeight - Math.min(180, Math.max(80, innerHeight * 0.18));
+      nodes.forEach((node, key) => {
+        if (reachedNodes.has(key)) return;
+        const bounds = node.getBoundingClientRect();
+        if (bounds.top + Math.min(bounds.height * 0.35, 40) <= readingLine) reachedNodes.add(key);
+      });
+      edges.forEach(([from, to], index) => {
+        if (reachedNodes.has(from) && reachedNodes.has(to)) edgePaths[index].classList.add("is-visible");
+      });
+    }
+    if (edgePaths.every(path => path.classList.contains("is-visible"))) window.removeEventListener("scroll", scheduleReveal);
+  }
+
+  function scheduleReveal() {
+    if (revealQueued) return;
+    revealQueued = true;
+    requestAnimationFrame(revealEdges);
+  }
 
   function roundedPath(points) {
     let d = `M ${points[0].x} ${points[0].y}`;
@@ -101,6 +130,7 @@
       label.style.left = `${position.x}px`;
       label.style.top = `${position.y}px`;
     }
+    scheduleReveal();
   }
   function schedule() {
     if (queued) return;
@@ -113,7 +143,9 @@
     nodes.forEach(node => observer.observe(node));
   }
   window.addEventListener("resize", schedule, { passive: true });
-  document.addEventListener("easyformat:languagechange", schedule);
+  window.addEventListener("scroll", scheduleReveal, { passive: true });
+  reducedMotion.addEventListener("change", scheduleReveal);
+  document.addEventListener("autoformat:languagechange", schedule);
   if (document.fonts) document.fonts.ready.then(schedule);
   schedule();
 })();

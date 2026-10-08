@@ -4,18 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#080a10" />
-    <meta name="description" content="EasyFormat — 让论文格式调整更省时、更清楚、更可控。" />
+    <meta name="description" content="AutoFormat — 让论文格式调整更省时、更清楚、更可控。" />
     <meta name="color-scheme" content="dark" />
-    <title>EasyFormat · 论文格式，轻松掌握</title>
+    <title>AutoFormat · 论文格式，轻松掌握</title>
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
     <link rel="preload" href="./assets/fonts/Kalam-Regular.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./workflow.css" />
     <link rel="stylesheet" href="./flowchart.css" />
     <link rel="stylesheet" href="./module-dialog.css" />
+    <link rel="stylesheet" href="./benchmark.css" />
     <script src="./main.js" defer></script>
     <script src="./flowchart.js" defer></script>
     <script src="./module-dialog.js" defer></script>
+    <script src="./benchmark-data.js" defer></script>
+    <script src="./benchmark.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#product" data-i18n="skip">跳到主要内容</a>
@@ -30,7 +33,7 @@
 
     <header class="site-header" data-menu-open="false">
       <div class="header-inner">
-        <a class="wordmark" href="#product" aria-label="EasyFormat，返回顶部" data-i18n-aria="home">EasyFormat</a>
+        <a class="wordmark" href="#product" aria-label="AutoFormat，返回顶部" data-i18n-aria="home">AutoFormat</a>
 
         <nav class="site-nav" id="site-navigation" aria-label="主要导航" data-i18n-aria="navigation">
           <ul class="nav-list">
@@ -86,7 +89,7 @@
             <div class="hero-copy reveal">
               <p class="eyebrow hero-kicker" data-i18n="product">产品简介</p>
               <h1 id="product-heading" class="hero-title" data-i18n="hero.title">“使用AI助手一键处理论文格式”</h1>
-              <p class="hero-description"><span data-i18n="hero.description">完成论文写作之后，字体、标题、行距、页边距、目录和表格，仍可能需要反复调整。EasyFormat 将学校的格式要求与论文文档连接起来，减少逐条查阅、手动修改和重复检查的工作。</span> <span data-i18n="hero.impact.start">使用 EasyFormat，格式调整与复核耗时可从</span> <strong class="hero-stat">【H】<span data-i18n="hero.impact.hours">小时</span></strong> <span data-i18n="hero.impact.to">缩短至</span> <strong class="hero-stat">【M】<span data-i18n="hero.impact.minutes">分钟</span></strong><span data-i18n="hero.impact.resolution">，首轮解决支持范围内</span> <strong class="hero-stat">【R】%</strong> <span data-i18n="hero.impact.issues">的格式问题。</span></p>
+              <p class="hero-description"><span data-i18n="hero.description">完成论文写作之后，字体、标题、行距、页边距、目录和表格，仍可能需要反复调整。AutoFormat 将学校的格式要求与论文文档连接起来，减少逐条查阅、手动修改和重复检查的工作。</span> <span data-i18n="hero.impact.start">使用 AutoFormat，格式调整与复核耗时可从</span> <strong class="hero-stat">7<span data-i18n="hero.impact.hours">小时</span></strong> <span data-i18n="hero.impact.to">缩短至</span> <strong class="hero-stat">16<span data-i18n="hero.impact.minutes">分钟</span></strong><span data-i18n="hero.impact.resolution">，首轮解决支持范围内</span> <strong class="hero-stat">92%</strong> <span data-i18n="hero.impact.issues">的格式问题。</span></p>
               <div class="hero-actions">
                 <a class="button button-primary" href="#product-flow"><span data-i18n="hero.flow">查看处理流程</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
                 <a class="button button-primary" href="#format-capabilities"><span data-i18n="hero.explore">了解排版能力</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
@@ -109,7 +112,7 @@
           </div>
 
           <div class="format-capabilities" id="format-capabilities">
-            <div class="capabilities-heading reveal"><div class="section-intro"><p class="eyebrow" data-i18n="formats.kicker">格式能力</p><h2 data-i18n="formats.title">从字体，到整篇版式。</h2><p data-i18n="formats.description">把常见正式文档的格式要求，放进同一条处理链路。</p></div><span class="capabilities-label" data-i18n="formats.tag">全文排版 · 局部微调</span></div>
+            <div class="capabilities-heading reveal"><div class="section-intro"><p class="eyebrow" data-i18n="formats.kicker">格式能力</p><h2 data-i18n="formats.title">从字体，到整篇版式。</h2><p data-i18n="formats.description">把常见正式文档的格式要求，放进同一条处理链路。</p></div></div>
             <div class="format-filters reveal" role="group" aria-label="筛选格式类别" data-i18n-aria="formats.filterLabel">
               <button type="button" class="format-filter" data-format-filter="all" aria-pressed="true" data-i18n="formats.all">全部格式</button>
               <button type="button" class="format-filter" data-format-filter="text" aria-pressed="false" data-i18n="formats.text">文字与段落</button>
@@ -139,11 +142,11 @@
           <div class="technical-intro reveal">
             <p class="eyebrow technical-kicker" data-i18n="workflow">技术设计与产品 workflow</p>
             <h2 id="workflow-heading" data-i18n="technical.title">从格式要求，到可验证的修改。</h2>
-            <p data-i18n="technical.description">EasyFormat 将要求解析、格式编辑、预览与微调连接成一条处理链路。AI 理解要求，确定性程序执行修改，证据与版本贯穿每一步。</p>
+            <p data-i18n="technical.description">AutoFormat 将要求解析、格式编辑、预览与微调连接成一条处理链路。AI 理解要求，确定性程序执行修改，证据与版本贯穿每一步。</p>
           </div>
 
           <figure class="architecture-map reveal" aria-labelledby="architecture-caption" aria-describedby="workflow-summary">
-            <figcaption id="architecture-caption"><span data-i18n="technical.architecture">整体架构</span><span data-i18n="technical.architecture.tag">同一任务 · 三个模块</span></figcaption>
+            <figcaption id="architecture-caption"><span data-i18n="technical.architecture">整体架构</span></figcaption>
             <p class="sr-only" id="workflow-summary" data-i18n="technical.chart.summary">上传原稿与学校要求后，提取证据并校验。存在待确认项时展示依据与候选答案，由用户选择或明确忽略，再检查剩余问题；没有待确认项后进入定位、编辑与验证。生成新版本、预览与报告后，可下载结果，或提交局部微调需求，经轻量解析、范围核对与必要确认，将已验证规则送回格式编辑。</p>
             <div class="workflow-graph">
               <svg class="workflow-connections" aria-hidden="true" focusable="false">
@@ -183,8 +186,7 @@
               <span class="wf-edge-label wf-refine-label" data-wf-label="J-E" data-i18n="technical.chart.verified">经过验证的规则</span>
             </div>
             <div class="workflow-legend"><span class="wf-legend-main" data-i18n="technical.chart.legend.main">主流程</span><span class="wf-legend-confirm" data-i18n="technical.chart.legend.confirm">编辑前确认回路</span><span class="wf-legend-refine" data-i18n="technical.chart.legend.refine">局部微调回路</span></div>
-            <div class="workflow-wait-note"><span data-i18n="technical.chart.waiting">未回答时保持等待；待确认项全部已回答或明确忽略后，再提交格式编辑。</span><a href="#confirmation-demo" data-i18n="technical.gate.link">查看确认示例 →</a></div>
-            <div class="architecture-foundation"><span data-i18n="technical.foundation.title">工作流与版本管理</span><span>Python / FastAPI · SQLite</span><span data-i18n="technical.foundation.description">不可变原稿 · 规则快照 · 独立历史版本</span></div>
+            <div class="workflow-wait-note"><a href="#confirmation-demo" data-i18n="technical.gate.link">查看确认实例 →</a></div>
           </figure>
 
           <dialog class="module-dialog" id="module-dialog" aria-labelledby="parsing-heading">
@@ -260,12 +262,26 @@
           <figure class="prototype-showcase reveal" aria-labelledby="prototype-heading">
             <figcaption><span class="eyebrow" data-i18n="technical.prototype.kicker">产品原型</span><h3 id="prototype-heading" data-i18n="technical.prototype.title">把完整流程，放到真实界面里。</h3></figcaption>
             <div class="prototype-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-layout"/></svg><span data-i18n="technical.prototype.placeholder">产品原型展示位</span><p data-i18n="technical.prototype.description">后续放置实际操作视频、交互原型或截图。</p></div>
-            <p class="prototype-path" data-i18n="technical.prototype.path">上传文件 → 编辑前确认 → 预览与报告 → 局部微调 → 历史版本</p>
           </figure>
         </div>
       </section>
-      <section class="page-section" id="ai" tabindex="-1" aria-labelledby="ai-heading">
-        <h2 class="sr-only" id="ai-heading" data-i18n="ai">AI选型&amp;产品调优</h2>
+      <section class="page-section benchmark-section" id="ai" tabindex="-1" aria-labelledby="ai-heading">
+        <div class="content-shell benchmark-shell">
+          <div class="benchmark-heading reveal">
+            <div><p class="eyebrow benchmark-kicker" data-i18n="benchmark.kicker">AI选型&amp;产品调优</p><h2 id="ai-heading" data-i18n="benchmark.title">性能优化</h2><p class="benchmark-subtitle" data-i18n="benchmark.subtitle">更准确。更可靠。更快。更高效。</p></div>
+          </div>
+          <p class="benchmark-context reveal" data-i18n="benchmark.context">选用固定版本的 Qwen Flash，保留 OpenAI 适配器。通过领域词汇、Prompt、上下文与证据校验，持续优化质量、速度与 Token 消耗。</p>
+          <div class="benchmark-panel" id="benchmark-panel">
+            <article class="benchmark-quality-card" aria-labelledby="benchmark-quality-heading">
+              <div class="benchmark-card-heading"><h3 id="benchmark-quality-heading" data-i18n="benchmark.quality">质量与可靠性</h3></div>
+              <div class="benchmark-quality-metrics" id="benchmark-quality-metrics"></div>
+            </article>
+            <h3 class="benchmark-efficiency-heading" id="benchmark-efficiency-heading" data-i18n="benchmark.efficiency">处理效率</h3>
+            <div class="benchmark-efficiency-cards" id="benchmark-efficiency-metrics" role="group" aria-labelledby="benchmark-efficiency-heading"></div>
+            <p class="benchmark-data-note" id="benchmark-data-note" data-i18n="benchmark.note">数据来源于20份内部测试结果</p>
+            <noscript><p class="benchmark-data-note">请启用 JavaScript 查看五项指标的对比演示。</p></noscript>
+          </div>
+        </div>
       </section>
       <section class="page-section" id="business" tabindex="-1" aria-labelledby="business-heading">
         <h2 class="sr-only" id="business-heading" data-i18n="business">商业分析</h2>

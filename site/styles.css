@@ -250,7 +250,6 @@ main { position: relative; }
 
 .format-capabilities { padding-top: 28px; scroll-margin-top: 28px; }
 .capabilities-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
-.capabilities-label { margin-bottom: 4px; color: #70829f; font-size: 11px; white-space: nowrap; }
 .format-filters { display: none; flex-wrap: wrap; gap: 8px; margin: 32px 0 24px; }
 .js .format-filters { display: flex; }
 .format-filter { min-height: 38px; padding: 8px 15px; border: 1px solid #28344a; border-radius: 6px; background: transparent; color: #899ab4; font-size: 12px; line-height: 1.5; transition: background 200ms, color 200ms, border-color 200ms; }
@@ -291,7 +290,6 @@ main { position: relative; }
   .flow-step p { max-width: none; margin-top: 8px; font-size: 13px; }
   .product-assurances { gap: 16px 24px; }
   .capabilities-heading { display: block; }
-  .capabilities-label { display: inline-block; margin-top: 20px; }
   .format-row { grid-template-columns: 1fr; gap: 10px; padding-block: 20px; }
   .format-row dt { font-size: 14px; }
   .format-row dd { padding-left: 34px; font-size: 13px; }

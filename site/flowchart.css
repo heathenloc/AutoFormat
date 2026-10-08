@@ -1,6 +1,5 @@
 .architecture-map { margin: 48px 0 0; padding: 28px; border: 1px solid #29364b; border-radius: 14px; background: linear-gradient(135deg, rgb(18 27 43 / 82%), rgb(10 15 24 / 80%)); }
 .architecture-map > figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: #d1def2; font-size: 14px; }
-.architecture-map > figcaption > span:last-child { color: #7e91af; font-size: 12px; }
 .workflow-graph { position: relative; padding: 32px 18px 52px; }
 .workflow-connections { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .wf-edge { fill: none; stroke: #839fc7; stroke-width: 1.15; vector-effect: non-scaling-stroke; }
@@ -47,16 +46,13 @@ html:not(.js) #workflow-summary { position: static; width: auto; height: auto; c
 .workflow-legend > span::before { content: ""; width: 22px; height: 1px; background: #839fc7; }
 .workflow-legend > .wf-legend-confirm::before { background: #b6a5cf; }
 .workflow-legend > .wf-legend-refine::before { background: #83b5c3; }
-.workflow-wait-note { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; padding-block: 22px; margin-top: 16px; border-bottom: 1px solid #2a3a51; color: #8196b4; font-size: 11px; line-height: 1.9; text-align: center; }
+.workflow-wait-note { display: flex; justify-content: center; padding-top: 22px; margin-top: 16px; font-size: 11px; line-height: 1.9; text-align: center; }
 .workflow-wait-note a { color: #adc5e9; }
 .workflow-wait-note a:hover { color: #fff; }
-.architecture-foundation { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; padding-top: 23px; color: #7387a5; font-size: 11px; line-height: 1.8; }
-.architecture-foundation > span:first-child { color: #b0bfd5; }
-.architecture-foundation > span:nth-child(2) { font-family: Consolas, monospace; }
 .motion-ready .workflow-graph .wf-node { opacity: 0; }
 .motion-ready .workflow-graph.is-visible .wf-node { opacity: 1; transition: opacity 650ms var(--ease); transition-delay: var(--node-delay, 0ms); }
-.motion-ready .workflow-graph .wf-edge { opacity: 0; }
-.motion-ready .workflow-graph.is-visible .wf-edge { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 0; animation: workflow-path-in 1100ms var(--ease) both; animation-delay: var(--edge-delay, 0ms); }
+.motion-ready .workflow-graph .wf-edge { opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.motion-ready .workflow-graph .wf-edge.is-visible { opacity: 1; stroke-dashoffset: 0; animation: workflow-path-in 1800ms var(--ease) both; animation-delay: var(--edge-delay, 240ms); }
 @keyframes workflow-path-in { from { stroke-dashoffset: 1; opacity: 0; } to { stroke-dashoffset: 0; opacity: 1; } }
 
 @media (max-width: 1040px) {
@@ -74,7 +70,6 @@ html:not(.js) #workflow-summary { position: static; width: auto; height: auto; c
   .wf-H { grid-area: 3 / 1; justify-self: center; width: min(240px, 100%); min-height: 54px; }
   .wf-I { grid-area: 4 / 1; }
   .wf-J { grid-area: 5 / 1; }
-  .architecture-foundation { flex-direction: column; gap: 8px; text-align: center; }
 }
 @media (max-width: 600px) {
   .architecture-map { padding: 20px 12px; margin-top: 32px; }

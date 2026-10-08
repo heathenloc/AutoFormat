@@ -5,14 +5,14 @@
 
   const messages = {
     "zh-CN": {
-      title: "EasyFormat · 论文格式，轻松掌握",
-      description: "EasyFormat — 让论文格式调整更省时、更清楚、更可控。",
+      title: "AutoFormat · 论文格式，轻松掌握",
+      description: "AutoFormat — 让论文格式调整更省时、更清楚、更可控。",
       product: "产品简介",
       workflow: "技术设计与产品 workflow",
       ai: "AI选型&产品调优",
       business: "商业分析",
       skip: "跳到主要内容",
-      home: "EasyFormat，返回顶部",
+      home: "AutoFormat，返回顶部",
       navigation: "主要导航",
       language: "切换语言",
       openMenu: "打开导航菜单",
@@ -24,23 +24,23 @@
       "technical.confirm.confirmed.skip": "示意：已明确暂时忽略，此项不执行并保留在报告中；其余已验证规则继续。",
     },
     en: {
-      title: "EasyFormat · Thesis formatting, made simple",
-      description: "EasyFormat — thesis formatting that saves time and keeps you in control.",
+      title: "AutoFormat · Thesis formatting, made simple",
+      description: "AutoFormat — thesis formatting that saves time and keeps you in control.",
       product: "Product Overview",
       workflow: "Technical Design & Workflow",
       ai: "AI Selection & Product Tuning",
       business: "Business Analysis",
       skip: "Skip to main content",
-      home: "EasyFormat, back to top",
+      home: "AutoFormat, back to top",
       navigation: "Main navigation",
       language: "Switch language",
       openMenu: "Open navigation menu",
       closeMenu: "Close navigation menu",
       "hero.title": "“Format your thesis in one click with an AI assistant”",
-      "hero.description": "Finishing your thesis is only part of the work. Fonts, headings, spacing, margins, contents and tables can still need repeated adjustments. EasyFormat connects your institution’s requirements with your document, reducing manual checks and repetitive edits.",
+      "hero.description": "Finishing your thesis is only part of the work. Fonts, headings, spacing, margins, contents and tables can still need repeated adjustments. AutoFormat connects your institution’s requirements with your document, reducing manual checks and repetitive edits.",
       "hero.explore": "Explore formatting",
       "hero.flow": "View the process",
-      "hero.impact.start": "With EasyFormat, formatting and review time can go from",
+      "hero.impact.start": "With AutoFormat, formatting and review time can go from",
       "hero.impact.hours": " hrs",
       "hero.impact.to": "to",
       "hero.impact.minutes": " min",
@@ -62,7 +62,6 @@
       "formats.kicker": "FORMATTING CAPABILITIES",
       "formats.title": "From individual fonts to the entire layout.",
       "formats.description": "Bring common formal-document requirements into one workflow.",
-      "formats.tag": "Whole-document formatting · Local refinement",
       "formats.filterLabel": "Filter formatting categories",
       "formats.all": "All formats",
       "formats.text": "Text & paragraphs",
@@ -93,15 +92,12 @@
       "format.equation.title": "Equations",
       "format.equation.description": "Fonts, sizes, alignment, numbering and spacing around equations.",
       "technical.title": "From requirements to verified changes.",
-      "technical.description": "EasyFormat connects requirement parsing, document editing, preview and refinement in one workflow. AI interprets requirements, deterministic software applies changes, and evidence and versions follow every step.",
+      "technical.description": "AutoFormat connects requirement parsing, document editing, preview and refinement in one workflow. AI interprets requirements, deterministic software applies changes, and evidence and versions follow every step.",
       "technical.architecture": "System architecture",
-      "technical.architecture.tag": "One task · Three modules",
       "technical.parse.title": "Requirement parsing",
       "technical.edit.title": "Document editing",
       "technical.preview.title": "Preview & refinement",
-      "technical.gate.link": "Explore the confirmation example →",
-      "technical.foundation.title": "Workflow and version management",
-      "technical.foundation.description": "Immutable original · Rule snapshots · Independent versions",
+      "technical.gate.link": "View confirmation example →",
       "technical.parse.subtitle": "Stable, efficient and reusable Brief Parsing.",
       "technical.parse.evidence.title": "Grounded in source evidence",
       "technical.parse.evidence.description": "Distinguish explicit requirements, template observations and examples. Link each candidate to real source evidence; missing or unsupported information remains pending clarification.",
@@ -161,7 +157,6 @@
       "technical.prototype.title": "Bring the complete workflow into view.",
       "technical.prototype.placeholder": "Product prototype showcase",
       "technical.prototype.description": "Reserved for an actual walkthrough, interactive prototype or screenshots.",
-      "technical.prototype.path": "Upload files → Clarify before editing → Preview and report → Local refinement → Version history",
       "technical.chart.summary": "Upload a thesis draft and institution requirements, then extract evidence and validate. If questions remain, show evidence and options, collect an answer or explicit skip, and check again. Once no questions remain, locate objects, edit and validate. Publish a document version, preview and report. Download the result or submit local feedback, check its scope and clarify as needed, then return validated rules to document editing.",
       "technical.chart.upload": "Upload thesis draft and institution requirements",
       "technical.chart.extract": "Extract requirements and source evidence",
@@ -181,7 +176,6 @@
       "technical.chart.no": "No questions remaining",
       "technical.chart.recheck": "Check again",
       "technical.chart.verified": "Validated rules",
-      "technical.chart.waiting": "Unanswered questions keep editing on hold. All pending items must be answered or explicitly skipped before editing.",
       "technical.chart.legend.main": "Main workflow",
       "technical.chart.legend.confirm": "Pre-edit confirmation loop",
       "technical.chart.legend.refine": "Local refinement loop",
@@ -190,6 +184,13 @@
       "technical.dialog.close": "Close module details",
       "technical.dialog.content": "Detailed module introduction",
       "technical.dialog.hint": "Click outside the card, or keep scrolling down after the content ends, to return to the workflow.",
+      "benchmark.kicker": "AI SELECTION & PRODUCT TUNING",
+      "benchmark.title": "Performance Improvement",
+      "benchmark.subtitle": "More accurate. More reliable. Faster. More efficient.",
+      "benchmark.context": "Use a fixed Qwen Flash version with an OpenAI adapter available. Tune domain vocabulary, prompts, context and evidence checks to improve quality, speed and token usage.",
+      "benchmark.quality": "Quality & Reliability",
+      "benchmark.efficiency": "Efficiency",
+      "benchmark.note": "Data from 20 internal tests.",
     },
   };
 
@@ -212,7 +213,7 @@
   const filterButtons = [...document.querySelectorAll("[data-format-filter]")];
   const formatRows = [...document.querySelectorAll("[data-format-group]")];
   const compactLayout = window.matchMedia("(max-width: 1120px)");
-  const storageKey = "easyformat-site-language";
+  const storageKey = "autoformat-site-language";
   const confirmationForm = document.getElementById("confirmation-demo");
   let confirmedDemoChoice = null;
   let language = "zh-CN";
@@ -281,7 +282,7 @@
     updateFormatStatus();
     updateConfirmationDemo();
     queuePositionUpdate();
-    document.dispatchEvent(new Event("easyformat:languagechange"));
+    document.dispatchEvent(new Event("autoformat:languagechange"));
     if (persist) {
       try { localStorage.setItem(storageKey, language); } catch { /* The switch still works without storage. */ }
     }
@@ -349,7 +350,16 @@
   window.addEventListener("pageshow", queuePositionUpdate);
 
   let storedLanguage;
-  try { storedLanguage = localStorage.getItem(storageKey); } catch { /* Default to Chinese. */ }
+  try {
+    storedLanguage = localStorage.getItem(storageKey);
+    if (storedLanguage === null) {
+      const legacyLanguage = localStorage.getItem("easyformat-site-language");
+      if (Object.hasOwn(messages, legacyLanguage)) {
+        storedLanguage = legacyLanguage;
+        localStorage.setItem(storageKey, legacyLanguage);
+      }
+    }
+  } catch { /* Default to Chinese when storage is unavailable. */ }
   setLanguage(Object.hasOwn(messages, storedLanguage) ? storedLanguage : "zh-CN", false);
   updatePosition();
 
