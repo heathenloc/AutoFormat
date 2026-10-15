@@ -1,0 +1,19 @@
+{
+  "name": "autoformat-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "test": "pnpm build && playwright test"
+  },
+  "dependencies": { "pdfjs-dist": "6.4.299" },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.3",
+    "@types/node": "24.10.1"
+  }
+}

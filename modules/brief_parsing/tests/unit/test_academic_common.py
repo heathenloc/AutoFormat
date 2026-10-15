@@ -247,7 +247,8 @@ def test_category_targets_and_character_scope_remain_distinct(tmp_path: Path) ->
     ))
     ruleset = AcademicCommonFormatExtractor().extract(ir)
     values = {(r.target.semantic_role, r.property_id): r.value.normalized
-              for r in ruleset.rules if r.status == "verified"}
+              for r in ruleset.rules if any(f.rule_id == r.rule_id and f.status == "verified"
+                                           for f in ruleset.fragments)}
     assert values[("abstract", "font.size")] == 12
     assert values[("toc_heading_1", "font.family")] == "黑体"
     assert values[("toc_heading_2", "font.family")] == "宋体"
@@ -265,10 +266,10 @@ def test_conditional_values_do_not_become_global_rules(tmp_path: Path) -> None:
         "正文：电子版使用黑体",
     ))
     ruleset = AcademicCommonFormatExtractor().extract(ir)
-    assert ruleset.rules == []
-    assert len(ruleset.issues) == 2
-    assert {issue.status for issue in ruleset.issues} == {"pending_condition"}
-    assert {issue.property_id for issue in ruleset.issues} == {"font.family"}
+    assert len(ruleset.rules) == 2
+    assert {rule.status for rule in ruleset.rules} == {"pending_condition"}
+    assert {rule.value.normalized for rule in ruleset.rules} == {"宋体", "黑体"}
+    assert not ruleset.conflicts
 
 
 def test_alternatives_are_not_reduced_to_first_recognized_value(tmp_path: Path) -> None:
@@ -301,7 +302,7 @@ async def test_docx_parse_service_includes_editor_handoff_without_model_rules(
         request_id="req_common_format", domain_pack_id="academic_paper",
         requested_task_types=("format_academic_paper",), source_paths=(path,),
     ))
-    assert bundle.bundle_version == "academic-parse-bundle/1.2"
+    assert bundle.bundle_version == "academic-parse-bundle/1.6"
     assert bundle.format_ruleset is not None
     assert {rule.target.semantic_role for rule in bundle.format_ruleset.rules
             if rule.status == "verified"} == {"abstract", "heading_1"}
@@ -320,13 +321,14 @@ async def test_project_template_distinguishes_toc_from_body_headings() -> None:
     ))
     assert bundle.format_ruleset is not None
     rules = {(rule.target.semantic_role, rule.property_id): rule
-             for rule in bundle.format_ruleset.rules if rule.status == "verified"}
+             for rule in bundle.format_ruleset.rules}
     assert rules[("toc", "toc.max_depth")].value.normalized == 3
     assert rules[("toc_heading_3", "font.size")].value.normalized == 12
     assert rules[("body", "font.size")].value.normalized == 12
     assert rules[("heading_1", "paragraph.alignment")].value.normalized == "center"
     assert rules[("latin_digits", "font.family")].value.normalized == "Times New Roman"
     assert rules[("latin_digits", "font.family")].character_scope == "latin_digits"
+    assert rules[("latin_digits", "font.family")].status == "pending_conflict"
     assert rules[("table", "table.border_style")].value.normalized == "three_line"
     assert rules[("figure_caption", "caption.position")].value.normalized == "below"
     assert rules[("figure_caption", "font.size")].value.normalized == 10.5

@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "version-continuation-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Version Id",
+      "type": "string"
+    },
+    "expected_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Docx Sha256",
+      "type": "string"
+    },
+    "expected_working_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Expected Working Version Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "task_id",
+    "version_id",
+    "expected_docx_sha256",
+    "expected_working_version_id"
+  ],
+  "title": "VersionContinuationRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/version-continuation-request/1.0"
+}

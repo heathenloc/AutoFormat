@@ -1,0 +1,797 @@
+{
+  "$defs": {
+    "AcademicCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "original_text": {
+          "title": "Original Text",
+          "type": "string"
+        },
+        "resolution": {
+          "enum": [
+            "known",
+            "unknown"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "original_text",
+        "resolution",
+        "reason"
+      ],
+      "title": "AcademicCondition",
+      "type": "object"
+    },
+    "AcademicQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "question_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "submission",
+            "condition",
+            "conflict",
+            "source_mismatch",
+            "template_inconsistent",
+            "template_category",
+            "value",
+            "clarification",
+            "source_review"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "phase": {
+          "enum": [
+            "resolve_requirements",
+            "confirm_template"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "status": {
+          "default": "pending",
+          "enum": [
+            "pending",
+            "blocked",
+            "answered",
+            "skipped",
+            "deferred"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "allowed_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "rule_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "group_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "issue_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Issue Ids",
+          "type": "array"
+        },
+        "review_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Review Ids",
+          "type": "array"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "character_scope": {
+          "default": "all",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requires_scope": {
+          "default": false,
+          "title": "Requires Scope",
+          "type": "boolean"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "observations": {
+          "items": {
+            "$ref": "#/$defs/TemplateObservation"
+          },
+          "title": "Observations",
+          "type": "array"
+        },
+        "candidate_values": {
+          "items": {
+            "$ref": "#/$defs/AcademicValue"
+          },
+          "title": "Candidate Values",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "kind",
+        "phase",
+        "prompt",
+        "allowed_actions",
+        "reason"
+      ],
+      "title": "AcademicQuestion",
+      "type": "object"
+    },
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "AcademicValue": {
+      "additionalProperties": false,
+      "properties": {
+        "original_text": {
+          "minLength": 1,
+          "title": "Original Text",
+          "type": "string"
+        },
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "dictionary_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Dictionary Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "original_text",
+        "normalized",
+        "dictionary_version"
+      ],
+      "title": "AcademicValue",
+      "type": "object"
+    },
+    "EvidenceMatchStatus": {
+      "enum": [
+        "exact",
+        "normalized",
+        "invalid"
+      ],
+      "title": "EvidenceMatchStatus",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Block Id",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "integer"
+        },
+        "index_basis": {
+          "const": "unicode_code_point",
+          "default": "unicode_code_point",
+          "title": "Index Basis",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "quote_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Quote Sha256",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "match_status": {
+          "$ref": "#/$defs/EvidenceMatchStatus"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_id",
+        "block_id",
+        "start",
+        "end",
+        "quote",
+        "quote_sha256",
+        "locator",
+        "match_status"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "SourceLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        },
+        "section_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Section Path",
+          "type": "array"
+        }
+      },
+      "title": "SourceLocator",
+      "type": "object"
+    },
+    "TemplateLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "title": "Part",
+          "type": "string"
+        },
+        "xpath": {
+          "title": "Xpath",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        },
+        "row": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "run": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run"
+        }
+      },
+      "required": [
+        "part",
+        "xpath"
+      ],
+      "title": "TemplateLocation",
+      "type": "object"
+    },
+    "TemplateObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "source_kind": {
+          "const": "template_observation",
+          "default": "template_observation",
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending_confirmation",
+          "default": "pending_confirmation",
+          "title": "Status",
+          "type": "string"
+        },
+        "semantic_role": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Role",
+          "type": "string"
+        },
+        "role_basis": {
+          "title": "Role Basis",
+          "type": "string"
+        },
+        "region": {
+          "enum": [
+            "template_candidate",
+            "context_only",
+            "uncertain"
+          ],
+          "title": "Region",
+          "type": "string"
+        },
+        "property_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "character_scope": {
+          "default": "all",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "resolution": {
+          "enum": [
+            "resolved",
+            "unresolved"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "reason_codes": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "location": {
+          "$ref": "#/$defs/TemplateLocation"
+        },
+        "origins": {
+          "items": {
+            "$ref": "#/$defs/TemplatePropertyOrigin"
+          },
+          "minItems": 1,
+          "title": "Origins",
+          "type": "array"
+        },
+        "text_excerpt": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Text Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observation_id",
+        "source_id",
+        "source_sha256",
+        "semantic_role",
+        "role_basis",
+        "region",
+        "property_id",
+        "value",
+        "resolution",
+        "location",
+        "origins"
+      ],
+      "title": "TemplateObservation",
+      "type": "object"
+    },
+    "TemplatePropertyOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "title": "Part",
+          "type": "string"
+        },
+        "xpath": {
+          "title": "Xpath",
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "section",
+            "direct",
+            "paragraph_style",
+            "character_style",
+            "table_style",
+            "document_default",
+            "theme"
+          ],
+          "title": "Layer",
+          "type": "string"
+        },
+        "style_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Style Id"
+        },
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "node_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Node Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "part",
+        "xpath",
+        "layer",
+        "raw_value",
+        "node_sha256"
+      ],
+      "title": "TemplatePropertyOrigin",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "academic-question-queue/1.0",
+      "default": "academic-question-queue/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "revision": {
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "reopen_decision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reopen Decision Id"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/AcademicQuestion"
+      },
+      "title": "Questions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_id",
+    "base_version_id",
+    "snapshot_id",
+    "revision",
+    "questions",
+    "schema_version"
+  ],
+  "title": "AcademicQuestionQueue",
+  "type": "object",
+  "$id": "https://easyformat.local/contracts/academic-question-queue/1.0"
+}

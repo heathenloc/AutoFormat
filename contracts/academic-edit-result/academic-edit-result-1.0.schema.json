@@ -1,0 +1,205 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "base_docx_sha256",
+    "rules_snapshot_id",
+    "output_docx_sha256",
+    "operations",
+    "rules",
+    "content_preserved",
+    "package_validated",
+    "field_refresh_status",
+    "reason"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "academic-edit-result/1.0"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "ready",
+        "already_satisfied",
+        "validation_failed",
+        "stale_base_version",
+        "output_exists"
+      ]
+    },
+    "base_docx_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "rules_snapshot_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "output_docx_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "operations": {
+      "type": "array",
+      "maxItems": 200000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "rule_id",
+          "fragment_id",
+          "object_id",
+          "part",
+          "xml_path",
+          "property_id",
+          "component",
+          "character_type",
+          "before",
+          "after",
+          "effective_scope",
+          "status",
+          "changed",
+          "reason"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fragment_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "part": {
+            "type": "string",
+            "minLength": 1
+          },
+          "xml_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "property_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "component": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "character_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "before": {},
+          "after": {},
+          "effective_scope": {
+            "enum": [
+              "run",
+              "paragraph",
+              "section",
+              "table"
+            ]
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "already_satisfied",
+              "modified_verified",
+              "pending_manual_check"
+            ]
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "status",
+          "target_count",
+          "reason"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "modified_verified",
+              "already_satisfied",
+              "pending_manual_check",
+              "no_target",
+              "ambiguous_target",
+              "pending_condition",
+              "pending_conflict",
+              "check_only",
+              "unsupported",
+              "needs_user_input"
+            ]
+          },
+          "target_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "content_preserved": {
+      "type": "boolean"
+    },
+    "package_validated": {
+      "type": "boolean"
+    },
+    "field_refresh_status": {
+      "enum": [
+        "not_run",
+        "not_required",
+        "pending_manual_check"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/academic-edit-result/1.0"
+}

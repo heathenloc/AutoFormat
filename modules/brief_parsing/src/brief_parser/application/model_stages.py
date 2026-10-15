@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from pydantic import BaseModel
+from brief_parser.academic_source_policy import scope_match
 
 from brief_parser.domain.candidates import (
     AuditorOutput,
@@ -52,6 +53,7 @@ class RequirementExtractor:
         evidence_index: EvidenceIndex,
         request_context: ModelRequestContext,
         domain_category_ids: Sequence[str] = (),
+        academic_format_only: bool = False,
     ) -> StructuredModelResult[ExtractorOutput]:
         clause_by_id = {clause.clause_id: clause for clause in clauses}
         if set(clause_by_id) != set(chunk.clause_ids):
@@ -67,7 +69,7 @@ class RequirementExtractor:
             "envelope_version": "model-input/1.0",
             "untrusted_document": True,
             "chunk_id": chunk.chunk_id,
-            "clauses": [self._clause_payload(clause) for clause in clauses],
+            "clauses": [self._clause_payload(clause, academic_format_only=academic_format_only) for clause in clauses],
             "deterministic_analysis": [
                 analysis.model_dump(mode="json") for analysis in analyses
             ],
@@ -79,6 +81,7 @@ class RequirementExtractor:
                 ModelRole.EXTRACTOR,
                 payload,
                 domain_category_ids=domain_category_ids,
+                academic_format_only=academic_format_only,
             ),
             output_schema=ExtractorOutput,
             request_context=request_context,
@@ -96,9 +99,32 @@ class RequirementExtractor:
         payload: Mapping[str, Any],
         *,
         domain_category_ids: Sequence[str],
+        academic_format_only: bool = False,
     ) -> list[ProviderMessage]:
         template = self._prompts.get(role=role, version=self._prompt_version)
         system_content = template.content
+        if academic_format_only:
+            from brief_parser.compilers.academic_candidates import REGISTERED_PROPERTIES
+            from brief_parser.validators.academic_decisions import ROLES
+            system_content += (
+                "\n\nTrusted AutoFormat scope: extract only document formatting requirements. "
+                "Do not extract word counts, text/page length limits, keyword/reference counts, "
+                "research or semantic content requirements, signatures or submission deadlines. "
+                "Do not create questions or unresolved items for those excluded requirements. "
+                "Examples and observed template styles are not explicit requirements."
+                " Emit one atomic Requirement per formatting property. Use a registered "
+                "property ID as value.type and a registered semantic role as subject. "
+                "Do not invent a missing size, font, unit, target or condition. "
+                "Preserve chapter, character and submission restrictions in the evidence. "
+                "CandidateValue uses text, amount, range_end and items, not arbitrary JSON. "
+                "For formatting values prefer text containing the exact literal value and "
+                "unit, with amount=null and range_end=null: font size text='12pt', bold "
+                "text='加粗', line spacing text='固定值20pt' or '1.5倍', size interval "
+                "text='12-14pt'. Do not add a unit absent from the source. Unsupported "
+                "formats remain unresolved."
+                "\nTrusted formatting property IDs: " + json.dumps(sorted(REGISTERED_PROPERTIES))
+                + "\nTrusted semantic roles: " + json.dumps(sorted(ROLES))
+            )
         if domain_category_ids:
             system_content += (
                 "\n\nTrusted Domain Pack category IDs: "
@@ -113,13 +139,14 @@ class RequirementExtractor:
         ]
 
     @staticmethod
-    def _clause_payload(clause: Clause) -> dict[str, Any]:
+    def _clause_payload(clause: Clause, *, academic_format_only: bool = False) -> dict[str, Any]:
         return {
             "clause_id": clause.clause_id,
             "evidence_id": clause.evidence_id,
             "text": clause.normalized_text,
             "block_kind": clause.block_kind.value,
-            "section_path": clause.locator.section_path,
+            "section_path": [part for part in clause.locator.section_path
+                             if not academic_format_only or not scope_match(part)],
         }
 
     @staticmethod
@@ -164,6 +191,7 @@ class CoverageAuditor:
         clauses: Sequence[Clause],
         extractor_output: ExtractorOutput,
         request_context: ModelRequestContext,
+        academic_format_only: bool = False,
     ) -> StructuredModelResult[AuditorOutput]:
         expected = {clause.clause_id for clause in clauses}
         if expected != set(chunk.clause_ids):
@@ -175,7 +203,7 @@ class CoverageAuditor:
             "envelope_version": "model-input/1.0",
             "untrusted_document": True,
             "chunk_id": chunk.chunk_id,
-            "clauses": [RequirementExtractor._clause_payload(item) for item in clauses],
+            "clauses": [RequirementExtractor._clause_payload(item, academic_format_only=academic_format_only) for item in clauses],
             "extractor_candidate_summary": extractor_output.model_dump(mode="json"),
             "allowed_evidence_ids": sorted(evidence_by_clause.values()),
         }

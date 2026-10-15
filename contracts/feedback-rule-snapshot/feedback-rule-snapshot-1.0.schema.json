@@ -1,0 +1,634 @@
+{
+  "$defs": {
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "DocxTextRange": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "start_utf16": {
+          "minimum": 0,
+          "title": "Start Utf16",
+          "type": "integer"
+        },
+        "length_utf16": {
+          "minimum": 1,
+          "title": "Length Utf16",
+          "type": "integer"
+        },
+        "matched_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Matched Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id",
+        "start_utf16",
+        "length_utf16",
+        "matched_text"
+      ],
+      "title": "DocxTextRange",
+      "type": "object"
+    },
+    "FeedbackEffectiveRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "feedback_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Feedback Id",
+          "type": "string"
+        },
+        "source_submission_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Submission Sha256",
+          "type": "string"
+        },
+        "parse_result_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Parse Result Id",
+          "type": "string"
+        },
+        "origin_version_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Origin Version Id",
+          "type": "string"
+        },
+        "candidate": {
+          "$ref": "#/$defs/FeedbackRuleCandidate"
+        },
+        "scope_review": {
+          "$ref": "#/$defs/ScopeReview"
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SelectionAnchor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "resolved_anchor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SelectionAnchor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "effect": {
+          "enum": [
+            "new_rule",
+            "local_exception",
+            "global_update"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "decision_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Id"
+        },
+        "status": {
+          "enum": [
+            "pending_target",
+            "pending_conflict",
+            "verified"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "feedback_id",
+        "source_submission_sha256",
+        "parse_result_id",
+        "origin_version_id",
+        "candidate",
+        "scope_review",
+        "effect",
+        "status"
+      ],
+      "title": "FeedbackEffectiveRule",
+      "type": "object"
+    },
+    "FeedbackRuleCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FormatValue"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "character_scope": {
+          "default": "all",
+          "enum": [
+            "all",
+            "chinese",
+            "latin",
+            "digits",
+            "complex_script",
+            "other"
+          ],
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "applicability_scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "candidate_id",
+        "property_id",
+        "value",
+        "requested_scope"
+      ],
+      "title": "FeedbackRuleCandidate",
+      "type": "object"
+    },
+    "FormatValue": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "normalized"
+      ],
+      "title": "FormatValue",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "PdfTextSpan": {
+      "additionalProperties": false,
+      "description": "PDF.js item positions; offsets are UTF-16 code units, not Python indices.",
+      "properties": {
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "start_item": {
+          "minimum": 0,
+          "title": "Start Item",
+          "type": "integer"
+        },
+        "start_offset_utf16": {
+          "minimum": 0,
+          "title": "Start Offset Utf16",
+          "type": "integer"
+        },
+        "end_item": {
+          "minimum": 0,
+          "title": "End Item",
+          "type": "integer"
+        },
+        "end_offset_utf16": {
+          "minimum": 0,
+          "title": "End Offset Utf16",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page",
+        "start_item",
+        "start_offset_utf16",
+        "end_item",
+        "end_offset_utf16"
+      ],
+      "title": "PdfTextSpan",
+      "type": "object"
+    },
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "ScopeReview": {
+      "additionalProperties": false,
+      "description": "Actual minimum Word unit is distinct from the user's requested scope.",
+      "properties": {
+        "review_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Review Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "effective_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Effective Scope",
+          "type": "string"
+        },
+        "minimum_unit": {
+          "enum": [
+            "character",
+            "paragraph",
+            "section",
+            "table",
+            "region",
+            "field_or_object",
+            "document"
+          ],
+          "title": "Minimum Unit",
+          "type": "string"
+        },
+        "target_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Target Ids",
+          "type": "array"
+        },
+        "estimated_affected_count": {
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Estimated Affected Count",
+          "type": "integer"
+        },
+        "requires_confirmation": {
+          "title": "Requires Confirmation",
+          "type": "boolean"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id",
+        "candidate_id",
+        "requested_scope",
+        "effective_scope",
+        "minimum_unit",
+        "target_ids",
+        "estimated_affected_count",
+        "requires_confirmation",
+        "reason"
+      ],
+      "title": "ScopeReview",
+      "type": "object"
+    },
+    "SelectionAnchor": {
+      "additionalProperties": false,
+      "description": "New generation; the existing prototype selection-anchor/1.0 is preserved.",
+      "properties": {
+        "schema_version": {
+          "const": "selection-anchor/1.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "anchor_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "base_version_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Base Version Id",
+          "type": "string"
+        },
+        "base_docx_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Base Docx Sha256",
+          "type": "string"
+        },
+        "preview_artifact_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Preview Artifact Id",
+          "type": "string"
+        },
+        "preview_pdf_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Preview Pdf Sha256",
+          "type": "string"
+        },
+        "renderer_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Renderer Id",
+          "type": "string"
+        },
+        "renderer_version": {
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "title": "Renderer Version",
+          "type": "string"
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionHint"
+        },
+        "ranges": {
+          "items": {
+            "$ref": "#/$defs/DocxTextRange"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Ranges",
+          "type": "array"
+        },
+        "status": {
+          "const": "ready",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "anchor_id",
+        "task_id",
+        "base_version_id",
+        "base_docx_sha256",
+        "preview_artifact_id",
+        "preview_pdf_sha256",
+        "renderer_id",
+        "renderer_version",
+        "selection",
+        "ranges",
+        "status"
+      ],
+      "title": "SelectionAnchor",
+      "type": "object"
+    },
+    "SelectionHint": {
+      "additionalProperties": false,
+      "properties": {
+        "selected_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Selected Text",
+          "type": "string"
+        },
+        "context_before": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context Before",
+          "type": "string"
+        },
+        "context_after": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context After",
+          "type": "string"
+        },
+        "spans": {
+          "items": {
+            "$ref": "#/$defs/PdfTextSpan"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "selected_text",
+        "spans"
+      ],
+      "title": "SelectionHint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Branch lineage contract; compiler/replay and exception migration come later.",
+  "properties": {
+    "schema_version": {
+      "const": "feedback-rule-snapshot/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "compiler_version": {
+      "const": "feedback-rules/1.0",
+      "title": "Compiler Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "parent_snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Parent Snapshot Id"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Base Docx Sha256",
+      "type": "string"
+    },
+    "brief_version_id": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Brief Version Id",
+      "type": "string"
+    },
+    "academic_rules_snapshot_id": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Academic Rules Snapshot Id",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/FeedbackEffectiveRule"
+      },
+      "maxItems": 512,
+      "title": "Rules",
+      "type": "array"
+    },
+    "decision_ids": {
+      "items": {
+        "pattern": "^[a-f0-9]{32}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Decision Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "compiler_version",
+    "snapshot_id",
+    "parent_snapshot_id",
+    "task_id",
+    "base_version_id",
+    "base_docx_sha256",
+    "brief_version_id",
+    "academic_rules_snapshot_id",
+    "rules",
+    "decision_ids"
+  ],
+  "title": "FeedbackRuleSnapshot",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-rule-snapshot/1.0"
+}

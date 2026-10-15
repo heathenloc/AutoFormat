@@ -3,24 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#080a10" />
+    <meta name="theme-color" content="#142238" />
     <meta name="description" content="AutoFormat — 让论文格式调整更省时、更清楚、更可控。" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light" />
     <title>AutoFormat · 论文格式，轻松掌握</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
-    <link rel="preload" href="./assets/fonts/Kalam-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AutoFormat" />
+    <meta property="og:title" content="AutoFormat · 论文格式，轻松掌握" />
+    <meta property="og:description" content="AutoFormat — 让论文格式调整更省时、更清楚、更可控。" />
+    <meta property="og:image" content="https://heathenloc.github.io/AutoFormat/assets/autoformat-preview.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="AutoFormat Logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="AutoFormat · 论文格式，轻松掌握" />
+    <meta name="twitter:description" content="AutoFormat — 让论文格式调整更省时、更清楚、更可控。" />
+    <meta name="twitter:image" content="https://heathenloc.github.io/AutoFormat/assets/autoformat-preview.png" />
+    <meta name="twitter:image:alt" content="AutoFormat Logo" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./workflow.css" />
-    <link rel="stylesheet" href="./flowchart.css" />
-    <link rel="stylesheet" href="./module-dialog.css" />
-    <link rel="stylesheet" href="./benchmark.css" />
+    <link rel="stylesheet" href="./theme-editorial.css" />
+    <link rel="stylesheet" href="./hero-editorial.css" />
+    <link rel="stylesheet" href="./home-paper.css" />
     <script src="./main.js" defer></script>
-    <script src="./flowchart.js" defer></script>
-    <script src="./module-dialog.js" defer></script>
-    <script src="./benchmark-data.js" defer></script>
-    <script src="./benchmark.js" defer></script>
   </head>
-  <body>
+  <body data-page="product">
     <a class="skip-link" href="#product" data-i18n="skip">跳到主要内容</a>
 
     <!-- Keep the background separate from content for a future canvas/WebGL layer. -->
@@ -33,14 +45,14 @@
 
     <header class="site-header" data-menu-open="false">
       <div class="header-inner">
-        <a class="wordmark" href="#product" aria-label="AutoFormat，返回顶部" data-i18n-aria="home">AutoFormat</a>
+        <a class="wordmark" href="./index.html" aria-label="AutoFormat，返回首页" data-i18n-aria="home">AutoFormat</a>
 
         <nav class="site-nav" id="site-navigation" aria-label="主要导航" data-i18n-aria="navigation">
           <ul class="nav-list">
-            <li><a class="nav-link" href="#product" aria-current="location" data-i18n="product">产品简介</a></li>
-            <li><a class="nav-link" href="#workflow" data-i18n="workflow">技术设计与产品 workflow</a></li>
-            <li><a class="nav-link" href="#ai" data-i18n="ai">AI选型&amp;产品调优</a></li>
-            <li><a class="nav-link" href="#business" data-i18n="business">商业分析</a></li>
+            <li><a class="nav-link" href="./index.html" data-page="product" aria-current="page" data-i18n="product">产品简介</a></li>
+            <li><a class="nav-link" href="./workflow.html" data-page="workflow" data-i18n="workflow">技术设计与产品 workflow</a></li>
+            <li><a class="nav-link" href="./ai.html" data-page="ai" data-i18n="ai">AI选型&amp;产品调优</a></li>
+            <li><a class="nav-link" href="./business.html" data-page="business" data-i18n="business">商业分析</a></li>
           </ul>
         </nav>
 
@@ -59,232 +71,166 @@
       </div>
     </header>
 
-    <!-- Product overview and technical workflow share this page. -->
+    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+        <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+        <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 7h8m4 0h4M4 17h3m4 0h9"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7M12 7v5l3 2"/></symbol>
+        <symbol id="icon-type" viewBox="0 0 24 24"><path d="M4 6V4h16v2M12 4v16m-4 0h8"/></symbol>
+        <symbol id="icon-paragraph" viewBox="0 0 24 24"><path d="M12 20V4H8a4 4 0 0 0 0 8h4M17 20V4m-7 0h10"/></symbol>
+        <symbol id="icon-heading" viewBox="0 0 24 24"><path d="M5 4v16M17 4v16M5 12h12M3 4h4M15 4h4M3 20h4M15 20h4"/></symbol>
+        <symbol id="icon-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M9 8v13"/></symbol>
+        <symbol id="icon-footer" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 17h8M11 14h2"/></symbol>
+        <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/></symbol>
+        <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/></symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+        <symbol id="icon-quote" viewBox="0 0 24 24"><path d="M4 12h5v7H3v-7c0-5 2-7 6-7M16 12h5v7h-6v-7c0-5 2-7 6-7"/></symbol>
+        <symbol id="icon-math" viewBox="0 0 24 24"><path d="M18 4H6l7 8-7 8h12M4 4h2M4 20h2"/></symbol>
+      </defs>
+    </svg>
+
     <main id="main-content">
       <section class="page-section product-section" id="product" tabindex="-1" aria-labelledby="product-heading">
-        <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></symbol>
-            <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
-            <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
-            <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
-            <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 7h8m4 0h4M4 17h3m4 0h9"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
-            <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
-            <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7M12 7v5l3 2"/></symbol>
-            <symbol id="icon-type" viewBox="0 0 24 24"><path d="M4 6V4h16v2M12 4v16m-4 0h8"/></symbol>
-            <symbol id="icon-paragraph" viewBox="0 0 24 24"><path d="M12 20V4H8a4 4 0 0 0 0 8h4M17 20V4m-7 0h10"/></symbol>
-            <symbol id="icon-heading" viewBox="0 0 24 24"><path d="M5 4v16M17 4v16M5 12h12M3 4h4M15 4h4M3 20h4M15 20h4"/></symbol>
-            <symbol id="icon-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M9 8v13"/></symbol>
-            <symbol id="icon-footer" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 17h8M11 14h2"/></symbol>
-            <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/></symbol>
-            <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/></symbol>
-            <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
-            <symbol id="icon-quote" viewBox="0 0 24 24"><path d="M4 12h5v7H3v-7c0-5 2-7 6-7M16 12h5v7h-6v-7c0-5 2-7 6-7"/></symbol>
-            <symbol id="icon-math" viewBox="0 0 24 24"><path d="M18 4H6l7 8-7 8h12M4 4h2M4 20h2"/></symbol>
-          </defs>
-        </svg>
 
         <div class="content-shell">
           <div class="product-hero">
+            <!-- Abstract typesetting, kept out of the reading and interaction order. -->
+            <div class="hero-artwork" aria-hidden="true">
+              <svg class="hero-typesetting" viewBox="0 0 640 780" fill="none" focusable="false">
+                <defs>
+                  <pattern id="hero-baselines" width="300" height="16" patternUnits="userSpaceOnUse"><path d="M0 .5H300" stroke="currentColor" stroke-opacity=".07"/></pattern>
+                  <linearGradient id="hero-edge-density" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="white" stop-opacity="0"/><stop offset=".28" stop-color="white" stop-opacity=".16"/><stop offset=".64" stop-color="white"/><stop offset="1" stop-color="white" stop-opacity=".75"/></linearGradient>
+                  <mask id="hero-edge-mask"><path fill="url(#hero-edge-density)" d="M0 0H640V780H0z"/></mask>
+                </defs>
+                <g mask="url(#hero-edge-mask)">
+                  <g class="typeset-structure" stroke="currentColor" stroke-width=".8">
+                    <path d="M180 92H576V700H180z" stroke-opacity=".1"/>
+                    <path d="M164 76H560V684H164z" stroke-opacity=".08"/>
+                    <path d="M140 44V728M608 44V728M116 80H628M116 704H628" stroke-opacity=".09"/>
+                    <path d="M140 68V92M128 80H152M608 68V92M596 80H620M140 692V716M128 704H152M608 692V716M596 704H620" stroke-opacity=".24"/>
+                  </g>
+                  <g class="typeset-sheet">
+                    <path d="M212 128H542L578 164V680H212z" fill="currentColor" fill-opacity=".018" stroke="currentColor" stroke-opacity=".23"/>
+                    <path d="M542 128V164H578" stroke="currentColor" stroke-opacity=".18"/>
+                    <path d="M246 180H544V634H246z" stroke="currentColor" stroke-opacity=".18" stroke-width=".7"/>
+                    <path d="M246 226H544V586H246z" fill="url(#hero-baselines)"/>
+                    <path d="M376 226V586M396 226V586M230 180H560M230 634H560" stroke="currentColor" stroke-opacity=".09" stroke-width=".7"/>
+                    <path d="M202 128H194M212 118V110M578 118V110M588 128H596M202 680H194M212 690V698M578 690V698M588 680H596" stroke="currentColor" stroke-opacity=".3" stroke-width=".8"/>
+                    <g class="typeset-folio" fill="currentColor"><text x="246" y="164">01</text><text x="533" y="164">¹</text><text x="384" y="660">024</text></g>
+                    <path d="M246 199H456" stroke="currentColor" stroke-opacity=".33" stroke-width="3"/>
+                    <path d="M246 211H346" stroke="currentColor" stroke-opacity=".2" stroke-width="2"/>
+                    <g class="typeset-paragraph typeset-paragraph-a">
+                      <text class="typeset-section-number" x="246" y="250">1.1</text>
+                      <path d="M246 270H370M246 282H362M246 294H370M246 306H344M246 318H370M246 330H352" stroke="currentColor" stroke-opacity=".24" stroke-width="2.2"/>
+                    </g>
+                    <g class="typeset-paragraph typeset-paragraph-b">
+                      <path d="M396 270H544M396 282H536M396 294H544M396 306H522M396 318H544M396 330H490" stroke="currentColor" stroke-opacity=".24" stroke-width="2.2"/>
+                      <path d="M396 354H544M396 366H530M396 378H544M396 390H500" stroke="currentColor" stroke-opacity=".17" stroke-width="2.2"/>
+                    </g>
+                    <g class="typeset-paragraph typeset-paragraph-c">
+                      <text class="typeset-section-number" x="246" y="420">2.3</text>
+                      <path d="M246 440H370M246 452H358M246 464H370M246 476H338M246 488H370M246 500H350" stroke="currentColor" stroke-opacity=".2" stroke-width="2.2"/>
+                      <path d="M396 440H544M396 452H532M396 464H544M396 476H514M396 488H544M396 500H472" stroke="currentColor" stroke-opacity=".2" stroke-width="2.2"/>
+                    </g>
+                    <g class="typeset-references" stroke="currentColor" stroke-opacity=".2" stroke-width="1.5">
+                      <path d="M246 564H292M268 582H502M268 592H472M268 610H528M268 620H492"/>
+                    </g>
+                    <g class="typeset-folio" fill="currentColor"><text x="246" y="585">[1]</text><text x="246" y="613">[2]</text></g>
+                    <path class="typeset-register" d="M238 180H246V188M536 626H544V634" stroke="currentColor" stroke-width="1"/>
+                  </g>
+                  <g class="typeset-fragments" stroke="currentColor" stroke-width="1.8" stroke-opacity=".18">
+                    <path d="M46 364H152M52 380H166M42 396H144M58 412H156"/>
+                    <path d="M108 524H178M116 540H188M102 556H164"/>
+                  </g>
+                </g>
+              </svg>
+              <svg class="hero-bibliography" viewBox="0 0 340 96" fill="none" focusable="false">
+                <path d="M1 12V84M1 12H19M1 84H19" stroke="currentColor" stroke-opacity=".14" stroke-width=".8"/>
+                <g fill="currentColor" fill-opacity=".23"><text x="28" y="30">[1]</text><text x="28" y="65">[2]</text></g>
+                <g stroke="currentColor" stroke-width="1.5" stroke-opacity=".16"><path d="M54 26H240M54 36H188M54 61H284M54 71H214"/></g>
+              </svg>
+            </div>
             <div class="hero-copy reveal">
               <p class="eyebrow hero-kicker" data-i18n="product">产品简介</p>
               <h1 id="product-heading" class="hero-title" data-i18n="hero.title">“使用AI助手一键处理论文格式”</h1>
-              <p class="hero-description"><span data-i18n="hero.description">完成论文写作之后，字体、标题、行距、页边距、目录和表格，仍可能需要反复调整。AutoFormat 将学校的格式要求与论文文档连接起来，减少逐条查阅、手动修改和重复检查的工作。</span> <span data-i18n="hero.impact.start">使用 AutoFormat，格式调整与复核耗时可从</span> <strong class="hero-stat">7<span data-i18n="hero.impact.hours">小时</span></strong> <span data-i18n="hero.impact.to">缩短至</span> <strong class="hero-stat">16<span data-i18n="hero.impact.minutes">分钟</span></strong><span data-i18n="hero.impact.resolution">，首轮解决支持范围内</span> <strong class="hero-stat">92%</strong> <span data-i18n="hero.impact.issues">的格式问题。</span></p>
+              <p class="hero-description"><span data-i18n="hero.description">完成论文写作之后，字体、标题、行距、页边距、目录和表格，仍可能需要反复调整。AutoFormat 将用户从繁琐的格式工作中解放出来。</span><br><span data-i18n="hero.impact.start">使用 AutoFormat，格式调整与复核耗时可从</span> <strong class="hero-stat">7<span data-i18n="hero.impact.hours">小时</span></strong> <span data-i18n="hero.impact.to">缩短至</span> <strong class="hero-stat">16<span data-i18n="hero.impact.minutes">分钟</span></strong><span data-i18n="hero.impact.resolution">，首轮至少解决</span> <strong class="hero-stat">92%</strong> <span data-i18n="hero.impact.issues">的格式问题。</span></p>
               <div class="hero-actions">
-                <a class="button button-primary" href="#product-flow"><span data-i18n="hero.flow">查看处理流程</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
-                <a class="button button-primary" href="#format-capabilities"><span data-i18n="hero.explore">了解排版能力</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+                <button class="button button-primary" type="button" data-product-toggle="flow" aria-expanded="false" aria-controls="product-flow"><span data-i18n="hero.flow">查看处理流程</span><svg class="icon product-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                <button class="button button-primary" type="button" data-product-toggle="formats" aria-expanded="false" aria-controls="format-capabilities"><span data-i18n="hero.explore">了解排版能力</span><svg class="icon product-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
               </div>
             </div>
           </div>
 
-          <div class="product-flow" id="product-flow">
-            <div class="section-intro reveal"><p class="eyebrow" data-i18n="flow.kicker">处理流程</p><h2 data-i18n="flow.title">上传原稿与要求，一键开始。</h2><p data-i18n="flow.description">按需确认，自动排版；全文处理之后，继续调整局部细节。</p></div>
-            <div class="flow-steps">
-              <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg></span><h3 data-i18n="flow.upload.title">上传原稿与要求</h3><p><span data-i18n="flow.upload.description">上传论文原稿与格式要求</span><span class="flow-upload-formats" data-i18n="flow.upload.formats">（支持DOCX与PDF格式）</span></p></article>
-              <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-sliders"/></svg></span><h3 data-i18n="flow.format.title">按需确认，自动排版</h3><p data-i18n="flow.format.description">系统提取规则，先确认疑问，再完成可靠的格式修改；没有疑问时直接继续。</p></article>
-              <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-eye"/></svg></span><h3 data-i18n="flow.refine.title">预览结果，局部微调</h3><p data-i18n="flow.refine.description">生成可编辑论文、报告和预览。选中文字、提出需求，按指定范围调整细节。</p></article>
-            </div>
-            <div class="product-assurances reveal">
-              <span><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg><span data-i18n="assurance.versions">保留原稿与历史版本</span></span>
-              <span><svg class="icon" aria-hidden="true"><use href="#icon-file"/></svg><span data-i18n="assurance.evidence">展示修改依据与位置</span></span>
-              <span><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg><span data-i18n="assurance.validation">提供验证结果</span></span>
-            </div>
-          </div>
+          <div class="product-details" id="product-details">
+            <div class="product-details-content">
+              <div class="product-flow product-disclosure" id="product-flow" role="region" aria-labelledby="product-flow-heading">
+                <div class="product-disclosure-content">
+                  <div class="section-intro"><p class="eyebrow" data-i18n="flow.kicker">处理流程</p><h2 id="product-flow-heading" data-i18n="flow.title">上传原稿与要求即可使用</h2><p data-i18n="flow.description">按需确认，自动排版；全文处理之后，继续调整局部细节。</p></div>
+                  <div class="flow-steps">
+                    <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg></span><h3 data-i18n="flow.upload.title">上传原稿与要求</h3><p><span data-i18n="flow.upload.description">上传论文原稿与格式要求</span><span class="flow-upload-formats" data-i18n="flow.upload.formats">（支持DOCX与PDF格式）</span></p></article>
+                    <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-sliders"/></svg></span><h3 data-i18n="flow.format.title">按需确认，自动排版</h3><p data-i18n="flow.format.description">系统提取规则，先确认疑问，再完成可靠的格式修改；没有疑问时直接继续。</p></article>
+                    <article class="flow-step"><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#icon-eye"/></svg></span><h3 data-i18n="flow.refine.title">预览结果，局部微调</h3><p data-i18n="flow.refine.description">生成可编辑论文、报告和预览。选中文字、提出需求，按指定范围调整细节。</p></article>
+                  </div>
+                  <div class="product-assurances">
+                    <span><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg><span data-i18n="assurance.versions">随时回滚版本</span></span>
+                    <span><svg class="icon" aria-hidden="true"><use href="#icon-file"/></svg><span data-i18n="assurance.evidence">修改结果可预览</span></span>
+                    <span><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg><span data-i18n="assurance.validation">输出稳定可用的版本</span></span>
+                  </div>
+                  <div class="product-details-footer"><button class="format-collapse" type="button" data-product-collapse aria-controls="product-flow"><span data-i18n="formats.collapse">收起</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button></div>
+                </div>
+              </div>
 
-          <div class="format-capabilities" id="format-capabilities">
-            <div class="capabilities-heading reveal"><div class="section-intro"><p class="eyebrow" data-i18n="formats.kicker">格式能力</p><h2 data-i18n="formats.title">从字体，到整篇版式。</h2><p data-i18n="formats.description">把常见正式文档的格式要求，放进同一条处理链路。</p></div></div>
-            <div class="format-filters reveal" role="group" aria-label="筛选格式类别" data-i18n-aria="formats.filterLabel">
-              <button type="button" class="format-filter" data-format-filter="all" aria-pressed="true" data-i18n="formats.all">全部格式</button>
-              <button type="button" class="format-filter" data-format-filter="text" aria-pressed="false" data-i18n="formats.text">文字与段落</button>
-              <button type="button" class="format-filter" data-format-filter="layout" aria-pressed="false" data-i18n="formats.layout">页面与结构</button>
-              <button type="button" class="format-filter" data-format-filter="academic" aria-pressed="false" data-i18n="formats.academic">图表与学术</button>
+              <div class="format-capabilities product-disclosure" id="format-capabilities" role="region" aria-labelledby="formats-heading">
+                <div class="product-disclosure-content">
+                  <div class="capabilities-heading"><div class="section-intro"><p class="eyebrow" data-i18n="formats.kicker">格式能力</p><h2 id="formats-heading" data-i18n="formats.title">从字体，到整篇版式。</h2><p data-i18n="formats.description">把常见正式文档的格式要求，放进同一条处理链路。</p></div></div>
+                  <div class="format-filters" role="group" aria-label="选择格式类别" data-i18n-aria="formats.filterLabel">
+                    <button type="button" class="format-filter" data-format-filter="all" aria-pressed="false" aria-expanded="false" aria-controls="format-details"><span data-i18n="formats.all">全部格式</span><svg class="icon format-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <button type="button" class="format-filter" data-format-filter="text" aria-pressed="false" aria-expanded="false" aria-controls="format-details"><span data-i18n="formats.text">文字与段落</span><svg class="icon format-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <button type="button" class="format-filter" data-format-filter="layout" aria-pressed="false" aria-expanded="false" aria-controls="format-details"><span data-i18n="formats.layout">页面与结构</span><svg class="icon format-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <button type="button" class="format-filter" data-format-filter="academic" aria-pressed="false" aria-expanded="false" aria-controls="format-details"><span data-i18n="formats.academic">图表与学术</span><svg class="icon format-toggle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                  </div>
+                  <p class="sr-only" id="format-status" role="status" aria-live="polite"></p>
+                  <div class="format-details" id="format-details" role="region" aria-label="格式能力详情" data-i18n-aria="formats.detailsLabel">
+                    <div class="format-details-content">
+                      <dl class="format-list">
+                        <div class="format-row" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-type"/></svg><span data-i18n="format.font.title">字体与字符</span></dt><dd data-i18n="format.font.description">字体、字号、加粗、斜体、颜色、下划线、删除线、上下标、字符间距与缩放；中文、西文和数字分别设置</dd></div>
+                        <div class="format-row" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-paragraph"/></svg><span data-i18n="format.paragraph.title">段落</span></dt><dd data-i18n="format.paragraph.description">对齐、行距、段前段后间距、首行／悬挂／左右缩进、制表位、引导符、边框与底纹、孤行与分页控制</dd></div>
+                        <div class="format-row" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-heading"/></svg><span data-i18n="format.heading.title">标题</span></dt><dd data-i18n="format.heading.description">各级标题字体、字号、字形、对齐、缩进与间距；标题层级、多级编号、章节起始和目录联动</dd></div>
+                        <div class="format-row" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-layout"/></svg><span data-i18n="format.page.title">页面与分节</span></dt><dd data-i18n="format.page.description">纸张、方向、页边距、装订线、分栏、文字方向、镜像页边距、分节和章节独立设置</dd></div>
+                        <div class="format-row" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-footer"/></svg><span data-i18n="format.footer.title">页眉、页脚与页码</span></dt><dd data-i18n="format.footer.description">文字外观、位置与距离、页码样式与起始值、首页不同、奇偶页不同、章节页眉和连续编号</dd></div>
+                        <div class="format-row" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-list"/></svg><span data-i18n="format.contents.title">目录与交叉引用</span></dt><dd data-i18n="format.contents.description">目录层级与条目外观、手工目录转换、图表目录、交叉引用和字段更新</dd></div>
+                        <div class="format-row" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-table"/></svg><span data-i18n="format.table.title">表格</span></dt><dd data-i18n="format.table.description">三线表、全框线、无边框、表内文字、行高列宽、单元格边距与对齐、重复表头、跨页控制与复杂边框</dd></div>
+                        <div class="format-row" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-image"/></svg><span data-i18n="format.image.title">图片与题注</span></dt><dd data-i18n="format.image.description">图片尺寸、位置、对齐与环绕；题注字体、字号、编号、位置和图文间距</dd></div>
+                        <div class="format-row" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-list"/></svg><span data-i18n="format.list.title">列表与编号</span></dt><dd data-i18n="format.list.description">项目符号、编号样式、缩进、编号连续性、多级列表和列表文字外观</dd></div>
+                        <div class="format-row" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-quote"/></svg><span data-i18n="format.reference.title">注释、引用与参考文献</span></dt><dd data-i18n="format.reference.description">字体、字号、缩进、间距、脚注尾注编号、分隔线和外观一致性</dd></div>
+                        <div class="format-row" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-math"/></svg><span data-i18n="format.equation.title">公式</span></dt><dd data-i18n="format.equation.description">字体、字号、对齐、编号和公式间距</dd></div>
+                      </dl>
+                      <div class="format-details-footer">
+                        <p class="development-note"><span aria-hidden="true">*</span><small data-i18n="formats.disclaimer">部分内容仍在开发中，实际功能可能产生变动</small></p>
+                        <button class="format-collapse" type="button" data-product-collapse aria-controls="format-capabilities"><span data-i18n="formats.collapse">收起</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="sr-only" id="format-status" role="status" aria-live="polite"></p>
-            <dl class="format-list">
-              <div class="format-row reveal" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-type"/></svg><span data-i18n="format.font.title">字体与字符</span></dt><dd data-i18n="format.font.description">字体、字号、加粗、斜体、颜色、下划线、删除线、上下标、字符间距与缩放；中文、西文和数字分别设置</dd></div>
-              <div class="format-row reveal" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-paragraph"/></svg><span data-i18n="format.paragraph.title">段落</span></dt><dd data-i18n="format.paragraph.description">对齐、行距、段前段后间距、首行／悬挂／左右缩进、制表位、引导符、边框与底纹、孤行与分页控制</dd></div>
-              <div class="format-row reveal" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-heading"/></svg><span data-i18n="format.heading.title">标题</span></dt><dd data-i18n="format.heading.description">各级标题字体、字号、字形、对齐、缩进与间距；标题层级、多级编号、章节起始和目录联动</dd></div>
-              <div class="format-row reveal" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-layout"/></svg><span data-i18n="format.page.title">页面与分节</span></dt><dd data-i18n="format.page.description">纸张、方向、页边距、装订线、分栏、文字方向、镜像页边距、分节和章节独立设置</dd></div>
-              <div class="format-row reveal" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-footer"/></svg><span data-i18n="format.footer.title">页眉、页脚与页码</span></dt><dd data-i18n="format.footer.description">文字外观、位置与距离、页码样式与起始值、首页不同、奇偶页不同、章节页眉和连续编号</dd></div>
-              <div class="format-row reveal" data-format-group="layout"><dt><svg class="icon" aria-hidden="true"><use href="#icon-list"/></svg><span data-i18n="format.contents.title">目录与交叉引用</span></dt><dd data-i18n="format.contents.description">目录层级与条目外观、手工目录转换、图表目录、交叉引用和字段更新</dd></div>
-              <div class="format-row reveal" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-table"/></svg><span data-i18n="format.table.title">表格</span></dt><dd data-i18n="format.table.description">三线表、全框线、无边框、表内文字、行高列宽、单元格边距与对齐、重复表头、跨页控制与复杂边框</dd></div>
-              <div class="format-row reveal" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-image"/></svg><span data-i18n="format.image.title">图片与题注</span></dt><dd data-i18n="format.image.description">图片尺寸、位置、对齐与环绕；题注字体、字号、编号、位置和图文间距</dd></div>
-              <div class="format-row reveal" data-format-group="text"><dt><svg class="icon" aria-hidden="true"><use href="#icon-list"/></svg><span data-i18n="format.list.title">列表与编号</span></dt><dd data-i18n="format.list.description">项目符号、编号样式、缩进、编号连续性、多级列表和列表文字外观</dd></div>
-              <div class="format-row reveal" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-quote"/></svg><span data-i18n="format.reference.title">注释、引用与参考文献</span></dt><dd data-i18n="format.reference.description">字体、字号、缩进、间距、脚注尾注编号、分隔线和外观一致性</dd></div>
-              <div class="format-row reveal" data-format-group="academic"><dt><svg class="icon" aria-hidden="true"><use href="#icon-math"/></svg><span data-i18n="format.equation.title">公式</span></dt><dd data-i18n="format.equation.description">字体、字号、对齐、编号和公式间距</dd></div>
-            </dl>
-            <p class="development-note"><span aria-hidden="true">*</span><small data-i18n="formats.disclaimer">部分内容仍在开发中，实际功能可能产生变动</small></p>
           </div>
         </div>
       </section>
-      <section class="page-section technical-section" id="workflow" tabindex="-1" aria-labelledby="workflow-heading">
+      <section class="page-section prototype-section" id="prototype" tabindex="-1" aria-labelledby="prototype-heading">
         <div class="content-shell">
-          <div class="technical-intro reveal">
-            <p class="eyebrow technical-kicker" data-i18n="workflow">技术设计与产品 workflow</p>
-            <h2 id="workflow-heading" data-i18n="technical.title">从格式要求，到可验证的修改。</h2>
-            <p data-i18n="technical.description">AutoFormat 将要求解析、格式编辑、预览与微调连接成一条处理链路。AI 理解要求，确定性程序执行修改，证据与版本贯穿每一步。</p>
-          </div>
-
-          <figure class="architecture-map reveal" aria-labelledby="architecture-caption" aria-describedby="workflow-summary">
-            <figcaption id="architecture-caption"><span data-i18n="technical.architecture">整体架构</span></figcaption>
-            <p class="sr-only" id="workflow-summary" data-i18n="technical.chart.summary">上传原稿与学校要求后，提取证据并校验。存在待确认项时展示依据与候选答案，由用户选择或明确忽略，再检查剩余问题；没有待确认项后进入定位、编辑与验证。生成新版本、预览与报告后，可下载结果，或提交局部微调需求，经轻量解析、范围核对与必要确认，将已验证规则送回格式编辑。</p>
-            <div class="workflow-graph">
-              <svg class="workflow-connections" aria-hidden="true" focusable="false">
-                <defs>
-                  <marker id="wf-arrow-main" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#839fc7" stroke-width="1.2"/></marker>
-                  <marker id="wf-arrow-confirm" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#b6a5cf" stroke-width="1.2"/></marker>
-                  <marker id="wf-arrow-refine" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#83b5c3" stroke-width="1.2"/></marker>
-                </defs>
-                <g class="workflow-paths"></g>
-              </svg>
-              <div class="wf-upload-row"><div class="wf-node wf-upload" data-wf-node="U"><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg><span data-i18n="technical.chart.upload">上传论文原稿与学校要求</span></div></div>
-              <div class="wf-lanes">
-                <section class="wf-lane wf-parsing" aria-labelledby="wf-parsing-title">
-                  <h3 id="wf-parsing-title"><span class="wf-lane-number">01</span><a href="#module-parsing"><span class="wf-link-copy"><span data-i18n="technical.parse.title">要求解析</span><small data-i18n="technical.dialog.openHint">（点击查看详情）</small></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
-                  <div class="wf-node wf-A" data-wf-node="A"><span data-i18n="technical.chart.extract">提取要求与原文证据</span></div>
-                  <div class="wf-node wf-B" data-wf-node="B"><span data-i18n="technical.chart.validate">Schema 与语义校验</span></div>
-                  <div class="wf-node wf-decision wf-Q" data-wf-node="Q"><span data-i18n="technical.chart.question">有待确认项？</span></div>
-                  <div class="wf-node wf-confirm wf-C" data-wf-node="C"><span data-i18n="technical.chart.show">展示依据与候选答案</span><small data-i18n="technical.chart.show.detail">提供暂时忽略选项</small></div>
-                  <div class="wf-node wf-confirm wf-D" data-wf-node="D"><span data-i18n="technical.chart.answer">用户逐项选择</span><small data-i18n="technical.chart.answer.detail">或明确暂时忽略</small></div>
-                </section>
-                <section class="wf-lane wf-editing" aria-labelledby="wf-editing-title">
-                  <h3 id="wf-editing-title"><span class="wf-lane-number">02</span><a href="#module-editing"><span data-i18n="technical.edit.title">格式编辑</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
-                  <div class="wf-node wf-E" data-wf-node="E"><span data-i18n="technical.chart.locate">定位对象与生成计划</span></div>
-                  <div class="wf-node wf-F" data-wf-node="F"><span data-i18n="technical.chart.edit">编辑副本与验证</span></div>
-                </section>
-                <section class="wf-lane wf-preview" aria-labelledby="wf-preview-title">
-                  <h3 id="wf-preview-title"><span class="wf-lane-number">03</span><a href="#module-preview"><span data-i18n="technical.preview.title">预览与微调</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
-                  <div class="wf-node wf-G" data-wf-node="G"><span data-i18n="technical.chart.preview">初稿或新版本、预览与报告</span></div>
-                  <div class="wf-node wf-download wf-H" data-wf-node="H"><span data-i18n="technical.chart.download">下载结果</span></div>
-                  <div class="wf-node wf-I" data-wf-node="I"><span data-i18n="technical.chart.refine">局部选择与微调需求</span></div>
-                  <div class="wf-node wf-refine wf-J" data-wf-node="J"><span data-i18n="technical.chart.feedback">轻量解析、范围核对与必要确认</span></div>
-                </section>
-              </div>
-              <span class="wf-edge-label wf-confirm-label" data-wf-label="Q-C" data-i18n="technical.chart.yes">有</span>
-              <span class="wf-edge-label" data-wf-label="Q-E" data-i18n="technical.chart.no">无待确认项</span>
-              <span class="wf-edge-label wf-confirm-label" data-wf-label="D-Q" data-i18n="technical.chart.recheck">重新检查</span>
-              <span class="wf-edge-label wf-refine-label" data-wf-label="J-E" data-i18n="technical.chart.verified">经过验证的规则</span>
-            </div>
-            <div class="workflow-legend"><span class="wf-legend-main" data-i18n="technical.chart.legend.main">主流程</span><span class="wf-legend-confirm" data-i18n="technical.chart.legend.confirm">编辑前确认回路</span><span class="wf-legend-refine" data-i18n="technical.chart.legend.refine">局部微调回路</span></div>
-            <div class="workflow-wait-note"><a href="#confirmation-demo" data-i18n="technical.gate.link">查看确认实例 →</a></div>
-          </figure>
-
-          <dialog class="module-dialog" id="module-dialog" aria-labelledby="parsing-heading">
-            <div class="module-card">
-              <div class="module-card-toolbar"><span data-i18n="technical.dialog.kicker">模块详情</span><button class="module-dialog-close" type="button" aria-label="关闭模块详情" data-i18n-aria="technical.dialog.close"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-              <div class="module-card-scroll" tabindex="0" role="region" aria-label="模块详细介绍" data-i18n-aria="technical.dialog.content">
-                <div class="technical-modules">
-                  <article class="technical-module" id="module-parsing" aria-labelledby="parsing-heading" hidden>
-                    <div class="module-heading"><span class="module-number">01 / BRIEF PARSING</span><h3 id="parsing-heading" data-i18n="technical.parse.title">要求解析</h3><p data-i18n="technical.parse.subtitle">稳定、高效、可复用的 Brief Parsing。</p><div class="module-stack">JSON Schema · Evidence · Domain Pack</div></div>
-                    <div class="module-details">
-                      <div class="module-features">
-                        <div><h4 data-i18n="technical.parse.evidence.title">原文约束，降低幻觉</h4><p data-i18n="technical.parse.evidence.description">区分明文要求、模板观察与示例。每条候选关联真实原文证据，缺失或无依据的信息保留为待确认项。</p></div>
-                        <div><h4 data-i18n="technical.parse.schema.title">Schema 与语义双层校验</h4><p data-i18n="technical.parse.schema.description">用 JSON Schema 约束输出结构，再核对对象、属性、值、单位、条件与范围，让规则可以交给程序处理。</p></div>
-                        <div><h4 data-i18n="technical.parse.budget.title">分阶段处理，控制成本</h4><p data-i18n="technical.parse.budget.description">要求提取、覆盖审计与争议分析分别承担职责。设置超时、有限重试与 Token 预算，复用已验证的解析结果。</p></div>
-                        <div><h4 data-i18n="technical.parse.reuse.title">版本化接口，方便复用</h4><p data-i18n="technical.parse.reuse.description">固定模型与 Prompt 版本，通过解析 Bundle、领域包和模型适配器接入不同宿主，保持清晰的输入、输出与验证边界。</p></div>
-                      </div>
-                      <div class="rule-proof">
-                        <div class="proof-source"><span class="detail-label" data-i18n="technical.proof.source">原文证据 · E-001</span><blockquote data-i18n="technical.proof.quote">“正文采用宋体。”</blockquote><p data-i18n="technical.proof.description">候选值需要得到原文支持，模板观察保留独立来源。</p></div>
-                        <div class="proof-schema"><span class="detail-label" data-i18n="technical.proof.schema">结构化输出 · 简化示意</span><pre><code data-i18n="technical.proof.code">{
-        "object": "body",
-        "attribute": "font",
-        "value": "宋体",
-        "evidence": "E-001"
-      }</code></pre></div>
-                      </div>
-                      <form class="confirmation-demo" id="confirmation-demo" aria-labelledby="confirmation-heading">
-                        <div class="confirmation-heading"><h4 id="confirmation-heading" data-i18n="technical.confirm.title">有疑问先确认，在修改前做决定。</h4><span data-i18n="technical.confirm.badge">交互示意</span></div>
-                        <p class="confirmation-question" data-i18n="technical.confirm.question">正文存在两种字体要求，本次采用哪一条？</p>
-                        <div class="confirmation-evidence"><span data-i18n="technical.confirm.evidence1">要求 A：正文使用宋体。</span><span data-i18n="technical.confirm.evidence2">要求 B：正文使用黑体。</span></div>
-                        <fieldset class="confirmation-options"><legend class="sr-only" data-i18n="technical.confirm.legend">选择字体要求或暂时忽略</legend>
-                          <label><input type="radio" name="font-rule" value="simsun"/><span data-i18n="technical.confirm.simsun">采用宋体</span></label>
-                          <label><input type="radio" name="font-rule" value="simhei"/><span data-i18n="technical.confirm.simhei">采用黑体</span></label>
-                          <label><input type="radio" name="font-rule" value="skip"/><span data-i18n="technical.confirm.skip">暂时忽略此问题</span></label>
-                        </fieldset>
-                        <div class="confirmation-actions"><button class="button button-primary" type="submit" disabled data-i18n="technical.confirm.submit">确认选择（示意）</button><button class="demo-reset" type="reset" data-i18n="technical.confirm.reset">重置示例</button></div>
-                        <p class="confirmation-status" role="status" aria-live="polite" data-i18n="technical.confirm.pending">请选择一个选项。未回答时，格式编辑保持等待。</p>
-                        <p class="confirmation-footnote" data-i18n="technical.confirm.footnote">可靠明文规则无需逐条询问。暂时忽略不会成为默认规则，相关项目仍保留在报告中。</p>
-                      </form>
-                    </div>
-                  </article>
-
-                  <article class="technical-module" id="module-editing" aria-labelledby="editing-heading" hidden>
-                    <div class="module-heading"><span class="module-number">02 / DOCUMENT ENGINE</span><h3 id="editing-heading" data-i18n="technical.edit.title">格式编辑</h3><p data-i18n="technical.edit.subtitle">确定性执行，逐项验证。</p><div class="module-stack">C# / .NET · Open XML SDK</div></div>
-                    <div class="module-details">
-                      <div class="module-features">
-                        <div><h4 data-i18n="technical.edit.rules.title">经过验证的规则才执行</h4><p data-i18n="technical.edit.rules.description">将类型化规则转换为对象定位与修改计划，按指定属性和作用范围执行，保留论文语义、表格数据与引用内容。</p></div>
-                        <div><h4 data-i18n="technical.edit.versions.title">每次修改都有独立版本</h4><p data-i18n="technical.edit.versions.description">原稿 V0 与已发布历史保持不变。每轮从选定父版本创建新文件，规则快照与本次编辑绑定，防止改答后发布过期结果。</p></div>
-                        <div><h4 data-i18n="technical.edit.validation.title">保存后重新读取和验证</h4><p data-i18n="technical.edit.validation.description">重新检查实际格式属性、文档结构与文字内容，记录修改位置、依据和验证结果，让每次操作可以追溯。</p></div>
-                        <div><h4 data-i18n="technical.edit.efficiency.title">明确执行边界，减少返工</h4><p data-i18n="technical.edit.efficiency.description">将规则理解与文档执行分开。定位不可靠、条件不明确或存在冲突时先确认，再提交可靠的修改计划。</p></div>
-                      </div>
-                      <ol class="engine-sequence" aria-label="格式编辑步骤" data-i18n-aria="technical.edit.sequenceLabel"><li data-i18n="technical.edit.locate">定位对象</li><li data-i18n="technical.edit.plan">生成计划</li><li data-i18n="technical.edit.apply">编辑副本</li><li data-i18n="technical.edit.verify">回读验证</li></ol>
-                    </div>
-                  </article>
-
-                  <article class="technical-module" id="module-preview" aria-labelledby="preview-heading" hidden>
-                    <div class="module-heading"><span class="module-number">03 / PREVIEW & REFINE</span><h3 id="preview-heading" data-i18n="technical.preview.title">预览与微调</h3><p data-i18n="technical.preview.subtitle">看见结果，调整细节。</p><div class="module-stack">TypeScript · PDF.js · LibreOffice</div></div>
-                    <div class="module-details">
-                      <div class="module-features">
-                        <div><h4 data-i18n="technical.preview.visible.title">预览、报告与版本一起交付</h4><p data-i18n="technical.preview.visible.description">通过 LibreOffice 生成 PDF，使用 PDF.js 浏览、缩放与选择文字。结合报告查看修改依据，并下载可继续编辑的 DOCX。</p></div>
-                        <div><h4 data-i18n="technical.preview.scope.title">选中哪里，就从哪里微调</h4><p data-i18n="technical.preview.scope.description">选中文字并提出需求，明确实际作用范围。段落属性会显示所在段落；扩大范围、定位不唯一或冲突时先确认。</p></div>
-                        <div><h4 data-i18n="technical.preview.reuse.title">轻量解析，复用已有结果</h4><p data-i18n="technical.preview.reuse.description">局部反馈复用格式规则与校验能力，结合已验证的解析结果和决定快照，减少重复处理整份要求的模型调用。</p></div>
-                        <div><h4 data-i18n="technical.preview.history.title">持续微调，历史可追溯</h4><p data-i18n="technical.preview.history.description">每轮微调生成独立的新文档、报告与预览。用户可以查看历史，选择任一版本作为后续修改的起点。</p></div>
-                      </div>
-                      <div class="refinement-loop"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg><p data-i18n="technical.preview.loop">选区与需求 → 轻量解析与范围核对 → 必要确认 → 格式编辑 → 新版本预览</p></div>
-                    </div>
-                  </article>
-                      </div>
-              </div>
-              <div class="module-card-footer"><span class="module-dismiss-icon" aria-hidden="true">↓</span><span data-i18n="technical.dialog.hint">点击卡片外，或阅读到底后继续向下滚动，即可返回流程图。</span></div>
-            </div>
-          </dialog>
-
           <figure class="prototype-showcase reveal" aria-labelledby="prototype-heading">
-            <figcaption><span class="eyebrow" data-i18n="technical.prototype.kicker">产品原型</span><h3 id="prototype-heading" data-i18n="technical.prototype.title">把完整流程，放到真实界面里。</h3></figcaption>
-            <div class="prototype-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-layout"/></svg><span data-i18n="technical.prototype.placeholder">产品原型展示位</span><p data-i18n="technical.prototype.description">后续放置实际操作视频、交互原型或截图。</p></div>
+            <figcaption><h2 id="prototype-heading" data-i18n="technical.prototype.title">产品原型展示</h2></figcaption>
+            <div class="prototype-placeholder">
+              <svg class="icon" aria-hidden="true"><use href="#icon-layout"/></svg>
+              <a class="button button-primary" href="./prototype/index.html#upload" target="_blank" rel="noopener"><span data-i18n="technical.prototype.launch">打开交互原型</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+            </div>
           </figure>
         </div>
-      </section>
-      <section class="page-section benchmark-section" id="ai" tabindex="-1" aria-labelledby="ai-heading">
-        <div class="content-shell benchmark-shell">
-          <div class="benchmark-heading reveal">
-            <div><p class="eyebrow benchmark-kicker" data-i18n="benchmark.kicker">AI选型&amp;产品调优</p><h2 id="ai-heading" data-i18n="benchmark.title">性能优化</h2><p class="benchmark-subtitle" data-i18n="benchmark.subtitle">更准确。更可靠。更快。更高效。</p></div>
-          </div>
-          <p class="benchmark-context reveal" data-i18n="benchmark.context">选用固定版本的 Qwen Flash，保留 OpenAI 适配器。通过领域词汇、Prompt、上下文与证据校验，持续优化质量、速度与 Token 消耗。</p>
-          <div class="benchmark-panel" id="benchmark-panel">
-            <article class="benchmark-quality-card" aria-labelledby="benchmark-quality-heading">
-              <div class="benchmark-card-heading"><h3 id="benchmark-quality-heading" data-i18n="benchmark.quality">质量与可靠性</h3></div>
-              <div class="benchmark-quality-metrics" id="benchmark-quality-metrics"></div>
-            </article>
-            <h3 class="benchmark-efficiency-heading" id="benchmark-efficiency-heading" data-i18n="benchmark.efficiency">处理效率</h3>
-            <div class="benchmark-efficiency-cards" id="benchmark-efficiency-metrics" role="group" aria-labelledby="benchmark-efficiency-heading"></div>
-            <p class="benchmark-data-note" id="benchmark-data-note" data-i18n="benchmark.note">数据来源于20份内部测试结果</p>
-            <noscript><p class="benchmark-data-note">请启用 JavaScript 查看五项指标的对比演示。</p></noscript>
-          </div>
-        </div>
-      </section>
-      <section class="page-section" id="business" tabindex="-1" aria-labelledby="business-heading">
-        <h2 class="sr-only" id="business-heading" data-i18n="business">商业分析</h2>
       </section>
     </main>
   </body>

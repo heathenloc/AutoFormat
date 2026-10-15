@@ -7,6 +7,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../services/docx_engine/EasyFormat.DocxIndex/EasyFormat.DocxIndex.csproj" />
+    <ProjectReference Include="../../services/docx_engine/AutoFormat.DocxIndex/AutoFormat.DocxIndex.csproj" />
   </ItemGroup>
 </Project>

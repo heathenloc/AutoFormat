@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "initial-draft-request/1.0",
+      "default": "initial-draft-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "expected_base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Base Docx Sha256",
+      "type": "string"
+    },
+    "expected_snapshot_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "base_version_id",
+    "expected_base_docx_sha256",
+    "expected_snapshot_id"
+  ],
+  "title": "InitialDraftRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/initial-draft-request/1.0"
+}

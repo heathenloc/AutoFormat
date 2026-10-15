@@ -1,0 +1,198 @@
+{
+  "$defs": {
+    "FeedbackWorkItem": {
+      "additionalProperties": false,
+      "properties": {
+        "feedback_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Feedback Id",
+          "type": "string"
+        },
+        "created_at": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Created At",
+          "type": "string"
+        },
+        "raw_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "selected_text": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Text"
+        },
+        "status": {
+          "enum": [
+            "needs_target",
+            "needs_value",
+            "needs_scope",
+            "needs_conflict",
+            "ready",
+            "executing",
+            "failed",
+            "completed",
+            "no_document_change",
+            "rule_kept",
+            "question",
+            "out_of_scope",
+            "blocked",
+            "invalid"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "execution_request_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Execution Request Id"
+        },
+        "output_version_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Output Version Id"
+        }
+      },
+      "required": [
+        "feedback_id",
+        "created_at",
+        "raw_text",
+        "requested_scope",
+        "selected_text",
+        "status",
+        "reason",
+        "execution_request_id",
+        "output_version_id"
+      ],
+      "title": "FeedbackWorkItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-work-queue/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "queue_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Queue Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Base Docx Sha256",
+      "type": "string"
+    },
+    "version_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Version Context Id",
+      "type": "string"
+    },
+    "working_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Working Version Id",
+      "type": "string"
+    },
+    "rules_snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Rules Snapshot Id"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/FeedbackWorkItem"
+      },
+      "maxItems": 50,
+      "title": "Items",
+      "type": "array"
+    },
+    "next_before": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Before"
+    }
+  },
+  "required": [
+    "schema_version",
+    "queue_id",
+    "task_id",
+    "base_version_id",
+    "base_docx_sha256",
+    "version_context_id",
+    "working_version_id",
+    "rules_snapshot_id",
+    "items",
+    "next_before"
+  ],
+  "title": "FeedbackWorkQueue",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-work-queue/1.0"
+}

@@ -154,8 +154,10 @@ def test_incomplete_ir_and_unknown_property_are_reported() -> None:
 
 
 def test_schema_snapshot_matches_strict_model() -> None:
-    expected = AcademicFormatRuleSet.model_json_schema()
-    expected["$id"] = "https://easyformat.local/contracts/academic-format-rule-set/1.2"
-    expected["properties"]["schema_version"].pop("enum")
-    expected["properties"]["schema_version"]["const"] = "academic-format-rule-set/1.2"
-    assert json.loads(CURRENT_CONTRACT.read_text(encoding="utf-8")) == expected
+    schema = json.loads(CURRENT_CONTRACT.with_name("academic-format-rule-set-1.4.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    assert schema["properties"]["schema_version"]["const"] == "academic-format-rule-set/1.4"
+    assert schema["properties"]["compiler_version"]["const"] == "1.4.0"
+    assert {"relations", "conflicts", "fragments"} <= set(schema["required"])
+    assert schema["additionalProperties"] is False
+    assert "semantics" in schema["$defs"]["AcademicFormatRule"]["required"]

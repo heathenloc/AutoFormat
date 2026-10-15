@@ -23,7 +23,7 @@ def _comparison_key(text: str) -> str:
 class PdfParser:
     supported_kinds: frozenset[SourceKind] = frozenset({"pdf"})
     parser_id = "pdf-pdfplumber"
-    parser_version = "1.0.0"
+    parser_version = "1.1.0"
 
     def parse(self, source: SecuredSource) -> ParserResult:
         if source.kind != "pdf":
@@ -31,6 +31,7 @@ class PdfParser:
         try:
             with pdfplumber.open(BytesIO(source.content)) as document:
                 page_lines = [self._page_lines(page) for page in document.pages]
+                has_images = any(page.images for page in document.pages)
         except (PDFSyntaxError, ValueError, TypeError, OSError) as exc:
             raise BriefParserError(
                 ErrorCode.SOURCE_EXTRACTION_FAILED,
@@ -83,6 +84,10 @@ class PdfParser:
                 )
 
         warnings: list[str] = []
+        if has_images:
+            warnings.append("PDF_IMAGES_NOT_READ")
+        if empty_page_count:
+            warnings.append("PDF_EMPTY_PAGES_NOT_READ")
         if duplicate_header_count:
             warnings.append("DUPLICATE_HEADERS_REMOVED")
         if duplicate_footer_count:
@@ -121,4 +126,3 @@ class PdfParser:
             {key for key, count in header_counts.items() if key and count >= threshold},
             {key for key, count in footer_counts.items() if key and count >= threshold},
         )
-

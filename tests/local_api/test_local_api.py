@@ -25,12 +25,12 @@ from brief_parser.domain.requirement_ir import (
     DomainPackRef, EvidenceReference, SourceLocator,
 )
 
-from easyformat.local_api import bind_local_api, create_local_api
-from easyformat.preview import LibreOfficeRenderer
-from easyformat.rule_snapshots import RuleSnapshotError, RuleSnapshotStore
-from easyformat.target_planning import DotnetTargetIndexer
-from easyformat.version_store import VersionStore, new_id
-from easyformat.workflow import DotnetEditor
+from autoformat.local_api import bind_local_api, create_local_api
+from autoformat.preview import LibreOfficeRenderer
+from autoformat.rule_snapshots import RuleSnapshotError, RuleSnapshotStore
+from autoformat.target_planning import DotnetTargetIndexer
+from autoformat.version_store import VersionStore, new_id
+from autoformat.workflow import DotnetEditor
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,8 +43,8 @@ def engines() -> tuple[DotnetTargetIndexer, DotnetEditor]:
     dotnet = shutil.which("dotnet")
     if dotnet is None:
         pytest.skip(".NET 10 SDK is required for local API integration.")
-    index_project = ROOT / "services" / "docx_engine" / "EasyFormat.DocxIndex"
-    editor_project = ROOT / "services" / "docx_engine" / "EasyFormat.DocxEditor"
+    index_project = ROOT / "services" / "docx_engine" / "AutoFormat.DocxIndex"
+    editor_project = ROOT / "services" / "docx_engine" / "AutoFormat.DocxEditor"
     for project in (index_project, editor_project):
         completed = subprocess.run(
             [dotnet, "build", str(project), "--no-restore", "-c", "Debug"],
@@ -52,8 +52,8 @@ def engines() -> tuple[DotnetTargetIndexer, DotnetEditor]:
             encoding="utf-8", errors="replace",
         )
         assert completed.returncode == 0, completed.stderr[-2000:]
-    index_dll = index_project / "bin" / "Debug" / "net10.0" / "EasyFormat.DocxIndex.dll"
-    editor_dll = editor_project / "bin" / "Debug" / "net10.0" / "EasyFormat.DocxEditor.dll"
+    index_dll = index_project / "bin" / "Debug" / "net10.0" / "AutoFormat.DocxIndex.dll"
+    editor_dll = editor_project / "bin" / "Debug" / "net10.0" / "AutoFormat.DocxEditor.dll"
     return (
         DotnetTargetIndexer(
             dotnet_path=Path(dotnet), index_dll=index_dll,
@@ -109,8 +109,8 @@ def _setup(tmp_path: Path, engines):
         task_id=v0.task_id, base_version_id=v0.version_id, ruleset=_ruleset())
 
     def renderer(work_dir: Path):
-        executable = os.environ.get("EASYFORMAT_TEST_SOFFICE")
-        expected_hash = os.environ.get("EASYFORMAT_TEST_SOFFICE_SHA256")
+        executable = os.environ.get("AUTOFORMAT_TEST_SOFFICE")
+        expected_hash = os.environ.get("AUTOFORMAT_TEST_SOFFICE_SHA256")
         if not executable or not expected_hash:
             raise AssertionError("Unexpected renderer call without integration configuration.")
         return LibreOfficeRenderer(
@@ -124,7 +124,7 @@ def _setup(tmp_path: Path, engines):
         allowed_origin=ORIGIN, font_fingerprint="fixture-fonts",
     )
     client = TestClient(app, base_url=ORIGIN)
-    headers = {"X-EasyFormat-Session": TOKEN, "Origin": ORIGIN}
+    headers = {"X-AutoFormat-Session": TOKEN, "Origin": ORIGIN}
     prefix = f"/api/tasks/{v0.task_id}/versions/{v0.version_id}"
     return client, headers, prefix, store, v0, snapshots, snapshot
 
@@ -192,7 +192,7 @@ def test_local_server_serves_reserved_socket_and_stops(
         with httpx.Client(timeout=3, trust_env=False) as network_client:
             response = network_client.get(
                 binding.url + f"/api/tasks/{v0.task_id}",
-                headers={"X-EasyFormat-Session": binding.session_token,
+                headers={"X-AutoFormat-Session": binding.session_token,
                          "Origin": binding.url},
             )
         assert response.status_code == 200
@@ -261,7 +261,7 @@ def test_local_review_and_confirmation_require_session_and_fresh_review(
 def test_local_execute_rechecks_plan_and_serves_registered_artifacts(
     tmp_path: Path, engines,
 ) -> None:
-    if not os.environ.get("EASYFORMAT_TEST_SOFFICE"):
+    if not os.environ.get("AUTOFORMAT_TEST_SOFFICE"):
         pytest.skip("Set verified LibreOffice path for API execution integration.")
     client, headers, prefix, store, v0, _, _ = _setup(tmp_path, engines)
     review = client.get(prefix + "/body-alignment/review", headers=headers).json()

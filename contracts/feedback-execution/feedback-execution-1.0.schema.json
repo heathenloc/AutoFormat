@@ -1,0 +1,88 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-execution/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "phase": {
+      "enum": [
+        "planning",
+        "editing",
+        "validating",
+        "rendering",
+        "ready",
+        "no_document_change",
+        "failed"
+      ],
+      "title": "Phase",
+      "type": "string"
+    },
+    "version_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Version Id"
+    },
+    "error_status": {
+      "anyOf": [
+        {
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Error Status"
+    },
+    "reason": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "task_id",
+    "base_version_id",
+    "snapshot_id",
+    "phase",
+    "version_id",
+    "error_status",
+    "reason"
+  ],
+  "title": "FeedbackExecution",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-execution/1.0"
+}

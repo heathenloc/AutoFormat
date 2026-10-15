@@ -1,14 +1,40 @@
 # DOCX engine development
 
-`EasyFormat.DocxIndex` is the first read-only prototype for the selection anchor
+The academic editor increment (2026-10-04) now implements semantic planning and
+editing for all 35 currently registered typed properties. Use `capabilities`,
+`inspect-academic`, `plan-academic`, and `apply-academic`; old commands remain
+compatible. Source replay belongs to the Python `AcademicEditor` boundary, so
+raw client or model manifests must never call this internal CLI directly.
+See [coverage, contracts, verification and remaining boundaries](../../docs/docx-engine-core-v1.md)
+and run `dotnet run --project tests/AcademicEditor.Checks`.
+
+Step 3 adds `inspect-selection <docx>` to the academic editor CLI. It reads
+paragraph text and UTF-16 positions using the same opaque `o:` object IDs as
+`inspect-academic`, without editing the package. Separate story IDs prevent
+joining main text with headers, footers or different notes. Fields, hidden or
+revised text and unreliable inline structures are marked unsupported. Python
+rechecks the saved PDF's text layer, resolves candidates and handles target
+confirmation. See [selection step 3](../../docs/preview-selection-step3.md).
+
+Step 6 adds `plan-feedback` and `apply-feedback` with a strict typed
+`feedback-edit-manifest/1.0`. Python replays source decisions and sends exact
+objects and UTF-16 character fragments; the editor splits safe text runs, checks
+physical property conflicts, preserves content, and reads back effective values
+after saving. It never executes raw feedback. Any unsupported target rejects the
+whole candidate. Historical input stays immutable, including already-satisfied
+edits. See [feedback editing step 6](../../docs/preview-feedback-editing-step6.md).
+
+The following notes describe the earlier selection/alignment prototypes.
+
+`AutoFormat.DocxIndex` is the first read-only prototype for the selection anchor
 boundary. It reads `word/document.xml`, builds version-local paragraph IDs, and
 requires an exact text and context match. It never edits the source DOCX.
 
-Run from the EasyFormat root:
+Run from the AutoFormat root:
 
 ```powershell
-dotnet run --project services/docx_engine/EasyFormat.DocxIndex -- index TestDocuments/材料学院毕业论文模板2026.docx
-dotnet run --project services/docx_engine/EasyFormat.DocxIndex -- inspect TestDocuments/材料学院毕业论文模板2026.docx
+dotnet run --project services/docx_engine/AutoFormat.DocxIndex -- index TestDocuments/材料学院毕业论文模板2026.docx
+dotnet run --project services/docx_engine/AutoFormat.DocxIndex -- inspect TestDocuments/材料学院毕业论文模板2026.docx
 dotnet run --project tests/DocxIndex.Checks -- TestDocuments/材料学院毕业论文模板2026.docx
 ```
 
@@ -38,7 +64,7 @@ verified, so this boundary is not the complete feedback workflow.
 
 The index prototype is deliberately read-only. Editing is a separate project.
 
-`EasyFormat.DocxEditor` now implements the first isolated edit primitive:
+`AutoFormat.DocxEditor` now implements the first isolated edit primitive:
 `paragraph.alignment` for one version-local paragraph. Its JSON manifest
 requires a base DOCX hash, target paragraph ID and text hash, explicit
 `paragraph` effective scope, and distinct input/output filenames inside a

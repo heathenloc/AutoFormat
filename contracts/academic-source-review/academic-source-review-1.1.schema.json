@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "AcademicReviewItem": {
+      "additionalProperties": false,
+      "properties": {
+        "review_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Review Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "suspected_omission",
+            "unsupported_format",
+            "recognized_pending",
+            "source_uncertain",
+            "unread_source"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "next_action": {
+          "minLength": 1,
+          "title": "Next Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id",
+        "kind",
+        "source_id",
+        "evidence_ids",
+        "reason",
+        "next_action"
+      ],
+      "title": "AcademicReviewItem",
+      "type": "object"
+    },
+    "AcademicSourceDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "source_class": {
+          "enum": [
+            "explicit_requirement",
+            "example",
+            "background",
+            "template_observation",
+            "out_of_scope",
+            "uncertain"
+          ],
+          "title": "Source Class",
+          "type": "string"
+        },
+        "reason_code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "format_properties": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Format Properties",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_class",
+        "reason_code",
+        "format_properties"
+      ],
+      "title": "AcademicSourceDecision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "academic-source-review/1.1"
+    },
+    "policy_version": {
+      "type": "string",
+      "const": "academic-format-scope/1.1"
+    },
+    "source_artifact_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_version": {
+      "exclusiveMinimum": 0,
+      "title": "Source Artifact Version",
+      "type": "integer"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/AcademicSourceDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/AcademicReviewItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "classification_counts": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "explicit_requirement",
+          "example",
+          "background",
+          "template_observation",
+          "out_of_scope",
+          "uncertain"
+        ]
+      },
+      "title": "Classification Counts",
+      "type": "object"
+    },
+    "detected_format_property_count": {
+      "minimum": 0,
+      "title": "Detected Format Property Count",
+      "type": "integer"
+    },
+    "represented_format_property_count": {
+      "minimum": 0,
+      "title": "Represented Format Property Count",
+      "type": "integer"
+    },
+    "scope_note": {
+      "default": "仅审计论文格式；字数、词数、篇幅及具体内容要求不提取、不报漏提、不生成问题。",
+      "title": "Scope Note",
+      "type": "string"
+    },
+    "coverage_note": {
+      "default": "词典线索覆盖检查，不是人工标注的召回率，也不代表编辑器已执行。",
+      "title": "Coverage Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_artifact_id",
+    "source_artifact_version",
+    "decisions",
+    "items",
+    "classification_counts",
+    "detected_format_property_count",
+    "represented_format_property_count",
+    "schema_version"
+  ],
+  "title": "AcademicSourceReview",
+  "type": "object",
+  "$id": "https://easyformat.local/contracts/academic-source-review/1.1"
+}

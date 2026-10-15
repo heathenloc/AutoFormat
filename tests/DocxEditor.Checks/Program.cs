@@ -4,8 +4,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
-using EasyFormat.DocxEditor;
-using EasyFormat.DocxIndex;
+using AutoFormat.DocxEditor;
+using AutoFormat.DocxIndex;
 
 var taskRoot = Path.GetFullPath(Path.Combine("runtime", "tests", "docx-editor", Guid.NewGuid().ToString("N")));
 Directory.CreateDirectory(taskRoot);

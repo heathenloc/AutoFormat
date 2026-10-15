@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "expected_base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Base Docx Sha256",
+      "type": "string"
+    },
+    "expected_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Context Id",
+      "type": "string"
+    },
+    "feedback_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Feedback Id",
+      "type": "string"
+    },
+    "expected_parse_result_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Parse Result Id",
+      "type": "string"
+    },
+    "raw_answer": {
+      "default": "",
+      "maxLength": 4096,
+      "title": "Raw Answer",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "feedback-decision-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "conflict_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+      "title": "Conflict Id",
+      "type": "string"
+    },
+    "action": {
+      "enum": [
+        "keep_rule",
+        "local_exception",
+        "update_rule"
+      ],
+      "title": "Action",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "task_id",
+    "base_version_id",
+    "expected_base_docx_sha256",
+    "expected_context_id",
+    "feedback_id",
+    "expected_parse_result_id",
+    "schema_version",
+    "conflict_id",
+    "action"
+  ],
+  "title": "FeedbackDecisionRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-decision-request/1.0"
+}

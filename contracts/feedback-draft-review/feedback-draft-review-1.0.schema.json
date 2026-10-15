@@ -1,0 +1,447 @@
+{
+  "$defs": {
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "FeedbackPartialRule": {
+      "additionalProperties": false,
+      "description": "Fields understood so far; never a candidate that may be executed.",
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "requested_scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "selection",
+                "paragraph",
+                "same_kind",
+                "document"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Scope"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "FeedbackPartialRule",
+      "type": "object"
+    },
+    "FeedbackRuleCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FormatValue"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "character_scope": {
+          "default": "all",
+          "enum": [
+            "all",
+            "chinese",
+            "latin",
+            "digits",
+            "complex_script",
+            "other"
+          ],
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "applicability_scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "candidate_id",
+        "property_id",
+        "value",
+        "requested_scope"
+      ],
+      "title": "FeedbackRuleCandidate",
+      "type": "object"
+    },
+    "FormatValue": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "normalized"
+      ],
+      "title": "FormatValue",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "ScopeReview": {
+      "additionalProperties": false,
+      "description": "Actual minimum Word unit is distinct from the user's requested scope.",
+      "properties": {
+        "review_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Review Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "effective_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Effective Scope",
+          "type": "string"
+        },
+        "minimum_unit": {
+          "enum": [
+            "character",
+            "paragraph",
+            "section",
+            "table",
+            "region",
+            "field_or_object",
+            "document"
+          ],
+          "title": "Minimum Unit",
+          "type": "string"
+        },
+        "target_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Target Ids",
+          "type": "array"
+        },
+        "estimated_affected_count": {
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Estimated Affected Count",
+          "type": "integer"
+        },
+        "requires_confirmation": {
+          "title": "Requires Confirmation",
+          "type": "boolean"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id",
+        "candidate_id",
+        "requested_scope",
+        "effective_scope",
+        "minimum_unit",
+        "target_ids",
+        "estimated_affected_count",
+        "requires_confirmation",
+        "reason"
+      ],
+      "title": "ScopeReview",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Read-only pre-submission interpretation; not a saved feedback record.",
+  "properties": {
+    "schema_version": {
+      "const": "feedback-draft-review/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "review_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Review Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "version_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Version Context Id",
+      "type": "string"
+    },
+    "source_submission_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Submission Sha256",
+      "type": "string"
+    },
+    "parser_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+      "title": "Parser Id",
+      "type": "string"
+    },
+    "parser_version": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+      "title": "Parser Version",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "execution_defect",
+        "new_rule",
+        "clarification_needed",
+        "question",
+        "out_of_scope"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/FeedbackRuleCandidate"
+      },
+      "maxItems": 64,
+      "title": "Candidates",
+      "type": "array"
+    },
+    "understood": {
+      "items": {
+        "$ref": "#/$defs/FeedbackPartialRule"
+      },
+      "maxItems": 64,
+      "title": "Understood",
+      "type": "array"
+    },
+    "missing_fields": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Missing Fields",
+      "type": "array"
+    },
+    "scope_reviews": {
+      "items": {
+        "$ref": "#/$defs/ScopeReview"
+      },
+      "maxItems": 64,
+      "title": "Scope Reviews",
+      "type": "array"
+    },
+    "existing_rule_ids": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+        "type": "string"
+      },
+      "maxItems": 512,
+      "title": "Existing Rule Ids",
+      "type": "array"
+    },
+    "target_status": {
+      "enum": [
+        "ready",
+        "pending_confirmation",
+        "unavailable",
+        "none"
+      ],
+      "title": "Target Status",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "review_id",
+    "task_id",
+    "base_version_id",
+    "version_context_id",
+    "source_submission_sha256",
+    "parser_id",
+    "parser_version",
+    "kind",
+    "target_status",
+    "reason"
+  ],
+  "title": "FeedbackDraftReview",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-draft-review/1.0"
+}

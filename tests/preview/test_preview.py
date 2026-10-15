@@ -17,8 +17,8 @@ from docx import Document
 from jsonschema import Draft202012Validator
 from pypdf import PdfReader
 
-from easyformat.preview import LibreOfficeRenderer, PreviewError, inspect_docx_for_render
-from easyformat.selection import verify_pdf_selection
+from autoformat.preview import LibreOfficeRenderer, PreviewError, inspect_docx_for_render
+from autoformat.selection import verify_pdf_selection
 
 
 @pytest.fixture
@@ -92,8 +92,8 @@ def test_school_template_with_embedded_object_is_not_rendered() -> None:
 
 
 def test_real_headless_pdf_has_selectable_text(safe_docx: Path) -> None:
-    executable = os.environ.get("EASYFORMAT_TEST_SOFFICE")
-    expected_hash = os.environ.get("EASYFORMAT_TEST_SOFFICE_SHA256")
+    executable = os.environ.get("AUTOFORMAT_TEST_SOFFICE")
+    expected_hash = os.environ.get("AUTOFORMAT_TEST_SOFFICE_SHA256")
     if not executable or not expected_hash:
         pytest.skip("Set an explicit verified LibreOffice path and SHA-256 for integration.")
 
@@ -177,7 +177,7 @@ def test_real_headless_pdf_has_selectable_text(safe_docx: Path) -> None:
         Draft202012Validator(schema).validate(payload)
     command = [
         "dotnet", "run", "--project",
-        str(repo_root / "services" / "docx_engine" / "EasyFormat.DocxIndex"),
+        str(repo_root / "services" / "docx_engine" / "AutoFormat.DocxIndex"),
         "--", "locate", str(source), str(hint_path), str(binding_path),
     ]
     located = subprocess.run(command, cwd=repo_root, capture_output=True,

@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "FeedbackEditFragment": {
+      "additionalProperties": false,
+      "properties": {
+        "fragment_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Fragment Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "start_utf16": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Utf16"
+        },
+        "length_utf16": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Length Utf16"
+        }
+      },
+      "required": [
+        "fragment_id",
+        "rule_id",
+        "property_id",
+        "object_id",
+        "start_utf16",
+        "length_utf16"
+      ],
+      "title": "FeedbackEditFragment",
+      "type": "object"
+    },
+    "FeedbackEditRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "academic",
+            "feedback"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "source_rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Source Rule Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FeedbackEditValue"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source_kind",
+        "source_rule_id",
+        "property_id",
+        "value"
+      ],
+      "title": "FeedbackEditRule",
+      "type": "object"
+    },
+    "FeedbackEditValue": {
+      "additionalProperties": false,
+      "properties": {
+        "original_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Original Text",
+          "type": "string"
+        },
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "pattern": "^[^\\r\\n\\x00]{1,200}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit"
+        },
+        "dictionary_version": {
+          "default": "academic-properties/1.0",
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "title": "Dictionary Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "original_text",
+        "normalized",
+        "unit"
+      ],
+      "title": "FeedbackEditValue",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-edit-manifest/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Base Docx Sha256",
+      "type": "string"
+    },
+    "input_file": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Input File",
+      "type": "string"
+    },
+    "output_file": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Output File",
+      "type": "string"
+    },
+    "rules_snapshot_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Rules Snapshot Id",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/FeedbackEditRule"
+      },
+      "maxItems": 1024,
+      "title": "Rules",
+      "type": "array"
+    },
+    "fragments": {
+      "items": {
+        "$ref": "#/$defs/FeedbackEditFragment"
+      },
+      "maxItems": 20000,
+      "title": "Fragments",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "base_version_id",
+    "base_docx_sha256",
+    "input_file",
+    "output_file",
+    "rules_snapshot_id",
+    "rules",
+    "fragments"
+  ],
+  "title": "FeedbackEditManifest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-edit-manifest/1.0"
+}

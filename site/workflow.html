@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#142238" />
+    <meta name="description" content="AutoFormat 的要求解析、格式编辑、预览与微调，以及编辑前确认与版本管理设计。" />
+    <meta name="color-scheme" content="light" />
+    <title>AutoFormat · 技术设计与产品 Workflow</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AutoFormat" />
+    <meta property="og:title" content="AutoFormat · 技术设计与产品 Workflow" />
+    <meta property="og:description" content="AutoFormat 的要求解析、格式编辑、预览与微调，以及编辑前确认与版本管理设计。" />
+    <meta property="og:image" content="https://heathenloc.github.io/AutoFormat/assets/autoformat-preview.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="AutoFormat Logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="AutoFormat · 技术设计与产品 Workflow" />
+    <meta name="twitter:description" content="AutoFormat 的要求解析、格式编辑、预览与微调，以及编辑前确认与版本管理设计。" />
+    <meta name="twitter:image" content="https://heathenloc.github.io/AutoFormat/assets/autoformat-preview.png" />
+    <meta name="twitter:image:alt" content="AutoFormat Logo" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./workflow.css" />
+    <link rel="stylesheet" href="./flowchart.css" />
+    <link rel="stylesheet" href="./module-dialog.css" />
+    <link rel="stylesheet" href="./theme-editorial.css" />
+    <link rel="stylesheet" href="./secondary-paper.css" />
+    <script src="./main.js" defer></script>
+    <script src="./flowchart.js" defer></script>
+    <script src="./module-dialog.js" defer></script>
+  </head>
+  <body data-page="workflow" class="secondary-page">
+    <a class="skip-link" href="#workflow" data-i18n="skip">跳到主要内容</a>
+
+    <!-- Keep the background separate from content for a future canvas/WebGL layer. -->
+    <div class="site-background" aria-hidden="true">
+      <div class="background-glow"></div>
+      <div class="background-grid"></div>
+      <div class="background-texture"></div>
+      <div class="background-animation" id="background-animation"></div>
+    </div>
+
+    <header class="site-header" data-menu-open="false">
+      <div class="header-inner">
+        <a class="wordmark" href="./index.html" aria-label="AutoFormat，返回首页" data-i18n-aria="home">AutoFormat</a>
+
+        <nav class="site-nav" id="site-navigation" aria-label="主要导航" data-i18n-aria="navigation">
+          <ul class="nav-list">
+            <li><a class="nav-link" href="./index.html" data-page="product" data-i18n="product">产品简介</a></li>
+            <li><a class="nav-link" href="./workflow.html" data-page="workflow" aria-current="page" data-i18n="workflow">技术设计与产品 workflow</a></li>
+            <li><a class="nav-link" href="./ai.html" data-page="ai" data-i18n="ai">AI选型&amp;产品调优</a></li>
+            <li><a class="nav-link" href="./business.html" data-page="business" data-i18n="business">商业分析</a></li>
+          </ul>
+        </nav>
+
+        <button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label="打开导航菜单" data-i18n-aria="openMenu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path class="menu-line menu-line-top" d="M4 8H20" />
+            <path class="menu-line menu-line-bottom" d="M4 16H20" />
+          </svg>
+        </button>
+
+        <div class="language-switch" role="group" aria-label="切换语言" data-i18n-aria="language">
+          <button type="button" class="language-button" data-language="zh-CN" lang="zh-CN" aria-label="中文" aria-pressed="true" disabled>中</button>
+          <span class="language-divider" aria-hidden="true"></span>
+          <button type="button" class="language-button" data-language="en" lang="en" aria-label="English" aria-pressed="false" disabled>EN</button>
+        </div>
+      </div>
+    </header>
+
+    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+        <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+        <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 7h8m4 0h4M4 17h3m4 0h9"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7M12 7v5l3 2"/></symbol>
+        <symbol id="icon-type" viewBox="0 0 24 24"><path d="M4 6V4h16v2M12 4v16m-4 0h8"/></symbol>
+        <symbol id="icon-paragraph" viewBox="0 0 24 24"><path d="M12 20V4H8a4 4 0 0 0 0 8h4M17 20V4m-7 0h10"/></symbol>
+        <symbol id="icon-heading" viewBox="0 0 24 24"><path d="M5 4v16M17 4v16M5 12h12M3 4h4M15 4h4M3 20h4M15 20h4"/></symbol>
+        <symbol id="icon-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M9 8v13"/></symbol>
+        <symbol id="icon-footer" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 17h8M11 14h2"/></symbol>
+        <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/></symbol>
+        <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/></symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+        <symbol id="icon-quote" viewBox="0 0 24 24"><path d="M4 12h5v7H3v-7c0-5 2-7 6-7M16 12h5v7h-6v-7c0-5 2-7 6-7"/></symbol>
+        <symbol id="icon-math" viewBox="0 0 24 24"><path d="M18 4H6l7 8-7 8h12M4 4h2M4 20h2"/></symbol>
+      </defs>
+    </svg>
+
+    <main id="main-content">
+      <div class="paper-decoration" aria-hidden="true">
+        <div class="paper-ruler"><div class="paper-ruler-scale"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><i class="paper-ruler-marker"></i><i class="paper-ruler-marker paper-ruler-marker--end"></i></div></div>
+        <div class="paper-margin-frame">
+          <i class="paper-corner paper-corner--top-left"></i><i class="paper-corner paper-corner--top-right"></i>
+          <i class="paper-corner paper-corner--bottom-left"></i><i class="paper-corner paper-corner--bottom-right"></i>
+        </div>
+      </div>
+      <section class="page-section technical-section" id="workflow" tabindex="-1" aria-labelledby="workflow-heading">
+        <div class="content-shell">
+          <div class="technical-intro reveal">
+            <p class="eyebrow technical-kicker" data-i18n="workflow">技术设计与产品 workflow</p>
+            <h1 id="workflow-heading" data-i18n="technical.title">稳定交付可重复，无幻觉的成果</h1>
+            <p data-i18n="technical.description">AutoFormat 将要求解析、格式编辑、预览与微调连接成一条处理链路。AI 理解要求，确定性程序执行修改，证据与版本贯穿每一步。</p>
+          </div>
+
+          <figure class="architecture-map reveal" aria-labelledby="architecture-caption" aria-describedby="workflow-summary">
+            <figcaption id="architecture-caption"><span data-i18n="technical.architecture">整体架构</span></figcaption>
+            <p class="sr-only" id="workflow-summary" data-i18n="technical.chart.summary">上传原稿与学校要求后，提取证据并校验。存在待确认项时展示依据与候选答案，由用户选择或明确忽略，再检查剩余问题；没有待确认项后进入定位、编辑与验证。生成新版本、预览与报告后，可下载结果，或提交局部微调需求，经轻量解析、范围核对与必要确认，将已验证规则送回格式编辑。</p>
+            <div class="workflow-graph">
+              <svg class="workflow-connections" aria-hidden="true" focusable="false">
+                <defs>
+                  <marker id="wf-arrow-main" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#839fc7" stroke-width="1.2"/></marker>
+                  <marker id="wf-arrow-confirm" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#b6a5cf" stroke-width="1.2"/></marker>
+                  <marker id="wf-arrow-refine" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 6 3.5 1 6" fill="none" stroke="#83b5c3" stroke-width="1.2"/></marker>
+                </defs>
+                <g class="workflow-paths"></g>
+              </svg>
+              <div class="wf-upload-row"><div class="wf-node wf-upload" data-wf-node="U"><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg><span data-i18n="technical.chart.upload">上传论文原稿与学校要求</span></div></div>
+              <div class="wf-lanes">
+                <section class="wf-lane wf-parsing" aria-labelledby="wf-parsing-title">
+                  <h3 id="wf-parsing-title"><span class="wf-lane-number">01</span><a href="#module-parsing"><span class="wf-link-copy"><span data-i18n="technical.parse.title">要求解析</span><small data-i18n="technical.dialog.openHint">（点击查看详情）</small></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
+                  <div class="wf-node wf-A" data-wf-node="A"><span data-i18n="technical.chart.extract">提取要求与原文证据</span></div>
+                  <div class="wf-node wf-B" data-wf-node="B"><span data-i18n="technical.chart.validate">Schema 与语义校验</span></div>
+                  <div class="wf-node wf-decision wf-Q" data-wf-node="Q"><span data-i18n="technical.chart.question">有待确认项？</span></div>
+                  <div class="wf-node wf-confirm wf-C" data-wf-node="C"><span data-i18n="technical.chart.show">展示依据与候选答案</span><small data-i18n="technical.chart.show.detail">提供暂时忽略选项</small></div>
+                  <div class="wf-node wf-confirm wf-D" data-wf-node="D"><span data-i18n="technical.chart.answer">用户逐项选择</span><small data-i18n="technical.chart.answer.detail">或明确暂时忽略</small></div>
+                </section>
+                <section class="wf-lane wf-editing" aria-labelledby="wf-editing-title">
+                  <h3 id="wf-editing-title"><span class="wf-lane-number">02</span><a href="#module-editing"><span data-i18n="technical.edit.title">格式编辑</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
+                  <div class="wf-node wf-E" data-wf-node="E"><span data-i18n="technical.chart.locate">定位对象与生成计划</span></div>
+                  <div class="wf-node wf-F" data-wf-node="F"><span data-i18n="technical.chart.edit">编辑副本与验证</span></div>
+                </section>
+                <section class="wf-lane wf-preview" aria-labelledby="wf-preview-title">
+                  <h3 id="wf-preview-title"><span class="wf-lane-number">03</span><a href="#module-preview"><span data-i18n="technical.preview.title">预览与微调</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a></h3>
+                  <div class="wf-node wf-G" data-wf-node="G"><span data-i18n="technical.chart.preview">初稿或新版本、预览与报告</span></div>
+                  <div class="wf-node wf-download wf-H" data-wf-node="H"><span data-i18n="technical.chart.download">下载结果</span></div>
+                  <div class="wf-node wf-I" data-wf-node="I"><span data-i18n="technical.chart.refine">局部选择与微调需求</span></div>
+                  <div class="wf-node wf-refine wf-J" data-wf-node="J"><span data-i18n="technical.chart.feedback">轻量解析、范围核对与必要确认</span></div>
+                </section>
+              </div>
+              <span class="wf-edge-label wf-confirm-label" data-wf-label="Q-C" data-i18n="technical.chart.yes">有</span>
+              <span class="wf-edge-label" data-wf-label="Q-E" data-i18n="technical.chart.no">无待确认项</span>
+              <span class="wf-edge-label wf-confirm-label" data-wf-label="D-Q" data-i18n="technical.chart.recheck">重新检查</span>
+              <span class="wf-edge-label wf-refine-label" data-wf-label="J-E" data-i18n="technical.chart.verified">经过验证的规则</span>
+            </div>
+            <div class="workflow-legend"><span class="wf-legend-main" data-i18n="technical.chart.legend.main">主流程</span><span class="wf-legend-confirm" data-i18n="technical.chart.legend.confirm">编辑前确认回路</span><span class="wf-legend-refine" data-i18n="technical.chart.legend.refine">局部微调回路</span></div>
+            <div class="workflow-wait-note"><a href="#confirmation-demo" data-i18n="technical.gate.link">查看确认实例 →</a></div>
+          </figure>
+
+          <dialog class="module-dialog" id="module-dialog" aria-labelledby="parsing-heading">
+            <div class="module-card">
+              <div class="module-card-toolbar"><span data-i18n="technical.dialog.kicker">模块详情</span><button class="module-dialog-close" type="button" aria-label="关闭模块详情" data-i18n-aria="technical.dialog.close"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+              <div class="module-card-scroll" tabindex="0" role="region" aria-label="模块详细介绍" data-i18n-aria="technical.dialog.content">
+                <div class="technical-modules">
+                  <article class="technical-module" id="module-parsing" aria-labelledby="parsing-heading" hidden>
+                    <div class="module-heading"><span class="module-number">01 / BRIEF PARSING</span><h3 id="parsing-heading" data-i18n="technical.parse.title">要求解析</h3><p data-i18n="technical.parse.subtitle">稳定、高效、可复用的 Brief Parsing。</p><div class="module-stack">JSON Schema · Evidence · Domain Pack</div></div>
+                    <div class="module-details">
+                      <div class="module-features">
+                        <div><h4 data-i18n="technical.parse.evidence.title">原文约束，降低幻觉</h4><p data-i18n="technical.parse.evidence.description">区分明文要求、模板观察与示例。每条候选关联真实原文证据，缺失或无依据的信息保留为待确认项。</p></div>
+                        <div><h4 data-i18n="technical.parse.schema.title">Schema 与语义双层校验</h4><p data-i18n="technical.parse.schema.description">用 JSON Schema 约束输出结构，再核对对象、属性、值、单位、条件与范围，让规则可以交给程序处理。</p></div>
+                        <div><h4 data-i18n="technical.parse.budget.title">分阶段处理，控制成本</h4><p data-i18n="technical.parse.budget.description">要求提取、覆盖审计与争议分析分别承担职责。设置超时、有限重试与 Token 预算，复用已验证的解析结果。</p></div>
+                        <div><h4 data-i18n="technical.parse.reuse.title">版本化接口，方便复用</h4><p data-i18n="technical.parse.reuse.description">固定模型与 Prompt 版本，通过解析 Bundle、领域包和模型适配器接入不同宿主，保持清晰的输入、输出与验证边界。</p></div>
+                      </div>
+                      <div class="rule-proof">
+                        <div class="proof-source"><span class="detail-label" data-i18n="technical.proof.source">原文证据 · E-001</span><blockquote data-i18n="technical.proof.quote">“正文采用宋体。”</blockquote><p data-i18n="technical.proof.description">候选值需要得到原文支持，模板观察保留独立来源。</p></div>
+                        <div class="proof-schema"><span class="detail-label" data-i18n="technical.proof.schema">结构化输出 · 简化示意</span><pre><code data-i18n="technical.proof.code">{
+        "object": "body",
+        "attribute": "font",
+        "value": "宋体",
+        "evidence": "E-001"
+      }</code></pre></div>
+                      </div>
+                      <form class="confirmation-demo" id="confirmation-demo" aria-labelledby="confirmation-heading">
+                        <div class="confirmation-heading"><h4 id="confirmation-heading" data-i18n="technical.confirm.title">有疑问先确认，在修改前做决定。</h4><span data-i18n="technical.confirm.badge">交互示意</span></div>
+                        <p class="confirmation-question" data-i18n="technical.confirm.question">正文存在两种字体要求，本次采用哪一条？</p>
+                        <div class="confirmation-evidence"><span data-i18n="technical.confirm.evidence1">要求 A：正文使用宋体。</span><span data-i18n="technical.confirm.evidence2">要求 B：正文使用黑体。</span></div>
+                        <fieldset class="confirmation-options"><legend class="sr-only" data-i18n="technical.confirm.legend">选择字体要求或暂时忽略</legend>
+                          <label><input type="radio" name="font-rule" value="simsun"/><span data-i18n="technical.confirm.simsun">采用宋体</span></label>
+                          <label><input type="radio" name="font-rule" value="simhei"/><span data-i18n="technical.confirm.simhei">采用黑体</span></label>
+                          <label><input type="radio" name="font-rule" value="skip"/><span data-i18n="technical.confirm.skip">暂时忽略此问题</span></label>
+                        </fieldset>
+                        <div class="confirmation-actions"><button class="button button-primary" type="submit" disabled data-i18n="technical.confirm.submit">确认选择（示意）</button><button class="demo-reset" type="reset" data-i18n="technical.confirm.reset">重置示例</button></div>
+                        <p class="confirmation-status" role="status" aria-live="polite" data-i18n="technical.confirm.pending">请选择一个选项。未回答时，格式编辑保持等待。</p>
+                        <p class="confirmation-footnote" data-i18n="technical.confirm.footnote">可靠明文规则无需逐条询问。暂时忽略不会成为默认规则，相关项目仍保留在报告中。</p>
+                      </form>
+                    </div>
+                  </article>
+
+                  <article class="technical-module" id="module-editing" aria-labelledby="editing-heading" hidden>
+                    <div class="module-heading"><span class="module-number">02 / DOCUMENT ENGINE</span><h3 id="editing-heading" data-i18n="technical.edit.title">格式编辑</h3><p data-i18n="technical.edit.subtitle">确定性执行，逐项验证。</p><div class="module-stack">C# / .NET · Open XML SDK</div></div>
+                    <div class="module-details">
+                      <div class="module-features">
+                        <div><h4 data-i18n="technical.edit.rules.title">经过验证的规则才执行</h4><p data-i18n="technical.edit.rules.description">将类型化规则转换为对象定位与修改计划，按指定属性和作用范围执行，保留论文语义、表格数据与引用内容。</p></div>
+                        <div><h4 data-i18n="technical.edit.versions.title">每次修改都有独立版本</h4><p data-i18n="technical.edit.versions.description">原稿 V0 与已发布历史保持不变。每轮从选定父版本创建新文件，规则快照与本次编辑绑定，防止改答后发布过期结果。</p></div>
+                        <div><h4 data-i18n="technical.edit.validation.title">保存后重新读取和验证</h4><p data-i18n="technical.edit.validation.description">重新检查实际格式属性、文档结构与文字内容，记录修改位置、依据和验证结果，让每次操作可以追溯。</p></div>
+                        <div><h4 data-i18n="technical.edit.efficiency.title">明确执行边界，减少返工</h4><p data-i18n="technical.edit.efficiency.description">将规则理解与文档执行分开。定位不可靠、条件不明确或存在冲突时先确认，再提交可靠的修改计划。</p></div>
+                      </div>
+                      <ol class="engine-sequence" aria-label="格式编辑步骤" data-i18n-aria="technical.edit.sequenceLabel"><li data-i18n="technical.edit.locate">定位对象</li><li data-i18n="technical.edit.plan">生成计划</li><li data-i18n="technical.edit.apply">编辑副本</li><li data-i18n="technical.edit.verify">回读验证</li></ol>
+                    </div>
+                  </article>
+
+                  <article class="technical-module" id="module-preview" aria-labelledby="preview-heading" hidden>
+                    <div class="module-heading"><span class="module-number">03 / PREVIEW & REFINE</span><h3 id="preview-heading" data-i18n="technical.preview.title">预览与微调</h3><p data-i18n="technical.preview.subtitle">看见结果，调整细节。</p><div class="module-stack">TypeScript · PDF.js · LibreOffice</div></div>
+                    <div class="module-details">
+                      <div class="module-features">
+                        <div><h4 data-i18n="technical.preview.visible.title">预览、报告与版本一起交付</h4><p data-i18n="technical.preview.visible.description">通过 LibreOffice 生成 PDF，使用 PDF.js 浏览、缩放与选择文字。结合报告查看修改依据，并下载可继续编辑的 DOCX。</p></div>
+                        <div><h4 data-i18n="technical.preview.scope.title">选中哪里，就从哪里微调</h4><p data-i18n="technical.preview.scope.description">选中文字并提出需求，明确实际作用范围。段落属性会显示所在段落；扩大范围、定位不唯一或冲突时先确认。</p></div>
+                        <div><h4 data-i18n="technical.preview.reuse.title">轻量解析，复用已有结果</h4><p data-i18n="technical.preview.reuse.description">局部反馈复用格式规则与校验能力，结合已验证的解析结果和决定快照，减少重复处理整份要求的模型调用。</p></div>
+                        <div><h4 data-i18n="technical.preview.history.title">持续微调，历史可追溯</h4><p data-i18n="technical.preview.history.description">每轮微调生成独立的新文档、报告与预览。用户可以查看历史，选择任一版本作为后续修改的起点。</p></div>
+                      </div>
+                      <div class="refinement-loop"><svg class="icon" aria-hidden="true"><use href="#icon-history"/></svg><p data-i18n="technical.preview.loop">选区与需求 → 轻量解析与范围核对 → 必要确认 → 格式编辑 → 新版本预览</p></div>
+                    </div>
+                  </article>
+                      </div>
+              </div>
+              <div class="module-card-footer"><span class="module-dismiss-icon" aria-hidden="true">↓</span><span data-i18n="technical.dialog.hint">点击卡片外，或阅读到底后继续向下滚动，即可返回流程图。</span></div>
+            </div>
+          </dialog>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

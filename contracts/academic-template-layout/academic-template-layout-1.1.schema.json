@@ -1,0 +1,550 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "TemplateDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemplateLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "source_id",
+        "code",
+        "message"
+      ],
+      "title": "TemplateDiagnostic",
+      "type": "object"
+    },
+    "TemplateLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "title": "Part",
+          "type": "string"
+        },
+        "xpath": {
+          "title": "Xpath",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        },
+        "row": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        },
+        "run": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run"
+        }
+      },
+      "required": [
+        "part",
+        "xpath"
+      ],
+      "title": "TemplateLocation",
+      "type": "object"
+    },
+    "TemplateObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "source_kind": {
+          "const": "template_observation",
+          "default": "template_observation",
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending_confirmation",
+          "default": "pending_confirmation",
+          "title": "Status",
+          "type": "string"
+        },
+        "semantic_role": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Role",
+          "type": "string"
+        },
+        "role_basis": {
+          "title": "Role Basis",
+          "type": "string"
+        },
+        "region": {
+          "enum": [
+            "template_candidate",
+            "context_only",
+            "uncertain"
+          ],
+          "title": "Region",
+          "type": "string"
+        },
+        "property_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "character_scope": {
+          "default": "all",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "resolution": {
+          "enum": [
+            "resolved",
+            "unresolved"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "reason_codes": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "location": {
+          "$ref": "#/$defs/TemplateLocation"
+        },
+        "origins": {
+          "items": {
+            "$ref": "#/$defs/TemplatePropertyOrigin"
+          },
+          "minItems": 1,
+          "title": "Origins",
+          "type": "array"
+        },
+        "text_excerpt": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Text Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observation_id",
+        "source_id",
+        "source_sha256",
+        "semantic_role",
+        "role_basis",
+        "region",
+        "property_id",
+        "value",
+        "resolution",
+        "location",
+        "origins"
+      ],
+      "title": "TemplateObservation",
+      "type": "object"
+    },
+    "TemplatePropertyGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Group Id",
+          "type": "string"
+        },
+        "category": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        },
+        "semantic_role": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Semantic Role",
+          "type": "string"
+        },
+        "property_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "character_scope": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "covered_by_explicit_rule",
+            "source_mismatch",
+            "blocked_by_pending_rule",
+            "inconsistent_observations",
+            "needs_template_confirmation",
+            "unresolved_observation"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "explicit_rule_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Explicit Rule Ids",
+          "type": "array"
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "next_action": {
+          "title": "Next Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "category",
+        "semantic_role",
+        "property_id",
+        "character_scope",
+        "status",
+        "observation_ids",
+        "explicit_rule_ids",
+        "values",
+        "unit",
+        "reason",
+        "next_action"
+      ],
+      "title": "TemplatePropertyGroup",
+      "type": "object"
+    },
+    "TemplatePropertyOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "part": {
+          "title": "Part",
+          "type": "string"
+        },
+        "xpath": {
+          "title": "Xpath",
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "section",
+            "direct",
+            "paragraph_style",
+            "character_style",
+            "table_style",
+            "document_default",
+            "theme"
+          ],
+          "title": "Layer",
+          "type": "string"
+        },
+        "style_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Style Id"
+        },
+        "raw_value": {
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "node_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Node Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "part",
+        "xpath",
+        "layer",
+        "raw_value",
+        "node_sha256"
+      ],
+      "title": "TemplatePropertyOrigin",
+      "type": "object"
+    },
+    "TemplateSourceProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "docx",
+            "pdf",
+            "txt",
+            "text"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "classification": {
+          "enum": [
+            "template_candidate",
+            "instruction_document",
+            "uncertain",
+            "not_available"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "signal_codes": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Signal Codes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_id",
+        "sha256",
+        "kind",
+        "classification",
+        "signal_codes"
+      ],
+      "title": "TemplateSourceProfile",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "academic-template-layout/1.1"
+    },
+    "reader_version": {
+      "type": "string",
+      "const": "docx-template-layout/1.1"
+    },
+    "source_artifact_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Source Artifact Id",
+      "type": "string"
+    },
+    "source_artifact_version": {
+      "exclusiveMinimum": 0,
+      "title": "Source Artifact Version",
+      "type": "integer"
+    },
+    "source_profiles": {
+      "items": {
+        "$ref": "#/$defs/TemplateSourceProfile"
+      },
+      "title": "Source Profiles",
+      "type": "array"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/TemplateObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "groups": {
+      "items": {
+        "$ref": "#/$defs/TemplatePropertyGroup"
+      },
+      "title": "Groups",
+      "type": "array"
+    },
+    "diagnostics": {
+      "items": {
+        "$ref": "#/$defs/TemplateDiagnostic"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "scope_note": {
+      "default": "仅读取 Brief 的逻辑版式；观察值需确认后才能成为规则，不从论文原稿推导学校要求。",
+      "title": "Scope Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_artifact_id",
+    "source_artifact_version",
+    "source_profiles",
+    "observations",
+    "groups",
+    "diagnostics",
+    "schema_version"
+  ],
+  "title": "TemplateLayoutReport",
+  "type": "object",
+  "$id": "https://easyformat.local/contracts/academic-template-layout/1.1"
+}

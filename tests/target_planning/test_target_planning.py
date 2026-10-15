@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import asyncio
 import json
 import shutil
 import subprocess
@@ -16,8 +17,11 @@ from brief_parser.domain.academic_format import (
     AcademicTarget, AcademicValue,
 )
 from jsonschema import Draft202012Validator
+from brief_parser.bootstrap import build_service
+from brief_parser.config import Settings
+from brief_parser.application.service import ParseServiceRequest, TextSourceInput
 
-from easyformat.target_planning import (
+from autoformat.target_planning import (
     BodyScopeConfirmation, DotnetTargetIndexer, TargetPlanningError,
     build_body_alignment_review, build_confirmed_body_alignment_plan,
     validate_target_index,
@@ -25,7 +29,7 @@ from easyformat.target_planning import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
-INDEX_PROJECT = ROOT / "services" / "docx_engine" / "EasyFormat.DocxIndex"
+INDEX_PROJECT = ROOT / "services" / "docx_engine" / "AutoFormat.DocxIndex"
 
 
 @pytest.fixture(scope="module")
@@ -39,7 +43,7 @@ def indexer() -> DotnetTargetIndexer:
         encoding="utf-8", errors="replace",
     )
     assert completed.returncode == 0, completed.stderr[-2000:]
-    dll = INDEX_PROJECT / "bin" / "Debug" / "net10.0" / "EasyFormat.DocxIndex.dll"
+    dll = INDEX_PROJECT / "bin" / "Debug" / "net10.0" / "AutoFormat.DocxIndex.dll"
     return DotnetTargetIndexer(
         dotnet_path=Path(dotnet), index_dll=dll,
         expected_index_sha256=hashlib.sha256(dll.read_bytes()).hexdigest(),
@@ -78,6 +82,18 @@ def _ruleset(*, property_id: str = "paragraph.alignment") -> AcademicFormatRuleS
     return AcademicFormatRuleSet.model_construct(rules=[rule], issues=[])
 
 
+@pytest.mark.parametrize("brief,status", [("正文：居中。", "needs_user_input"), ("第一章正文：居中。", "unsupported_property")])
+def test_current_semantic_scope_is_not_widened_by_legacy_alignment_planner(brief, status):
+    service = build_service(Settings(environment="test", provider="fake", parser_isolation_mode="in_process"))
+    bundle = asyncio.run(service.parse_academic(ParseServiceRequest(request_id="req_scope_guard", domain_pack_id="academic_paper",
+        requested_task_types=("format_academic_paper",), text_sources=(TextSourceInput(text=brief),))))
+    index = {"schema_version": "docx-target-index/1.0", "sha256": "0" * 64, "paragraph_count": 0, "paragraphs": []}
+    plan = build_body_alignment_review(ruleset=bundle.format_ruleset, index=index,
+        base_version_id="v0", expected_base_docx_sha256=index["sha256"], rules_snapshot_id="rules-v0")
+    assert plan["rule_reviews"][0]["status"] == status
+    assert not plan["executable_operations"]
+
+
 def test_mixed_docx_produces_review_without_executable_edits(
     tmp_path: Path, indexer: DotnetTargetIndexer,
 ) -> None:
@@ -86,7 +102,7 @@ def test_mixed_docx_produces_review_without_executable_edits(
     index = indexer.inspect(source, expected_docx_sha256=source_hash)
     schema = json.loads((ROOT / "contracts" / "docx-target-index" /
         "docx-target-index-1.0.schema.json").read_text(encoding="utf-8"))
-    packaged_schema = json.loads((ROOT / "apps" / "api" / "src" / "easyformat" /
+    packaged_schema = json.loads((ROOT / "apps" / "api" / "src" / "autoformat" /
         "schemas" / "docx-target-index-1.0.schema.json").read_text(encoding="utf-8"))
     assert schema == packaged_schema
     Draft202012Validator(schema).validate(index)

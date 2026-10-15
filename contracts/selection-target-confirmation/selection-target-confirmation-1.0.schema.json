@@ -1,0 +1,73 @@
+{
+  "additionalProperties": false,
+  "description": "Target-only decision before feedback parsing exists; no edit permission.",
+  "properties": {
+    "schema_version": {
+      "const": "selection-target-confirmation/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "feedback_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Feedback Id",
+      "type": "string"
+    },
+    "expected_base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Base Docx Sha256",
+      "type": "string"
+    },
+    "expected_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Context Id",
+      "type": "string"
+    },
+    "expected_resolution_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Resolution Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "raw_answer": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Raw Answer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "task_id",
+    "base_version_id",
+    "feedback_id",
+    "expected_base_docx_sha256",
+    "expected_context_id",
+    "expected_resolution_id",
+    "candidate_id",
+    "raw_answer"
+  ],
+  "title": "SelectionTargetConfirmation",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/selection-target-confirmation/1.0"
+}

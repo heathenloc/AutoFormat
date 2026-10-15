@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://easyformat.local/contracts/version-report/1.0",
-  "title": "Versioned EasyFormat facts and user report",
+  "title": "Versioned AutoFormat facts and user report",
   "type": "object",
   "additionalProperties": false,
   "required": [

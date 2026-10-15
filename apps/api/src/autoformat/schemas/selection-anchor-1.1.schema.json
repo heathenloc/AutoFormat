@@ -1,0 +1,200 @@
+{
+  "$defs": {
+    "DocxTextRange": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "start_utf16": {
+          "minimum": 0,
+          "title": "Start Utf16",
+          "type": "integer"
+        },
+        "length_utf16": {
+          "minimum": 1,
+          "title": "Length Utf16",
+          "type": "integer"
+        },
+        "matched_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Matched Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id",
+        "start_utf16",
+        "length_utf16",
+        "matched_text"
+      ],
+      "title": "DocxTextRange",
+      "type": "object"
+    },
+    "PdfTextSpan": {
+      "additionalProperties": false,
+      "description": "PDF.js item positions; offsets are UTF-16 code units, not Python indices.",
+      "properties": {
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "start_item": {
+          "minimum": 0,
+          "title": "Start Item",
+          "type": "integer"
+        },
+        "start_offset_utf16": {
+          "minimum": 0,
+          "title": "Start Offset Utf16",
+          "type": "integer"
+        },
+        "end_item": {
+          "minimum": 0,
+          "title": "End Item",
+          "type": "integer"
+        },
+        "end_offset_utf16": {
+          "minimum": 0,
+          "title": "End Offset Utf16",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page",
+        "start_item",
+        "start_offset_utf16",
+        "end_item",
+        "end_offset_utf16"
+      ],
+      "title": "PdfTextSpan",
+      "type": "object"
+    },
+    "SelectionHint": {
+      "additionalProperties": false,
+      "properties": {
+        "selected_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Selected Text",
+          "type": "string"
+        },
+        "context_before": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context Before",
+          "type": "string"
+        },
+        "context_after": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context After",
+          "type": "string"
+        },
+        "spans": {
+          "items": {
+            "$ref": "#/$defs/PdfTextSpan"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "selected_text",
+        "spans"
+      ],
+      "title": "SelectionHint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "New generation; the existing prototype selection-anchor/1.0 is preserved.",
+  "properties": {
+    "schema_version": {
+      "const": "selection-anchor/1.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "anchor_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Anchor Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Base Docx Sha256",
+      "type": "string"
+    },
+    "preview_artifact_id": {
+      "pattern": "^[A-Za-z0-9_-]{1,64}$",
+      "title": "Preview Artifact Id",
+      "type": "string"
+    },
+    "preview_pdf_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Preview Pdf Sha256",
+      "type": "string"
+    },
+    "renderer_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+      "title": "Renderer Id",
+      "type": "string"
+    },
+    "renderer_version": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Renderer Version",
+      "type": "string"
+    },
+    "selection": {
+      "$ref": "#/$defs/SelectionHint"
+    },
+    "ranges": {
+      "items": {
+        "$ref": "#/$defs/DocxTextRange"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Ranges",
+      "type": "array"
+    },
+    "status": {
+      "const": "ready",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "anchor_id",
+    "task_id",
+    "base_version_id",
+    "base_docx_sha256",
+    "preview_artifact_id",
+    "preview_pdf_sha256",
+    "renderer_id",
+    "renderer_version",
+    "selection",
+    "ranges",
+    "status"
+  ],
+  "title": "SelectionAnchor",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/selection-anchor/1.1"
+}

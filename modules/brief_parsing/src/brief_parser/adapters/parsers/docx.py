@@ -30,7 +30,7 @@ _WORD_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 class DocxParser:
     supported_kinds: frozenset[SourceKind] = frozenset({"docx"})
     parser_id = "docx-python-docx"
-    parser_version = "1.0.0"
+    parser_version = "1.1.0"
 
     def parse(self, source: SecuredSource) -> ParserResult:
         if source.kind != "docx":
@@ -119,6 +119,19 @@ class DocxParser:
             warnings.append("DUPLICATE_HEADERS_REMOVED")
         if duplicate_footer_count:
             warnings.append("DUPLICATE_FOOTERS_REMOVED")
+        # Presence checks only: do not execute embedded files or infer a
+        # school's written requirements from visual template formatting.
+        with ZipFile(BytesIO(source.content)) as archive:
+            names = archive.namelist()
+            if any(name.startswith("word/media/") for name in names):
+                warnings.append("DOCX_MEDIA_NOT_READ")
+            if any(name.startswith("word/embeddings/") for name in names):
+                warnings.append("DOCX_EMBEDDED_OBJECTS_NOT_READ")
+            if any(b"txbxContent" in archive.read(name) for name in names
+                   if name.startswith("word/") and name.endswith(".xml")):
+                warnings.append("DOCX_TEXTBOX_NOT_READ")
+        if seen_headers or seen_footers:
+            warnings.append("DOCX_HEADERS_FOOTERS_NOT_AUDITED")
         return ParserResult(
             parser_id=self.parser_id,
             parser_version=self.parser_version,

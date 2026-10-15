@@ -1,0 +1,299 @@
+{
+  "$defs": {
+    "AcademicAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "set_submission",
+            "confirm_condition",
+            "select_rule",
+            "keep_brief",
+            "select_template",
+            "accept_template",
+            "reject_template",
+            "clarify_format",
+            "skip",
+            "defer",
+            "ignore"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "submission": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SubmissionContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "applies": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Applies"
+        },
+        "selected_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Id"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatClarification"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "AcademicAnswer",
+      "type": "object"
+    },
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "FormatClarification": {
+      "additionalProperties": false,
+      "properties": {
+        "property_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "property_id",
+        "normalized"
+      ],
+      "title": "FormatClarification",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "SubmissionContext": {
+      "additionalProperties": false,
+      "properties": {
+        "medium": {
+          "enum": [
+            "print",
+            "electronic"
+          ],
+          "title": "Medium",
+          "type": "string"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "enum": [
+                "other",
+                "system_upload"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        }
+      },
+      "required": [
+        "medium"
+      ],
+      "title": "SubmissionContext",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "academic-decision-request/1.0",
+      "default": "academic-decision-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "expected_snapshot_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expected Snapshot Id",
+      "type": "string"
+    },
+    "question_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "answer": {
+      "$ref": "#/$defs/AcademicAnswer"
+    },
+    "raw_answer": {
+      "default": "",
+      "maxLength": 2048,
+      "title": "Raw Answer",
+      "type": "string"
+    },
+    "supersedes_decision_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Decision Id"
+    }
+  },
+  "required": [
+    "request_id",
+    "base_version_id",
+    "expected_snapshot_id",
+    "question_id",
+    "answer",
+    "schema_version"
+  ],
+  "title": "AcademicDecisionRequest",
+  "type": "object",
+  "$id": "https://easyformat.local/contracts/academic-decision-request/1.0"
+}

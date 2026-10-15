@@ -2,7 +2,7 @@
 .benchmark-section::before { content: ""; position: absolute; top: 0; inset-inline: var(--edge); height: 1px; background: linear-gradient(90deg, transparent, rgb(174 196 232 / 18%), transparent); }
 .benchmark-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .benchmark-kicker { margin-bottom: 10px; font-size: 16px; letter-spacing: 0.02em; }
-.benchmark-heading h2 { margin: 0; color: #edf2fb; font-size: clamp(30px, 3.2vw, 44px); font-weight: 500; line-height: 1.25; letter-spacing: -0.035em; }
+.benchmark-heading :is(h1, h2) { margin: 0; color: #edf2fb; font-size: clamp(30px, 3.2vw, 44px); font-weight: 500; line-height: 1.25; letter-spacing: -0.035em; }
 .benchmark-subtitle { margin: 10px 0 0; color: #9db1cd; font-size: 14px; line-height: 1.7; }
 .benchmark-context { max-width: 1020px; margin: 12px 0 20px; color: #8295b0; font-size: 12px; line-height: 1.8; }
 .benchmark-quality-card, .benchmark-efficiency-card { border: 1px solid #2b3b53; border-radius: 12px; background: linear-gradient(125deg, rgb(19 29 46 / 90%), rgb(11 18 29 / 90%)); box-shadow: 0 12px 36px rgb(0 0 0 / 8%); }
@@ -75,7 +75,7 @@
   .benchmark-section { padding-block: 48px 56px; }
   .benchmark-heading { display: block; }
   .benchmark-kicker { font-size: 16px; }
-  .benchmark-heading h2 { font-size: 30px; }
+  .benchmark-heading :is(h1, h2) { font-size: 30px; }
   .benchmark-subtitle { font-size: 13px; }
   .benchmark-context { margin-bottom: 22px; font-size: 11px; }
   .benchmark-card-heading { padding: 17px 18px; }

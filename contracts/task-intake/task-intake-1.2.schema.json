@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/task-intake/1.2",
+  "title": "Academic intake with pre-edit review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "phase",
+    "task_id",
+    "base_version_id",
+    "base_docx_sha256",
+    "initial_version_id",
+    "initial_docx_sha256",
+    "initial_format_status",
+    "pending_count",
+    "parse_artifact_id",
+    "parse_readiness",
+    "requirement_count",
+    "replayed",
+    "next_action",
+    "rules_snapshot_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "task-intake/1.2"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "needs_user_input"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "initial_draft_ready",
+        "reviewing_requirements"
+      ]
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "base_version_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "base_docx_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "initial_version_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "initial_docx_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "initial_format_status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "verified",
+        "partial",
+        "unassessed",
+        null
+      ]
+    },
+    "pending_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "parse_artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parse_readiness": {
+      "type": "string",
+      "enum": [
+        "complete",
+        "usable_with_warnings",
+        "incomplete"
+      ]
+    },
+    "requirement_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "replayed": {
+      "type": "boolean"
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rules_snapshot_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "reviewing_requirements"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "needs_user_input"
+          },
+          "pending_count": {
+            "minimum": 1
+          },
+          "initial_version_id": {
+            "type": "null"
+          },
+          "initial_docx_sha256": {
+            "type": "null"
+          },
+          "initial_format_status": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "status": {
+            "const": "ready"
+          },
+          "initial_version_id": {
+            "type": "string"
+          },
+          "initial_docx_sha256": {
+            "type": "string"
+          },
+          "initial_format_status": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

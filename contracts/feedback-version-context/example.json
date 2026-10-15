@@ -1,0 +1,16 @@
+{
+  "schema_version": "feedback-version-context/1.0",
+  "context_id": "9d79d283900098f0588692ea2abd3eec8d9526454f2220115067cee57c1804da",
+  "task_id": "11111111111111111111111111111111",
+  "base_version_id": "22222222222222222222222222222222",
+  "base_docx_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "preview_artifact_id": "example-preview",
+  "preview_pdf_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "preview_metadata_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+  "renderer_id": "libreoffice",
+  "renderer_version": "LibreOffice 26.8.0.3",
+  "page_count": 1,
+  "rules_snapshot_id": "6666666666666666666666666666666666666666666666666666666666666666",
+  "brief_version_id": "example-brief:v1",
+  "feedback_rules_snapshot_id": null
+}

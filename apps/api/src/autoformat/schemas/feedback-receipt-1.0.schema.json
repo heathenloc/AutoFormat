@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-receipt/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "feedback_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Feedback Id",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "version_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Version Context Id",
+      "type": "string"
+    },
+    "source_submission_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Submission Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Created At",
+      "type": "string"
+    },
+    "status": {
+      "const": "received",
+      "title": "Status",
+      "type": "string"
+    },
+    "replayed": {
+      "title": "Replayed",
+      "type": "boolean"
+    },
+    "next_action": {
+      "const": "pending_feedback_processing",
+      "title": "Next Action",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "task_id",
+    "base_version_id",
+    "feedback_id",
+    "request_id",
+    "version_context_id",
+    "source_submission_sha256",
+    "created_at",
+    "status",
+    "replayed",
+    "next_action"
+  ],
+  "title": "FeedbackReceipt",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-receipt/1.0"
+}

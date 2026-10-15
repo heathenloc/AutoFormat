@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "TaskSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "created_at": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Created At",
+          "type": "string"
+        },
+        "working_version_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Working Version Id",
+          "type": "string"
+        },
+        "working_sequence": {
+          "minimum": 0,
+          "title": "Working Sequence",
+          "type": "integer"
+        },
+        "version_count": {
+          "minimum": 1,
+          "title": "Version Count",
+          "type": "integer"
+        },
+        "has_initial_version": {
+          "title": "Has Initial Version",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "task_id",
+        "created_at",
+        "working_version_id",
+        "working_sequence",
+        "version_count",
+        "has_initial_version"
+      ],
+      "title": "TaskSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "task-catalog/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tasks": {
+      "items": {
+        "$ref": "#/$defs/TaskSummary"
+      },
+      "maxItems": 50,
+      "title": "Tasks",
+      "type": "array"
+    },
+    "next_before": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Before"
+    }
+  },
+  "required": [
+    "schema_version",
+    "tasks",
+    "next_before"
+  ],
+  "title": "TaskCatalog",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/task-catalog/1.0"
+}

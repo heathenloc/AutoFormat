@@ -1,0 +1,854 @@
+{
+  "$defs": {
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "DocxTextRange": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "start_utf16": {
+          "minimum": 0,
+          "title": "Start Utf16",
+          "type": "integer"
+        },
+        "length_utf16": {
+          "minimum": 1,
+          "title": "Length Utf16",
+          "type": "integer"
+        },
+        "matched_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Matched Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id",
+        "start_utf16",
+        "length_utf16",
+        "matched_text"
+      ],
+      "title": "DocxTextRange",
+      "type": "object"
+    },
+    "FeedbackConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Conflict Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "existing_rule_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 512,
+          "minItems": 1,
+          "title": "Existing Rule Ids",
+          "type": "array"
+        },
+        "property_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "affected_target_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Affected Target Ids",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conflict_id",
+        "candidate_id",
+        "existing_rule_ids",
+        "property_id",
+        "affected_target_ids",
+        "reason"
+      ],
+      "title": "FeedbackConflict",
+      "type": "object"
+    },
+    "FeedbackParseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "feedback-parse-result/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "result_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Result Id",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "feedback_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Feedback Id",
+          "type": "string"
+        },
+        "version_context_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Version Context Id",
+          "type": "string"
+        },
+        "source_submission_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Submission Sha256",
+          "type": "string"
+        },
+        "parser_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Parser Id",
+          "type": "string"
+        },
+        "parser_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "execution_defect",
+            "new_rule",
+            "clarification_needed",
+            "question",
+            "out_of_scope"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/FeedbackRuleCandidate"
+          },
+          "maxItems": 64,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "understood": {
+          "items": {
+            "$ref": "#/$defs/FeedbackPartialRule"
+          },
+          "maxItems": 64,
+          "title": "Understood",
+          "type": "array"
+        },
+        "existing_rule_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 512,
+          "title": "Existing Rule Ids",
+          "type": "array"
+        },
+        "missing_fields": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Missing Fields",
+          "type": "array"
+        },
+        "scope_reviews": {
+          "items": {
+            "$ref": "#/$defs/ScopeReview"
+          },
+          "maxItems": 64,
+          "title": "Scope Reviews",
+          "type": "array"
+        },
+        "conflicts": {
+          "items": {
+            "$ref": "#/$defs/FeedbackConflict"
+          },
+          "maxItems": 64,
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "result_id",
+        "task_id",
+        "feedback_id",
+        "version_context_id",
+        "source_submission_sha256",
+        "parser_id",
+        "parser_version",
+        "kind",
+        "reason"
+      ],
+      "title": "FeedbackParseResult",
+      "type": "object"
+    },
+    "FeedbackPartialRule": {
+      "additionalProperties": false,
+      "description": "Fields understood so far; never a candidate that may be executed.",
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "requested_scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "selection",
+                "paragraph",
+                "same_kind",
+                "document"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Scope"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "FeedbackPartialRule",
+      "type": "object"
+    },
+    "FeedbackRuleCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FormatValue"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "character_scope": {
+          "default": "all",
+          "enum": [
+            "all",
+            "chinese",
+            "latin",
+            "digits",
+            "complex_script",
+            "other"
+          ],
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "applicability_scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "candidate_id",
+        "property_id",
+        "value",
+        "requested_scope"
+      ],
+      "title": "FeedbackRuleCandidate",
+      "type": "object"
+    },
+    "FormatValue": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "normalized"
+      ],
+      "title": "FormatValue",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "PdfTextSpan": {
+      "additionalProperties": false,
+      "description": "PDF.js item positions; offsets are UTF-16 code units, not Python indices.",
+      "properties": {
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "start_item": {
+          "minimum": 0,
+          "title": "Start Item",
+          "type": "integer"
+        },
+        "start_offset_utf16": {
+          "minimum": 0,
+          "title": "Start Offset Utf16",
+          "type": "integer"
+        },
+        "end_item": {
+          "minimum": 0,
+          "title": "End Item",
+          "type": "integer"
+        },
+        "end_offset_utf16": {
+          "minimum": 0,
+          "title": "End Offset Utf16",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page",
+        "start_item",
+        "start_offset_utf16",
+        "end_item",
+        "end_offset_utf16"
+      ],
+      "title": "PdfTextSpan",
+      "type": "object"
+    },
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "ScopeReview": {
+      "additionalProperties": false,
+      "description": "Actual minimum Word unit is distinct from the user's requested scope.",
+      "properties": {
+        "review_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Review Id",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "effective_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Effective Scope",
+          "type": "string"
+        },
+        "minimum_unit": {
+          "enum": [
+            "character",
+            "paragraph",
+            "section",
+            "table",
+            "region",
+            "field_or_object",
+            "document"
+          ],
+          "title": "Minimum Unit",
+          "type": "string"
+        },
+        "target_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Target Ids",
+          "type": "array"
+        },
+        "estimated_affected_count": {
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Estimated Affected Count",
+          "type": "integer"
+        },
+        "requires_confirmation": {
+          "title": "Requires Confirmation",
+          "type": "boolean"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id",
+        "candidate_id",
+        "requested_scope",
+        "effective_scope",
+        "minimum_unit",
+        "target_ids",
+        "estimated_affected_count",
+        "requires_confirmation",
+        "reason"
+      ],
+      "title": "ScopeReview",
+      "type": "object"
+    },
+    "SelectionAnchor": {
+      "additionalProperties": false,
+      "description": "New generation; the existing prototype selection-anchor/1.0 is preserved.",
+      "properties": {
+        "schema_version": {
+          "const": "selection-anchor/1.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "anchor_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "base_version_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Base Version Id",
+          "type": "string"
+        },
+        "base_docx_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Base Docx Sha256",
+          "type": "string"
+        },
+        "preview_artifact_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Preview Artifact Id",
+          "type": "string"
+        },
+        "preview_pdf_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Preview Pdf Sha256",
+          "type": "string"
+        },
+        "renderer_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Renderer Id",
+          "type": "string"
+        },
+        "renderer_version": {
+          "pattern": "^[^\\r\\n\\x00]{1,200}$",
+          "title": "Renderer Version",
+          "type": "string"
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionHint"
+        },
+        "ranges": {
+          "items": {
+            "$ref": "#/$defs/DocxTextRange"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Ranges",
+          "type": "array"
+        },
+        "status": {
+          "const": "ready",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "anchor_id",
+        "task_id",
+        "base_version_id",
+        "base_docx_sha256",
+        "preview_artifact_id",
+        "preview_pdf_sha256",
+        "renderer_id",
+        "renderer_version",
+        "selection",
+        "ranges",
+        "status"
+      ],
+      "title": "SelectionAnchor",
+      "type": "object"
+    },
+    "SelectionHint": {
+      "additionalProperties": false,
+      "properties": {
+        "selected_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Selected Text",
+          "type": "string"
+        },
+        "context_before": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context Before",
+          "type": "string"
+        },
+        "context_after": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context After",
+          "type": "string"
+        },
+        "spans": {
+          "items": {
+            "$ref": "#/$defs/PdfTextSpan"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "selected_text",
+        "spans"
+      ],
+      "title": "SelectionHint",
+      "type": "object"
+    },
+    "SelectionResolution": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "selection-resolution/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "resolution_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Resolution Id",
+          "type": "string"
+        },
+        "feedback_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Feedback Id",
+          "type": "string"
+        },
+        "version_context_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Version Context Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "ambiguous",
+            "stale_base_version",
+            "stale_preview",
+            "unsupported_target",
+            "needs_user_input"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SelectionAnchor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/TargetCandidate"
+          },
+          "maxItems": 256,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "resolution_id",
+        "feedback_id",
+        "version_context_id",
+        "status",
+        "reason"
+      ],
+      "title": "SelectionResolution",
+      "type": "object"
+    },
+    "TargetCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "location_label": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Location Label",
+          "type": "string"
+        },
+        "excerpt": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "object_id",
+        "location_label",
+        "excerpt"
+      ],
+      "title": "TargetCandidate",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-analysis/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "analysis_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "interpretation": {
+      "$ref": "#/$defs/FeedbackParseResult"
+    },
+    "selection": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SelectionResolution"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "confirmed_review_ids": {
+      "items": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Confirmed Review Ids",
+      "type": "array"
+    },
+    "decision_count": {
+      "default": 0,
+      "maximum": 128,
+      "minimum": 0,
+      "title": "Decision Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "interpretation"
+  ],
+  "title": "FeedbackAnalysis",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-analysis/1.0"
+}

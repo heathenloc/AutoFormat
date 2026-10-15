@@ -1,0 +1,10 @@
+{
+  "schema_version": "desktop-config/1.0",
+  "node": "C:/Program Files/nodejs/node.exe",
+  "dotnet": "C:/Program Files/dotnet/dotnet.exe",
+  "editor_dll": "services/docx_engine/AutoFormat.DocxEditor/bin/Debug/net10.0/AutoFormat.DocxEditor.dll",
+  "editor_sha256": "REPLACE_WITH_EDITOR_SHA256",
+  "soffice": "C:/Program Files/LibreOffice/program/soffice.com",
+  "soffice_sha256": "REPLACE_WITH_SOFFICE_SHA256",
+  "font_files": []
+}

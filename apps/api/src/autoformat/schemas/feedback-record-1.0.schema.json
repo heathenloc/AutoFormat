@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "FeedbackSubmission": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "feedback-submission/1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "base_version_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Base Version Id",
+          "type": "string"
+        },
+        "expected_base_docx_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Expected Base Docx Sha256",
+          "type": "string"
+        },
+        "expected_context_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Expected Context Id",
+          "type": "string"
+        },
+        "preview_artifact_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Preview Artifact Id",
+          "type": "string"
+        },
+        "expected_preview_pdf_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Expected Preview Pdf Sha256",
+          "type": "string"
+        },
+        "raw_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "requested_scope": {
+          "default": "selection",
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "selection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SelectionHint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "schema_version",
+        "request_id",
+        "task_id",
+        "base_version_id",
+        "expected_base_docx_sha256",
+        "expected_context_id",
+        "preview_artifact_id",
+        "expected_preview_pdf_sha256",
+        "raw_text"
+      ],
+      "title": "FeedbackSubmission",
+      "type": "object"
+    },
+    "PdfTextSpan": {
+      "additionalProperties": false,
+      "description": "PDF.js item positions; offsets are UTF-16 code units, not Python indices.",
+      "properties": {
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "start_item": {
+          "minimum": 0,
+          "title": "Start Item",
+          "type": "integer"
+        },
+        "start_offset_utf16": {
+          "minimum": 0,
+          "title": "Start Offset Utf16",
+          "type": "integer"
+        },
+        "end_item": {
+          "minimum": 0,
+          "title": "End Item",
+          "type": "integer"
+        },
+        "end_offset_utf16": {
+          "minimum": 0,
+          "title": "End Offset Utf16",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page",
+        "start_item",
+        "start_offset_utf16",
+        "end_item",
+        "end_offset_utf16"
+      ],
+      "title": "PdfTextSpan",
+      "type": "object"
+    },
+    "SelectionHint": {
+      "additionalProperties": false,
+      "properties": {
+        "selected_text": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Selected Text",
+          "type": "string"
+        },
+        "context_before": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context Before",
+          "type": "string"
+        },
+        "context_after": {
+          "default": "",
+          "maxLength": 4096,
+          "title": "Context After",
+          "type": "string"
+        },
+        "spans": {
+          "items": {
+            "$ref": "#/$defs/PdfTextSpan"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "selected_text",
+        "spans"
+      ],
+      "title": "SelectionHint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-record/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "feedback_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Feedback Id",
+      "type": "string"
+    },
+    "submission": {
+      "$ref": "#/$defs/FeedbackSubmission"
+    },
+    "source_submission_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Submission Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Created At",
+      "type": "string"
+    },
+    "status": {
+      "const": "received",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "feedback_id",
+    "submission",
+    "source_submission_sha256",
+    "created_at",
+    "status"
+  ],
+  "title": "FeedbackRecord",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-record/1.0"
+}

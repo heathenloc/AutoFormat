@@ -2,9 +2,24 @@
   "schema_version": "brief-parser-local-changes/1.0",
   "changes": [
     {
+      "path": "src/brief_parser/adapters/parsers/docx.py",
+      "sha256": "6d567661ac3191f384eec7f0c81638b7f68e23568378cdb010f308ec9ccb19d2",
+      "reason": "Report unread media, embedded objects, textboxes and unaudited header/footer template observations."
+    },
+    {
+      "path": "src/brief_parser/adapters/parsers/pdf.py",
+      "sha256": "289385e974c930c247f69e631957a3260bfd2a34b6e45f742e47ea1760f35bed",
+      "reason": "Report unread PDF images and pages without a usable text layer."
+    },
+    {
       "path": "src/brief_parser/application/bundle.py",
-      "sha256": "3f44f2604a20656e8e5d218f7955f24886130234aea4ba8afc3d9eaae8a23134",
-      "reason": "Include the evidence-bound academic format handoff in the versioned parse Bundle."
+      "sha256": "a400d08ac0e07a36eed515d4e65a5e37a931de5f736a2e5e0f27085939927d2e",
+      "reason": "Add candidate proof review, source review, template observations and scope reporting to academic Bundle 1.6; preserve historical wire contracts."
+    },
+    {
+      "path": "src/brief_parser/application/model_stages.py",
+      "sha256": "5f0fd8341e54a4c3a2dc1ce4e189eea08aa1b5b21c741f8970daca6a8849b4c0",
+      "reason": "Pass trusted academic scope and typed property/role guidance; sanitize excluded context while preserving generic stage defaults. Rename the application label to AutoFormat."
     },
     {
       "path": "src/brief_parser/application/output_compilation.py",
@@ -12,14 +27,19 @@
       "reason": "Project academic IR and Markdown without creating a generic ExecutionBrief."
     },
     {
+      "path": "src/brief_parser/application/pipeline.py",
+      "sha256": "94f52312e05bb008bf7c4be40c8681a72becdb4627a121f747e0b8c9e7fd7bcf",
+      "reason": "Apply academic format scope before models, filter excluded candidates field by field, and pin academic policy/projector/guidance in fingerprints."
+    },
+    {
       "path": "src/brief_parser/application/service.py",
-      "sha256": "4448b1945c6c49df81100c78cd2b8d75078c5715a3cd516bd9d4585663a19fde",
-      "reason": "Produce typed common-format rules from the academic parse evidence without model-source classification."
+      "sha256": "3ddf7f85458c971b9ed18452fe6fe4685a50d68f04ba9e29030fdd7870cc269e",
+      "reason": "Produce typed academic rules and template observations from the same secured immutable Brief bytes; keep generic parse behavior."
     },
     {
       "path": "tests/unit/test_domain_pack_loader.py",
-      "sha256": "d62e1ff42c5c84fa0c6adf3369b3d13088cb85cfc82cbb3bbb81ab603f1dfe8d",
-      "reason": "Include the EasyFormat academic_paper pack in copied-parser loader regression coverage."
+      "sha256": "40ec8741153d99c920057881bcaf9254e1091cf08b885e6948adef6fe72f44c9",
+      "reason": "Verify the academic 1.1.0 formatting-only domain pack alongside historical and generic packs."
     }
   ]
 }

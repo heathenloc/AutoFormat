@@ -20,12 +20,12 @@ from brief_parser.domain.academic_format import (
 )
 from brief_parser.domain.requirement_ir import EvidenceReference
 
-from easyformat.preview import LibreOfficeRenderer
-from easyformat.target_planning import (
+from autoformat.preview import LibreOfficeRenderer
+from autoformat.target_planning import (
     DotnetTargetIndexer, TargetPlanningError, build_confirmed_body_alignment_plan,
 )
-from easyformat.version_store import VersionReferences, VersionStore, new_id
-from easyformat.workflow import (
+from autoformat.version_store import VersionReferences, VersionStore, new_id
+from autoformat.workflow import (
     ConfirmedBodyAlignment, ConfirmedBriefAlignment, DotnetEditor, WorkflowError,
     apply_confirmed_alignment, apply_confirmed_body_alignment_plan,
     confirm_body_scope,
@@ -33,8 +33,8 @@ from easyformat.workflow import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
-EDITOR_PROJECT = ROOT / "services" / "docx_engine" / "EasyFormat.DocxEditor"
-INDEX_PROJECT = ROOT / "services" / "docx_engine" / "EasyFormat.DocxIndex"
+EDITOR_PROJECT = ROOT / "services" / "docx_engine" / "AutoFormat.DocxEditor"
+INDEX_PROJECT = ROOT / "services" / "docx_engine" / "AutoFormat.DocxIndex"
 
 
 @pytest.fixture(scope="module")
@@ -48,7 +48,7 @@ def editor() -> DotnetEditor:
         encoding="utf-8", errors="replace",
     )
     assert completed.returncode == 0, completed.stderr[-2000:]
-    dll = EDITOR_PROJECT / "bin" / "Debug" / "net10.0" / "EasyFormat.DocxEditor.dll"
+    dll = EDITOR_PROJECT / "bin" / "Debug" / "net10.0" / "AutoFormat.DocxEditor.dll"
     return DotnetEditor(
         dotnet_path=Path(dotnet), editor_dll=dll,
         expected_editor_sha256=hashlib.sha256(dll.read_bytes()).hexdigest(),
@@ -66,7 +66,7 @@ def indexer() -> DotnetTargetIndexer:
         encoding="utf-8", errors="replace",
     )
     assert completed.returncode == 0, completed.stderr[-2000:]
-    dll = INDEX_PROJECT / "bin" / "Debug" / "net10.0" / "EasyFormat.DocxIndex.dll"
+    dll = INDEX_PROJECT / "bin" / "Debug" / "net10.0" / "AutoFormat.DocxIndex.dll"
     return DotnetTargetIndexer(
         dotnet_path=Path(dotnet), index_dll=dll,
         expected_index_sha256=hashlib.sha256(dll.read_bytes()).hexdigest(),
@@ -99,8 +99,8 @@ def _body_ruleset(*, include_issue: bool = False) -> AcademicFormatRuleSet:
 def test_confirmed_body_scope_batch_publishes_one_version(
     tmp_path: Path, editor: DotnetEditor, indexer: DotnetTargetIndexer,
 ) -> None:
-    executable = os.environ.get("EASYFORMAT_TEST_SOFFICE")
-    expected_hash = os.environ.get("EASYFORMAT_TEST_SOFFICE_SHA256")
+    executable = os.environ.get("AUTOFORMAT_TEST_SOFFICE")
+    expected_hash = os.environ.get("AUTOFORMAT_TEST_SOFFICE_SHA256")
     if not executable or not expected_hash:
         pytest.skip("Set verified LibreOffice path and SHA-256 for integration.")
     source = tmp_path / "original.docx"
@@ -290,8 +290,8 @@ def _references(plan: str) -> VersionReferences:
 
 
 def test_editor_renderer_report_and_version_lineage(tmp_path: Path, editor: DotnetEditor) -> None:
-    executable = os.environ.get("EASYFORMAT_TEST_SOFFICE")
-    expected_hash = os.environ.get("EASYFORMAT_TEST_SOFFICE_SHA256")
+    executable = os.environ.get("AUTOFORMAT_TEST_SOFFICE")
+    expected_hash = os.environ.get("AUTOFORMAT_TEST_SOFFICE_SHA256")
     if not executable or not expected_hash:
         pytest.skip("Set the verified LibreOffice path and SHA-256 for integration.")
     source = tmp_path / "original.docx"
@@ -417,14 +417,14 @@ def test_stale_parent_and_unconfirmed_rule_do_not_run_editor(tmp_path: Path, edi
 
 def test_runtime_result_schema_matches_contract() -> None:
     assert (ROOT / "contracts" / "edit-result" / "edit-result-prototype-1.0.schema.json").read_bytes() == (
-        ROOT / "apps" / "api" / "src" / "easyformat" / "schemas" /
+        ROOT / "apps" / "api" / "src" / "autoformat" / "schemas" /
         "edit-result-prototype-1.0.schema.json"
     ).read_bytes()
     assert (ROOT / "contracts" / "edit-batch-result" / "edit-batch-result-1.0.schema.json").read_bytes() == (
-        ROOT / "apps" / "api" / "src" / "easyformat" / "schemas" /
+        ROOT / "apps" / "api" / "src" / "autoformat" / "schemas" /
         "edit-batch-result-1.0.schema.json"
     ).read_bytes()
     assert (ROOT / "contracts" / "edit-batch-manifest" / "edit-batch-manifest-1.0.schema.json").read_bytes() == (
-        ROOT / "apps" / "api" / "src" / "easyformat" / "schemas" /
+        ROOT / "apps" / "api" / "src" / "autoformat" / "schemas" /
         "edit-batch-manifest-1.0.schema.json"
     ).read_bytes()

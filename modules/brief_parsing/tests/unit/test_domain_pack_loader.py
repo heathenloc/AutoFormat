@@ -29,6 +29,7 @@ def test_mvp_and_example_domain_packs_load_and_compile() -> None:
 
     assert set(catalog) == {
         ("academic_paper", "1.0.0"),
+        ("academic_paper", "1.1.0"),
         ("academic_paper_example", "1.0.0"),
         ("advertising_brief", "1.0.0"),
         ("generic_requirements", "1.0.0"),
@@ -38,6 +39,7 @@ def test_mvp_and_example_domain_packs_load_and_compile() -> None:
     ]
     assert catalog[("academic_paper", "1.0.0")].compilers == []
     assert len(catalog[("academic_paper", "1.0.0")].categories) >= 18
+    assert "word_count" not in {category.id for category in catalog[("academic_paper", "1.1.0")].categories}
     assert compile_domain_packs(check=True) == []
     for source in DOMAIN_PACK_ROOT.rglob("*.yaml"):
         assert loader.load_json(source.with_suffix(".json")) == loader.load_yaml(source)

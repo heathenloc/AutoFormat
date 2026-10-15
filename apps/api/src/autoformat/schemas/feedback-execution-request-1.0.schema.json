@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "feedback-execution-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "expected_base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Base Docx Sha256",
+      "type": "string"
+    },
+    "expected_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Context Id",
+      "type": "string"
+    },
+    "expected_snapshot_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "task_id",
+    "base_version_id",
+    "expected_base_docx_sha256",
+    "expected_context_id",
+    "expected_snapshot_id"
+  ],
+  "title": "FeedbackExecutionRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-execution-request/1.0"
+}

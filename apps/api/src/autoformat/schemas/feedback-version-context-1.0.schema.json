@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "description": "Server-derived identity of one published version, never the task head.",
+  "properties": {
+    "schema_version": {
+      "const": "feedback-version-context/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Context Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Base Docx Sha256",
+      "type": "string"
+    },
+    "preview_artifact_id": {
+      "pattern": "^[A-Za-z0-9_-]{1,64}$",
+      "title": "Preview Artifact Id",
+      "type": "string"
+    },
+    "preview_pdf_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Preview Pdf Sha256",
+      "type": "string"
+    },
+    "preview_metadata_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Preview Metadata Sha256",
+      "type": "string"
+    },
+    "renderer_id": {
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+      "title": "Renderer Id",
+      "type": "string"
+    },
+    "renderer_version": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Renderer Version",
+      "type": "string"
+    },
+    "page_count": {
+      "minimum": 1,
+      "title": "Page Count",
+      "type": "integer"
+    },
+    "rules_snapshot_id": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Rules Snapshot Id",
+      "type": "string"
+    },
+    "brief_version_id": {
+      "pattern": "^[^\\r\\n\\x00]{1,200}$",
+      "title": "Brief Version Id",
+      "type": "string"
+    },
+    "feedback_rules_snapshot_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Feedback Rules Snapshot Id"
+    }
+  },
+  "required": [
+    "schema_version",
+    "context_id",
+    "task_id",
+    "base_version_id",
+    "base_docx_sha256",
+    "preview_artifact_id",
+    "preview_pdf_sha256",
+    "preview_metadata_sha256",
+    "renderer_id",
+    "renderer_version",
+    "page_count",
+    "rules_snapshot_id",
+    "brief_version_id"
+  ],
+  "title": "FeedbackVersionContext",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-version-context/1.0"
+}

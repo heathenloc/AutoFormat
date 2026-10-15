@@ -17,9 +17,9 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from pypdf import PdfReader
 from jsonschema import Draft202012Validator
 
-from easyformat.preview import LibreOfficeRenderer, PreviewArtifact
-from easyformat.reports import ReportContext, build_report, render_markdown, write_report
-from easyformat.version_store import (
+from autoformat.preview import LibreOfficeRenderer, PreviewArtifact
+from autoformat.reports import ReportContext, build_report, render_markdown, write_report
+from autoformat.version_store import (
     VersionReferences,
     VersionStore,
     VersionStoreError,
@@ -354,8 +354,8 @@ def test_decision_log_is_append_only_without_redundant_docx(tmp_path: Path) -> N
 
 
 def test_real_libreoffice_preview_can_publish_v1() -> None:
-    executable = os.environ.get("EASYFORMAT_TEST_SOFFICE")
-    expected_hash = os.environ.get("EASYFORMAT_TEST_SOFFICE_SHA256")
+    executable = os.environ.get("AUTOFORMAT_TEST_SOFFICE")
+    expected_hash = os.environ.get("AUTOFORMAT_TEST_SOFFICE_SHA256")
     if not executable or not expected_hash:
         pytest.skip("Set the verified LibreOffice path and SHA-256 for integration.")
     root = Path(__file__).resolve().parents[2] / "runtime" / "tests" / "version-store-lo" / uuid4().hex

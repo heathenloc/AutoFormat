@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "AcademicRuleScope": {
+      "additionalProperties": false,
+      "properties": {
+        "axes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ScopeAxis"
+          },
+          "propertyNames": {
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "title": "Axes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "axes"
+      ],
+      "title": "AcademicRuleScope",
+      "type": "object"
+    },
+    "ClarifyFormatAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "clarify_format",
+          "title": "Action",
+          "type": "string"
+        },
+        "format": {
+          "$ref": "#/$defs/FeedbackRuleCandidate"
+        }
+      },
+      "required": [
+        "action",
+        "format"
+      ],
+      "title": "ClarifyFormatAnswer",
+      "type": "object"
+    },
+    "ConfirmScopeAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "confirm_scope",
+          "title": "Action",
+          "type": "string"
+        },
+        "accepted_review_ids": {
+          "items": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Accepted Review Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "accepted_review_ids"
+      ],
+      "title": "ConfirmScopeAnswer",
+      "type": "object"
+    },
+    "FeedbackRuleCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "property_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FormatValue"
+        },
+        "requested_scope": {
+          "enum": [
+            "selection",
+            "paragraph",
+            "same_kind",
+            "document"
+          ],
+          "title": "Requested Scope",
+          "type": "string"
+        },
+        "semantic_role": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Role"
+        },
+        "character_scope": {
+          "default": "all",
+          "enum": [
+            "all",
+            "chinese",
+            "latin",
+            "digits",
+            "complex_script",
+            "other"
+          ],
+          "title": "Character Scope",
+          "type": "string"
+        },
+        "applicability_scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AcademicRuleScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "candidate_id",
+        "property_id",
+        "value",
+        "requested_scope"
+      ],
+      "title": "FeedbackRuleCandidate",
+      "type": "object"
+    },
+    "FormatValue": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "normalized"
+      ],
+      "title": "FormatValue",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ScopeAxis": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclude",
+          "type": "array"
+        }
+      },
+      "title": "ScopeAxis",
+      "type": "object"
+    },
+    "SelectTargetAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "select_target",
+          "title": "Action",
+          "type": "string"
+        },
+        "expected_resolution_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Expected Resolution Id",
+          "type": "string"
+        },
+        "selected_candidate_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Selected Candidate Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "expected_resolution_id",
+        "selected_candidate_ids"
+      ],
+      "title": "SelectTargetAnswer",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "base_version_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Base Version Id",
+      "type": "string"
+    },
+    "expected_base_docx_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Base Docx Sha256",
+      "type": "string"
+    },
+    "expected_context_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Context Id",
+      "type": "string"
+    },
+    "feedback_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Feedback Id",
+      "type": "string"
+    },
+    "expected_parse_result_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Parse Result Id",
+      "type": "string"
+    },
+    "raw_answer": {
+      "default": "",
+      "maxLength": 4096,
+      "title": "Raw Answer",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "feedback-confirmation-request/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "answer": {
+      "discriminator": {
+        "mapping": {
+          "clarify_format": "#/$defs/ClarifyFormatAnswer",
+          "confirm_scope": "#/$defs/ConfirmScopeAnswer",
+          "select_target": "#/$defs/SelectTargetAnswer"
+        },
+        "propertyName": "action"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SelectTargetAnswer"
+        },
+        {
+          "$ref": "#/$defs/ConfirmScopeAnswer"
+        },
+        {
+          "$ref": "#/$defs/ClarifyFormatAnswer"
+        }
+      ],
+      "title": "Answer"
+    }
+  },
+  "required": [
+    "request_id",
+    "task_id",
+    "base_version_id",
+    "expected_base_docx_sha256",
+    "expected_context_id",
+    "feedback_id",
+    "expected_parse_result_id",
+    "schema_version",
+    "answer"
+  ],
+  "title": "FeedbackConfirmationRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easyformat.local/contracts/feedback-confirmation-request/1.0"
+}

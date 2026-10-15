@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://easyformat.local/contracts/version-node/1.0",
-  "title": "Immutable EasyFormat version node",
+  "title": "Immutable AutoFormat version node",
   "type": "object",
   "additionalProperties": false,
   "required": [

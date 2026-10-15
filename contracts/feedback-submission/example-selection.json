@@ -1,0 +1,26 @@
+{
+  "schema_version": "feedback-submission/1.0",
+  "request_id": "77777777777777777777777777777777",
+  "task_id": "11111111111111111111111111111111",
+  "base_version_id": "22222222222222222222222222222222",
+  "expected_base_docx_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "expected_context_id": "9d79d283900098f0588692ea2abd3eec8d9526454f2220115067cee57c1804da",
+  "preview_artifact_id": "example-preview",
+  "expected_preview_pdf_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "raw_text": "这一段改为居中",
+  "requested_scope": "selection",
+  "selection": {
+    "selected_text": "论文正文示例",
+    "context_before": "",
+    "context_after": "",
+    "spans": [
+      {
+        "page": 1,
+        "start_item": 0,
+        "start_offset_utf16": 0,
+        "end_item": 0,
+        "end_offset_utf16": 6
+      }
+    ]
+  }
+}

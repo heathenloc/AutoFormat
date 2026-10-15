@@ -13,6 +13,8 @@ from pydantic import BaseModel
 
 from brief_parser.adapters.bounded_provider import BoundedModelProvider
 from brief_parser.adapters.clause_segmenter import ClauseSegmenter
+from brief_parser.adapters.academic_clause_segmenter import AcademicClauseSegmenter
+from brief_parser.academic_source_policy import classify_evidence, is_excluded_candidate, scope_match
 from brief_parser.adapters.document_ingestion import DocumentIngestor
 from brief_parser.adapters.evidence_index import EvidenceIndexBuilder
 from brief_parser.adapters.observability import NullObservationSink
@@ -188,7 +190,15 @@ class BriefParsingPipeline:
         stages.append(self._stage("ingestion", started, len(documents)))
 
         started = perf_counter()
-        segmentations = [self._segmenter.segment(document) for document in documents]
+        academic = request.domain_pack.id == "academic_paper"
+        segmenter = self._segmenter
+        if academic and type(segmenter) is ClauseSegmenter:
+            segmenter = AcademicClauseSegmenter(
+                long_block_chars=segmenter._long_block_chars,
+                target_chunk_tokens=segmenter._target_chunk_tokens,
+                hard_chunk_tokens=segmenter._hard_chunk_tokens,
+            )
+        segmentations = [segmenter.segment(document) for document in documents]
         segmentation = self._merge_segmentations(segmentations)
         stages.append(self._stage("clause_segmentation", started, len(segmentation.clauses)))
 
@@ -220,11 +230,25 @@ class BriefParsingPipeline:
         classifications: dict[str, CoverageClassification] = {}
         reason_codes: dict[str, list[str]] = {}
         provider_unverifiable = False
+        model_chunks = segmentation.chunks
+        if academic:
+            decisions = {item.evidence_id: item for item in classify_evidence(evidence_index.values())}
+            allowed = set()
+            for clause in segmentation.clauses:
+                decision = decisions[clause.evidence_id]
+                if decision.source_class in {"explicit_requirement", "uncertain"} and not scope_match(clause.raw_text):
+                    allowed.add(clause.clause_id)
+                else:
+                    classifications[clause.clause_id] = CoverageClassification.CONTEXT
+                    reason_codes[clause.clause_id] = [decision.reason_code]
+            model_chunks = [chunk.model_copy(update={
+                "clause_ids": [identifier for identifier in chunk.clause_ids if identifier in allowed],
+            }) for chunk in segmentation.chunks if any(identifier in allowed for identifier in chunk.clause_ids)]
 
         started = perf_counter()
         completed_extractors = 0
         extractor_failure_reason: str | None = None
-        for chunk in segmentation.chunks:
+        for chunk in model_chunks:
             clauses = [clause_by_id[item] for item in chunk.clause_ids]
             chunk_analyses = [analysis_by_clause[item] for item in chunk.clause_ids]
             extractor_result = await self._extractor.extract(
@@ -234,6 +258,7 @@ class BriefParsingPipeline:
                 evidence_index=evidence_index,
                 request_context=context,
                 domain_category_ids=request.domain_category_ids,
+                academic_format_only=academic,
             )
             provider_calls.append(
                 self._provider_record(ModelRole.EXTRACTOR, extractor_result)
@@ -261,7 +286,7 @@ class BriefParsingPipeline:
                     (
                         chunk.chunk_id,
                         self._apply_category_risk_floor(
-                            extractor_result.output,
+                            self._filter_academic_output(extractor_result.output) if academic else extractor_result.output,
                             category_risks,
                         ),
                     )
@@ -296,7 +321,7 @@ class BriefParsingPipeline:
                 )
             )
         else:
-            for chunk in segmentation.chunks:
+            for chunk in model_chunks:
                 extractor_output = output_by_chunk.get(chunk.chunk_id)
                 if extractor_output is None:
                     continue
@@ -306,6 +331,7 @@ class BriefParsingPipeline:
                     clauses=clauses,
                     extractor_output=extractor_output,
                     request_context=context,
+                    academic_format_only=academic,
                 )
                 provider_calls.append(
                     self._provider_record(ModelRole.AUDITOR, audit_result)
@@ -545,6 +571,10 @@ class BriefParsingPipeline:
             },
             "requested_task_types": sorted(set(request.requested_task_types)),
         }
+        if request.domain_pack.id == "academic_paper":
+            payload["academic_scope_policy"] = "academic-format-scope/1.2"
+            payload["academic_rule_projector"] = "1.5.0"
+            payload["academic_candidate_guidance"] = "1.0"
         encoded = json.dumps(
             payload,
             ensure_ascii=False,
@@ -680,6 +710,28 @@ class BriefParsingPipeline:
             candidate_ids=conflict.candidate_ids,
             evidence_refs=conflict.evidence_refs,
             description=f"Requirement 候选在 {conflict.topic} 上存在冲突。",
+        )
+
+    @staticmethod
+    def _filter_academic_output(output: ExtractorOutput) -> ExtractorOutput:
+        def allowed(item: CandidateItem | CandidateRequirement) -> bool:
+            labels = [item.label, item.value.text or "", *item.value.items]
+            if isinstance(item, CandidateRequirement):
+                labels += [item.semantic_key, item.category, item.value.type]
+            # A5 + a page property in another field must not become "5 pages".
+            return not any(is_excluded_candidate(label) for label in labels)
+
+        requirements = [item for item in output.requirements if allowed(item)]
+        ids = {item.candidate_id for item in requirements}
+        return ExtractorOutput(
+            facts=[item for item in output.facts if allowed(item)],
+            objectives=[item for item in output.objectives if allowed(item)],
+            requirements=requirements,
+            references=[item for item in output.references if allowed(item)],
+            candidate_conflicts=[item for item in output.candidate_conflicts if set(item.candidate_ids) <= ids],
+            unresolved_items=[item for item in output.unresolved_items if not is_excluded_candidate(
+                item.topic + " " + item.description + " " + item.reason_code
+            )],
         )
 
     @staticmethod

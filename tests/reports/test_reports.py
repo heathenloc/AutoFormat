@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from easyformat.reports import (
+from autoformat.reports import (
     ReportContext,
     ReportError,
     build_report,
@@ -127,6 +127,6 @@ def test_no_rules_is_explicitly_unassessed() -> None:
 def test_runtime_schema_matches_public_contract() -> None:
     root = Path(__file__).resolve().parents[2]
     public = root / "contracts" / "version-report" / "version-report-1.0.schema.json"
-    packaged = root / "apps" / "api" / "src" / "easyformat" / "schemas" / "version-report-1.0.schema.json"
+    packaged = root / "apps" / "api" / "src" / "autoformat" / "schemas" / "version-report-1.0.schema.json"
     assert public.read_bytes() == packaged.read_bytes()
     assert json.loads(public.read_text(encoding="utf-8"))["$id"].endswith("/version-report/1.0")

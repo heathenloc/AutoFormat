@@ -7,17 +7,20 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from brief_parser.adapters.input_security import FileSecurityValidator
+from brief_parser.adapters.template_layout import DocxTemplateLayoutReader
 from brief_parser.application.bundle import build_academic_parse_bundle, build_parse_bundle
 from brief_parser.application.output_compilation import OutputCompiler
 from brief_parser.application.pipeline import BriefParsingPipeline, ParsePipelineRequest
 from brief_parser.application.resource_limits import ParseResourceLimits
 from brief_parser.compilers.academic_common import AcademicCommonFormatExtractor
+from brief_parser.compilers.template_layout import build_template_report
 from brief_parser.domain.academic_bundle import AcademicParseBundle
 from brief_parser.domain.bundle import ParseBundle
 from brief_parser.domain.domain_pack import DomainPack
-from brief_parser.domain.requirement_ir import DomainPackRef
 from brief_parser.domain.pipeline import PipelineResult
+from brief_parser.domain.requirement_ir import DomainPackRef
 from brief_parser.errors import BriefParserError, ErrorCode
+from brief_parser.ports.document_ingestion import SecuredSource
 
 
 @dataclass(frozen=True, slots=True)
@@ -106,7 +109,7 @@ class BriefParserService:
             ) from exc
 
     async def parse(self, request: ParseServiceRequest) -> ParseBundle:
-        pipeline_result, pack = await self._run_pipeline(request)
+        pipeline_result, pack, _ = await self._run_pipeline(request)
         outputs = self._compiler.compile(
             pipeline_result.requirement_ir,
             pack,
@@ -122,13 +125,16 @@ class BriefParserService:
                 ErrorCode.INVALID_REQUEST,
                 "论文 parse-only 仅接受 format_academic_paper 任务标识。",
             )
-        pipeline_result, pack = await self._run_pipeline(request)
+        pipeline_result, pack, sources = await self._run_pipeline(request)
         outputs = self._compiler.compile_parse_only(pipeline_result.requirement_ir, pack)
         format_ruleset = AcademicCommonFormatExtractor().extract(
             outputs.requirement_ir,
         )
         return build_academic_parse_bundle(
             pipeline_result, outputs, format_ruleset=format_ruleset,
+            template_layout=build_template_report(
+                DocxTemplateLayoutReader().read(sources), outputs.requirement_ir, format_ruleset,
+            ),
         )
 
     async def parse_academic_with_timeout(
@@ -153,7 +159,7 @@ class BriefParserService:
 
     async def _run_pipeline(
         self, request: ParseServiceRequest,
-    ) -> tuple[PipelineResult, DomainPack]:
+    ) -> tuple[PipelineResult, DomainPack, tuple[SecuredSource, ...]]:
         if not request.source_paths and not request.text_sources:
             raise BriefParserError(ErrorCode.INVALID_REQUEST, "至少需要一个输入 Source。")
         self._resource_limits.validate_source_count(
@@ -213,7 +219,7 @@ class BriefParserService:
                 locale=request.locale,
             )
         )
-        return pipeline_result, pack
+        return pipeline_result, pack, tuple(sources)
 
 
 def _semantic_version_key(version: str) -> tuple[int, int, int]:

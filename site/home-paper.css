@@ -1,0 +1,68 @@
+/* Paper-colored home; shared navy navigation retains its own palette. */
+:root { color-scheme: light; --background: var(--ivory); background: var(--ivory); }
+body[data-page="product"] {
+  --home-paper: #f5f3ee;
+  --home-ink: #000;
+  --home-prototype: #e2e2e2;
+  color: var(--home-ink);
+  background: var(--home-paper);
+}
+body[data-page="product"] .site-background { background: var(--home-paper); }
+body[data-page="product"] .background-texture { opacity: .018; }
+body[data-page="product"] main {
+  --text: var(--home-ink);
+  --text-muted: var(--home-ink);
+  --text-subtle: var(--home-ink);
+  --line: rgb(0 0 0 / 20%);
+  --line-subtle: rgb(0 0 0 / 12%);
+  --line-strong: rgb(0 0 0 / 42%);
+  color: var(--home-ink);
+  background: var(--home-paper);
+}
+body[data-page="product"] main ::selection { color: var(--home-paper); background: var(--home-ink); }
+body[data-page="product"] main :focus-visible { outline-color: var(--home-ink); }
+body[data-page="product"] main :is(
+  .hero-title, .hero-kicker, .hero-description, .hero-stat, .eyebrow,
+  .section-intro h2, .section-intro > p, .flow-step h3, .flow-step p,
+  .product-assurances > span, .product-assurances .icon,
+  .format-row dt, .format-row dt .icon, .format-row dd,
+  .development-note, .development-note > span, .prototype-showcase h2
+) { color: var(--home-ink); }
+
+/* All visible strokes use ink. SVG luminance masks retain their white stops. */
+body[data-page="product"] .hero-artwork,
+body[data-page="product"] .typeset-register { color: var(--home-ink); }
+
+body[data-page="product"] main :is(.button-primary, .format-filter, .format-collapse) {
+  color: var(--home-ink);
+  border-color: var(--line-strong);
+  background: transparent;
+}
+body[data-page="product"] main :is(.button-primary, .format-filter, .format-collapse):is(:hover, :focus-visible),
+body[data-page="product"] main .button-primary[aria-expanded="true"],
+body[data-page="product"] main .format-filter[aria-pressed="true"] {
+  color: var(--home-paper);
+  border-color: var(--home-ink);
+  background: var(--home-ink);
+}
+body[data-page="product"] .flow-icon {
+  color: var(--home-ink);
+  border-color: var(--line);
+  background: var(--home-paper);
+  box-shadow: 0 0 0 8px var(--home-paper);
+}
+body[data-page="product"] .format-row:hover { background: rgb(0 0 0 / 3%); }
+body[data-page="product"] .prototype-placeholder {
+  color: var(--home-ink);
+  border-color: var(--line);
+  background: var(--home-prototype);
+}
+body[data-page="product"] .prototype-placeholder > .icon {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 48px);
+  margin: 0;
+  color: var(--home-ink);
+  transform: translateX(-50%);
+}
+body[data-page="product"] .prototype-placeholder > .button { max-width: 100%; }

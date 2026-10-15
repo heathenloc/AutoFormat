@@ -2,7 +2,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using EasyFormat.DocxIndex;
+using AutoFormat.DocxIndex;
 
 var testDirectory = Path.GetFullPath(Path.Combine("runtime", "tests", "docx-index"));
 Directory.CreateDirectory(testDirectory);

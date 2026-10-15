@@ -2,7 +2,7 @@
 .technical-section::before { content: ""; position: absolute; top: 0; inset-inline: var(--edge); height: 1px; background: linear-gradient(90deg, transparent, rgb(174 196 232 / 18%), transparent); }
 .technical-intro { max-width: 860px; }
 .technical-intro .technical-kicker { font-size: 18px; letter-spacing: 0.02em; }
-.technical-intro h2 { margin: 0; color: #edf2fb; font-size: clamp(30px, 3.2vw, 46px); font-weight: 500; line-height: 1.35; letter-spacing: -0.04em; text-wrap: balance; }
+.technical-intro :is(h1, h2) { margin: 0; color: #edf2fb; font-size: clamp(30px, 3.2vw, 46px); font-weight: 500; line-height: 1.35; letter-spacing: -0.04em; text-wrap: balance; }
 .technical-intro > p:last-child { max-width: 790px; margin: 24px 0 0; color: #9ba9bf; font-size: 15px; line-height: 2; }
 .technical-modules { position: relative; margin-top: 96px; }
 .technical-modules::before { content: ""; position: absolute; top: 10px; bottom: 44px; left: 0; width: 1px; background: linear-gradient(#5b789f, #2b3e59 50%, transparent); }
@@ -51,7 +51,7 @@
 .refinement-loop p { margin: 0; font-size: 12px; line-height: 1.95; }
 .prototype-showcase { margin: 104px 0 0; }
 .prototype-showcase figcaption .eyebrow { margin-bottom: 16px; }
-.prototype-showcase h3 { margin: 0; color: #dce7f8; font-size: clamp(24px, 2.5vw, 34px); font-weight: 500; line-height: 1.45; letter-spacing: -0.03em; }
+.prototype-showcase :is(h2, h3) { margin: 0; color: #dce7f8; font-size: clamp(24px, 2.5vw, 34px); font-weight: 500; line-height: 1.45; letter-spacing: -0.03em; }
 .prototype-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; padding: 38px 24px; margin-top: 32px; border: 1px dashed #384b68; border-radius: 10px; background: radial-gradient(ellipse at center, rgb(47 69 106 / 14%), transparent 75%); text-align: center; }
 .prototype-placeholder > .icon { width: 32px; height: 32px; margin-bottom: 22px; color: #617ea8; stroke-width: 1; }
 .prototype-placeholder > span { color: #a8bedc; font-size: 17px; line-height: 1.8; }
