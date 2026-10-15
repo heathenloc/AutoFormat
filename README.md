@@ -2,6 +2,8 @@
 
 源码仓库：[heathenloc/AutoFormat](https://github.com/heathenloc/AutoFormat)。产品网页与交互原型的 GitHub Pages 配置见 [发布说明](docs/github-pages.md)。
 
+在线展示：[产品网页](https://heathenloc.github.io/AutoFormat/) · [交互原型](https://heathenloc.github.io/AutoFormat/prototype/index.html#upload)。
+
 项目于 2026-10-08 由 EasyFormat 更名为 AutoFormat。更名范围、开发环境更新和历史兼容说明见 [更名记录](docs/project-rename-autoformat.md)。
 
 > 2026-10-07 流程修订：待确认项在解析完成后、首次格式编辑前处理。用户逐项选择候选答案或明确暂时忽略，之后才能生成 V1；没有待确认项时直接继续。下文带历史日期的增量保留当时状态，当前流程以本修订和 `docs/pre-edit-review.md` 为准。

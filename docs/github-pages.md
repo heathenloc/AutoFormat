@@ -2,11 +2,11 @@
 
 源码仓库：<https://github.com/heathenloc/AutoFormat>。
 
-2026-10-15 发布状态：源码、现有历史和标签已上传到 `main`，仓库保持私有。启用 Pages 时 GitHub 返回 `422: Your current plan does not support GitHub Pages for this repository.`，因此网站尚未上线；首次工作流也会因 Pages 尚未启用而失败。需要先升级支持私有仓库 Pages 的套餐，或由仓库所有者决定公开仓库，再按下面的步骤启用并手动重跑，无需重建或重新上传网页。
+2026-10-15 发布状态：仓库所有者已将源码仓库改为公开，GitHub Pages 已启用，发布来源为 GitHub Actions，HTTPS 已强制开启。[首次成功部署](https://github.com/heathenloc/AutoFormat/actions/runs/38673473720)已完成；首页、三个栏目页、产品原型和图标均通过线上 HTTP 200 检查，原型入口、示例解析和编辑前确认交互已在浏览器验证。此前私有仓库因套餐限制启用失败的问题已解除。
 
 ## 展示入口
 
-Pages 启用并部署成功后，入口为：
+已上线入口为：
 
 - 产品网页：<https://heathenloc.github.io/AutoFormat/>
 - 交互原型：<https://heathenloc.github.io/AutoFormat/prototype/index.html#upload>
@@ -18,7 +18,7 @@ Pages 启用并部署成功后，入口为：
 
 GitHub Pages 提供静态展示。交互原型使用内置虚构材料，进度保存在浏览器本地，不上传或处理用户论文。真实应用位于 `apps/web`、`apps/api` 和 `services/docx_engine`，需要 Python、.NET、预览渲染器及本地宿主，不能通过 Pages 运行。
 
-## 首次启用
+## 首次启用（当前仓库已完成）
 
 1. 打开仓库 **Settings → Pages**。
 2. 在 **Build and deployment → Source** 中选择 **GitHub Actions**。
