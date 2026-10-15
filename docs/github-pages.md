@@ -2,6 +2,8 @@
 
 源码仓库：<https://github.com/heathenloc/AutoFormat>。
 
+2026-10-15 发布状态：源码、现有历史和标签已上传到 `main`，仓库保持私有。启用 Pages 时 GitHub 返回 `422: Your current plan does not support GitHub Pages for this repository.`，因此网站尚未上线；首次工作流也会因 Pages 尚未启用而失败。需要先升级支持私有仓库 Pages 的套餐，或由仓库所有者决定公开仓库，再按下面的步骤启用并手动重跑，无需重建或重新上传网页。
+
 ## 展示入口
 
 Pages 启用并部署成功后，入口为：
